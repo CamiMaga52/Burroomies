@@ -68,3 +68,12 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+
+Notas - CAMILA:
+
+- Correr comando en terminal en la carpeta del proyecto: npm install react-scroll
+- Correr comando en terminal en la carpeta del proyecto: npm install react-icons
+- Instalar la extensión de ES7+ React/Redux/React-Native snippets en Visual Studio Code
