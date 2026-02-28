@@ -1,0 +1,78 @@
+// ─────────────────────────────────────────
+//  propiedadesData.js  — datos de prueba
+//  (reemplazar por llamadas a la API en TT2)
+// ─────────────────────────────────────────
+
+export const PROPERTIES = [
+  {
+    id: 1,
+    titulo: "Departamento cerca de ESCOM",
+    tipo: "Departamento",
+    calificacion: 4.8,
+    numResenas: 15,
+    precio: 1500,
+    ocupacion: "Compartida",
+    lugares: 2,
+    totalLugares: 5,
+    ubicacion: "Torres Lindavista",
+    cp: "07300",
+    color: "#e8f5e9",
+    emoji: "🏠",
+  },
+  {
+    id: 2,
+    titulo: "Departamento cerca de ESCOM",
+    tipo: "Departamento",
+    calificacion: 3.1,
+    numResenas: 2,
+    precio: 2130,
+    ocupacion: "Privada",
+    lugares: null,
+    totalLugares: null,
+    ubicacion: "Torres Lindavista",
+    cp: "07300",
+    color: "#fce4ec",
+    emoji: "🛋️",
+  },
+  {
+    id: 3,
+    titulo: "Habitación en Lindavista",
+    tipo: "Habitación",
+    calificacion: 4.2,
+    numResenas: 8,
+    precio: 1200,
+    ocupacion: "Compartida",
+    lugares: 1,
+    totalLugares: 3,
+    ubicacion: "Lindavista",
+    cp: "07300",
+    color: "#e3f2fd",
+    emoji: "🛏️",
+  },
+  {
+    id: 4,
+    titulo: "Casa completa UPALM",
+    tipo: "Casa",
+    calificacion: 4.5,
+    numResenas: 5,
+    precio: 4500,
+    ocupacion: "Privada",
+    lugares: null,
+    totalLugares: null,
+    ubicacion: "Gustavo A. Madero",
+    cp: "07320",
+    color: "#fff8e1",
+    emoji: "🏡",
+  },
+];
+
+export const SERVICIOS_LIST = [
+  "Servicio de internet",
+  "Amueblada",
+  "Mantenimiento y limpieza",
+  "Seguridad",
+  "Elevador",
+  "Estacionamiento",
+  "Gimnasio o alberca",
+  "Servicio de TV por cable",
+];

@@ -1,12 +1,7 @@
-import logo from './logo.svg';
-import './App.css';
+import SearchProperties from './arrendatario/miVivienda/MiArrendamientoActual';
 
 function App() {
-  return (
-    <div className="App">
-      
-    </div>
-  );
+  return <SearchProperties />
 }
 
-export default App;
+export default App
