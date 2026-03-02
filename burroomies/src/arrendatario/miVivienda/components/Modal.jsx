@@ -10,22 +10,15 @@ export default function Modal({
   icon,
   children,
   confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
+  cancelText  = 'Cancelar',
   onConfirm,
   onCancel,
   confirmVariant = 'primary',
-  hideActions = false,
+  hideActions    = false,
 }) {
-  // Prevenir scroll del body cuando el modal está abierto
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -34,7 +27,6 @@ export default function Modal({
     <div
       className={styles.modalOverlay}
       onClick={onClose}
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}
       role="presentation"
     >
       <div
@@ -43,22 +35,18 @@ export default function Modal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        tabIndex="-1"
       >
-        <button
-          className={styles.modalClose}
-          onClick={onClose}
-          aria-label="Cerrar modal"
-        >
+        {/* Botón cerrar */}
+        <button className={styles.modalClose} onClick={onClose} aria-label="Cerrar">
           <IconX />
         </button>
 
+        {/* Ícono opcional (cuando NO se pasa imagen del burro) */}
         {icon && <div className={styles.modalIcon}>{icon}</div>}
 
-        <h2 id="modal-title" className={styles.modalTitle}>
-          {title}
-        </h2>
+        <h2 id="modal-title" className={styles.modalTitle}>{title}</h2>
 
+        {/* Aquí van los children (imagen del burro + descripción) */}
         {children}
 
         {!hideActions && (
@@ -72,7 +60,7 @@ export default function Modal({
             </button>
             <button
               type="button"
-              className={`${styles.btnConfirmar} ${styles[`btnConfirmar--${confirmVariant}`]}`}
+              className={styles.btnConfirmar}
               onClick={onConfirm}
             >
               {confirmText}
@@ -85,15 +73,15 @@ export default function Modal({
 }
 
 Modal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
-  icon: PropTypes.node,
-  children: PropTypes.node,
-  confirmText: PropTypes.string,
-  cancelText: PropTypes.string,
-  onConfirm: PropTypes.func,
-  onCancel: PropTypes.func,
+  isOpen:         PropTypes.bool.isRequired,
+  onClose:        PropTypes.func.isRequired,
+  title:          PropTypes.string.isRequired,
+  icon:           PropTypes.node,
+  children:       PropTypes.node,
+  confirmText:    PropTypes.string,
+  cancelText:     PropTypes.string,
+  onConfirm:      PropTypes.func,
+  onCancel:       PropTypes.func,
   confirmVariant: PropTypes.oneOf(['primary', 'danger']),
-  hideActions: PropTypes.bool,
+  hideActions:    PropTypes.bool,
 };

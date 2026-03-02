@@ -29,19 +29,19 @@ hacia zonas residenciales y puntos de interés dentro del municipio.`,
 
   // Servicios
   servicios: [
-    { icon: "📶", nombre: "Servicio de internet"   },
-    { icon: "🚗", nombre: "Estacionamiento"         },
-    { icon: "🛋️", nombre: "Amueblada"               },
+    { icon: "📶", nombre: "Servicio de internet"    },
+    { icon: "🚗", nombre: "Estacionamiento"          },
+    { icon: "🛋️", nombre: "Amueblada"                },
     { icon: "📺", nombre: "Servicio de TV por cable" },
     { icon: "🔧", nombre: "Mantenimiento y limpieza" },
   ],
 
   // Arrendador
   arrendador: {
-    nombre:       "Jaqueline Montiel",
-    experiencia:  3,
-    telefono:     "55 - 2222 0123",
-    correo:       "jaqueIMont@ejemplo.com",
+    nombre:      "Jaqueline Montiel",
+    experiencia: 3,
+    telefono:    "55 - 2222 0123",
+    correo:      "jaqueIMont@ejemplo.com",
   },
 
   // Calificaciones por categoría
@@ -57,47 +57,47 @@ hacia zonas residenciales y puntos de interés dentro del municipio.`,
 
 export const RESENAS = [
   {
-    autor:         "Ana P.",
-    nombreCompleto:"Oscar Martínez",
-    fecha:         "2024",
-    calGeneral:    4,
-    verificada:    true, // <-- NUEVO
-    texto:         `El lugar tiene muchas cosas que mejores cerca de la UPALM. Sin embargo, puede mejorar es lo
+    autor:          "Ana P.",
+    nombreCompleto: "Oscar Martínez",
+    fecha:          "2024",
+    calGeneral:     4,
+    corazones:      38,
+    texto: `El lugar tiene muchas cosas que mejores cerca de la UPALM. Sin embargo, puede mejorar es lo
 que quiero decir con esto porque hay cosas que también se podrían mejorar bastante. La verdad la experiencia
 fue bastante buena y recomendaría el lugar.`,
-    duracion:      "6 meses",
+    duracion: "6 meses",
   },
   {
-    autor:         "Yara M.",
-    nombreCompleto:"Yareli Morales",
-    fecha:         "2027",
-    calGeneral:    4,
-    verificada:    false,
-    texto:         `El lugar tiene muchas cosas que también se encuentran cerca de la UPALM. Sin embargo, puede
+    autor:          "Yara M.",
+    nombreCompleto: "Yareli Morales",
+    fecha:          "2027",
+    calGeneral:     4,
+    corazones:      12,
+    texto: `El lugar tiene muchas cosas que también se encuentran cerca de la UPALM. Sin embargo, puede
 mejorar es lo que quiero decir con esto porque hay cosas que también se podrían mejorar bastante. La verdad la
 experiencia fue bastante buena y recomendaría el lugar si tuviera la oportunidad en un futuro.`,
-    duracion:      "1 año",
+    duracion: "1 año",
   },
   {
-    autor:         "Carlos R.",
-    nombreCompleto:"Carlos Ramírez",
-    fecha:         "2025",
-    calGeneral:    3,
-    verificada:    true,
-    texto:         `Buena ubicación, cerca del metro y de la escuela. El departamento está amueblado y el internet
+    autor:          "Carlos R.",
+    nombreCompleto: "Carlos Ramírez",
+    fecha:          "2025",
+    calGeneral:     3,
+    corazones:      7,
+    texto: `Buena ubicación, cerca del metro y de la escuela. El departamento está amueblado y el internet
 funciona bien. La comunicación con el arrendador es rápida. Algunos detalles de mantenimiento pendientes
 pero en general una buena experiencia.`,
-    duracion:      "8 meses",
+    duracion: "8 meses",
   },
   {
-    autor:         "Diana L.",
-    nombreCompleto:"Diana López",
-    fecha:         "2026",
-    calGeneral:    5,
-    verificada:    true,
-    texto:         `Excelente lugar para vivir mientras estudias. El arrendador es muy amable y resuelve
+    autor:          "Diana L.",
+    nombreCompleto: "Diana López",
+    fecha:          "2026",
+    calGeneral:     5,
+    corazones:      54,
+    texto: `Excelente lugar para vivir mientras estudias. El arrendador es muy amable y resuelve
 los problemas rápido. La colonia es segura y hay mucho comercio alrededor. Totalmente recomendado para
 estudiantes de ESCOM o cualquier escuela del IPN.`,
-    duracion:      "1 año 2 meses",
+    duracion: "1 año 2 meses",
   },
 ];

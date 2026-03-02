@@ -1,12 +1,19 @@
 import { useState } from "react";
 import styles from "./DetallePropiedad.module.css";
 import { PROPIEDAD_DETALLE, RESENAS } from "./detallePropiedadData";
+import burroLogo from "../../img/burroLogo.png";
 import {
-    IconArrow, IconLocation, IconUsers, IconPhone,
-    IconMail, IconWifi, IconCouch, IconWrench,
-    IconShield, IconElevator, IconCar, IconGym,
-    IconTv, IconStar, IconUser, IconLogout, BunnyLogo,
-    IconCheck // <-- NUEVO
+    IconArrow,
+    IconLocation,
+    IconPhone,
+    IconMail,
+    IconUser,
+    IconLogout,
+    IconCamera,
+    IconHeart,
+    IconFacebook,
+    IconTwitter,
+    IconInstagram,
 } from "./DetallePropiedadComponents";
 
 export default function DetallePropiedad() {
@@ -20,24 +27,26 @@ export default function DetallePropiedad() {
             : tabResena === "antiguas"
                 ? [...RESENAS].sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
                 : tabResena === "mejores"
-                    ? [...RESENAS].sort((a, b) => b.calGeneral - a.calGeneral)
-                    : [...RESENAS].sort((a, b) => a.calGeneral - b.calGeneral);
+                    ? [...RESENAS].sort((a, b) => b.corazones - a.corazones)
+                    : [...RESENAS].sort((a, b) => a.corazones - b.corazones);
+
+    const handleDummyClick = (e) => e.preventDefault();
 
     return (
         <div className={styles.page}>
 
             {/* NAVBAR */}
             <nav className={styles.navbar}>
-                <a href="#" className={styles.navbarBrand}>
-                    <BunnyLogo />
+                <button className={styles.navbarBrand} onClick={handleDummyClick}>
+                    <img src={burroLogo} alt="Burroomies logo" className={styles.navbarLogo} />
                     <span className={styles.navbarTitle}>Burroomies</span>
-                </a>
+                </button>
                 <div className={styles.navbarRight}>
                     <button className={`${styles.btnNav} ${styles.btnGhost}`}>
                         <IconUser /> Mi vivienda
                     </button>
                     <div className={styles.avatarCircle}><IconUser /></div>
-                    <button className={`${styles.btnNav} ${styles.btnDanger}`}>
+                    <button className={`${styles.btnNav} ${styles.btnGhost} ${styles.btnLogout}`}>
                         <IconLogout /> Cerrar sesión
                     </button>
                 </div>
@@ -51,17 +60,21 @@ export default function DetallePropiedad() {
                     <IconArrow /> Atrás
                 </button>
 
-                {/* GALERÍA MEJORADA */}
+                {/* GALERÍA */}
                 <div className={styles.gallery}>
                     <div className={styles.galleryMain}>
-                        <div className={styles.imgPlaceholderMain}>🏠</div>
+                        <div className={styles.imgPlaceholderMain}>
+                            <IconCamera />
+                        </div>
                     </div>
                     <div className={styles.galleryGrid}>
-                        {[..."🛋️🛏️🚿"].map((e, i) => (
-                            <div key={i} className={styles.imgPlaceholderThumb}>{e}</div>
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className={styles.imgPlaceholderThumb}>
+                                <IconCamera />
+                            </div>
                         ))}
                         <button className={styles.btnVerFotos}>
-                            📷 Mostrar todas las fotos
+                            Ver todas las fotos
                         </button>
                     </div>
                 </div>
@@ -73,6 +86,15 @@ export default function DetallePropiedad() {
                         <div className={styles.subtitulo}>
                             <span className={`${styles.badge} ${styles.badgeComp}`}>{p.ocupacion}</span>
                             <span className={styles.lugares}>lugares {p.lugaresDisp}/{p.lugaresTotales}</span>
+                        </div>
+
+                        {/* CORAZONES TOTALES */}
+                        <div className={styles.corazonesTotales}>
+                            <IconHeart filled={true} />
+                            <span className={styles.corazonesTotalesNum}>
+                                {RESENAS.reduce((sum, r) => sum + r.corazones, 0)}
+                            </span>
+                            <span className={styles.corazonesTotalesLabel}>Me encanta</span>
                         </div>
 
                         {/* CALIFICACIÓN GENERAL */}
@@ -97,11 +119,11 @@ export default function DetallePropiedad() {
                         </div>
                     </div>
 
-                    {/* PRECIO - TARJETA MEJORADA */}
+                    {/* PRECIO */}
                     <div className={styles.precioCard}>
                         <div className={styles.precioLabel}>Precio</div>
-                        <div className={styles.precioMonto}>${p.precio.toLocaleString()} MXN / mes</div>
-                        <div className={styles.precioPorPersona}>por persona</div>
+                        <div className={styles.precioMonto}>${p.precio.toLocaleString()} MXN</div>
+                        <div className={styles.precioPorPersona}>por persona / mes</div>
                     </div>
                 </div>
 
@@ -130,7 +152,7 @@ export default function DetallePropiedad() {
 
                 <div className={styles.divider} />
 
-                {/* ARRENDADOR - CON AVATAR DE INICIAL */}
+                {/* ARRENDADOR */}
                 <section className={styles.section}>
                     <div className={styles.arrendadorCard}>
                         <div className={styles.arrendadorAvatar}>
@@ -166,7 +188,7 @@ export default function DetallePropiedad() {
                                 <span className={styles.calItemIcon}>{c.icon}</span>
                                 <div className={styles.calItemStars}>
                                     {[1, 2, 3, 4, 5].map(j => (
-                                        <span key={j} className={j <= Math.round(c.valor) ? styles.starF : styles.starE} style={{ fontSize: "0.85rem" }}>★</span>
+                                        <span key={j} className={j <= Math.round(c.valor) ? styles.starF : styles.starE}>★</span>
                                     ))}
                                 </div>
                                 <div className={styles.calItemNombre}>{c.nombre}</div>
@@ -182,14 +204,14 @@ export default function DetallePropiedad() {
                 <section className={styles.section}>
                     <h2 className={styles.sectionTitle}>Reseñas</h2>
 
-                    {/* TABS MEJORADAS (sin fondo, solo subrayado) */}
+                    {/* TABS */}
                     <div className={styles.tabs}>
                         {[
-                            ["todas", "Todas"],
+                            ["todas",     "Todas"],
                             ["recientes", "Más recientes"],
-                            ["antiguas", "Más antiguas"],
-                            ["mejores", "Mejores valoraciones"],
-                            ["peores", "Peores valoraciones"],
+                            ["antiguas",  "Más antiguas"],
+                            ["mejores",   "Más me encanta"],
+                            ["peores",    "Menos me encanta"],
                         ].map(([val, label]) => (
                             <button
                                 key={val}
@@ -208,27 +230,20 @@ export default function DetallePropiedad() {
                                 <div className={styles.resenaHeader}>
                                     <div className={styles.resenaAvatar}><IconUser /></div>
                                     <div>
-                                        <div className={styles.resenaAutor}>
-                                            {r.autor}
-                                            {r.verificada && (
-                                                <span className={styles.resenaVerificada}>
-                                                    <IconCheck /> Verificada
-                                                </span>
-                                            )}
-                                        </div>
+                                        <div className={styles.resenaAutor}>{r.autor}</div>
                                         <div className={styles.resenaFecha}>Ingresó {r.fecha}</div>
                                     </div>
-                                    <div className={styles.resenaStars}>
-                                        {[1, 2, 3, 4, 5].map(j => (
-                                            <span key={j} className={j <= Math.round(r.calGeneral) ? styles.starF : styles.starE} style={{ fontSize: "0.9rem" }}>★</span>
-                                        ))}
-                                        <span className={styles.resenaNum}>{r.calGeneral}</span>
+                                    {/* CORAZONES en lugar de estrellas + verificada */}
+                                    <div className={styles.resenaCorazones}>
+                                        <IconHeart filled={true} />
+                                        <span className={styles.resenaCorazonNum}>{r.corazones}</span>
+                                        <span className={styles.resenaCorazonLabel}>Me encanta</span>
                                     </div>
                                 </div>
                                 <div className={styles.resenaAutorNombre}>{r.nombreCompleto}</div>
                                 <p className={styles.resenaTexto}>{r.texto}</p>
                                 <div className={styles.resenaDuracion}>
-                                    Duración del arrendamiento: <strong>{r.duracion}</strong>
+                                    Duración: <strong>{r.duracion}</strong>
                                 </div>
                             </div>
                         ))}
@@ -237,13 +252,18 @@ export default function DetallePropiedad() {
 
             </div>
 
-            {/* FOOTER MEJORADO (con enlaces simulados) */}
+            {/* FOOTER */}
             <footer className={styles.footer}>
                 <div className={styles.footerContent}>
                     <div className={styles.footerLinks}>
-                        <a href="#">Términos y condiciones</a>
-                        <a href="#">Contacto</a>
-                        <a href="#">Redes sociales</a>
+                        <button className={styles.footerLinkBtn} onClick={handleDummyClick}>Términos y condiciones</button>
+                        <button className={styles.footerLinkBtn} onClick={handleDummyClick}>Contacto</button>
+                        <button className={styles.footerLinkBtn} onClick={handleDummyClick}>Ayuda</button>
+                    </div>
+                    <div className={styles.footerSocial}>
+                        <button className={styles.footerSocialBtn} onClick={handleDummyClick} aria-label="Facebook"><IconFacebook /></button>
+                        <button className={styles.footerSocialBtn} onClick={handleDummyClick} aria-label="Twitter"><IconTwitter /></button>
+                        <button className={styles.footerSocialBtn} onClick={handleDummyClick} aria-label="Instagram"><IconInstagram /></button>
                     </div>
                     <div className={styles.footerText}>
                         <div>© 2025 Burroomies</div>
