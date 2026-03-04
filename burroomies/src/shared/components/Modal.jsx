@@ -1,16 +1,34 @@
+// ─────────────────────────────────────────────────────────
+//  src/shared/components/Modal.jsx
+//  Modal reutilizable con sus PROPIOS estilos.
+//  Reemplaza: miVivienda/components/Modal.jsx
+//  (que tenía el error de importar estilos de MiArrendamientoActual)
+// ─────────────────────────────────────────────────────────
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styles from '../MiArrendamientoActual.module.css';
+import styles from './Modal.module.css';
 import { IconX } from '../icons';
 
+/**
+ * Props:
+ *  isOpen, onClose, title
+ *  icon           — nodo JSX opcional (ej. <IconHome />)
+ *  children       — contenido libre (imagen burro + texto)
+ *  confirmText    — texto botón confirmar (default "Confirmar")
+ *  cancelText     — texto botón cancelar (default "Cancelar")
+ *  onConfirm      — callback confirmar
+ *  onCancel       — callback cancelar (si no se pasa, usa onClose)
+ *  confirmVariant — "primary" | "danger"
+ *  hideActions    — oculta los botones (para modales informativos)
+ */
 export default function Modal({
   isOpen,
   onClose,
   title,
   icon,
   children,
-  confirmText = 'Confirmar',
-  cancelText  = 'Cancelar',
+  confirmText    = 'Confirmar',
+  cancelText     = 'Cancelar',
   onConfirm,
   onCancel,
   confirmVariant = 'primary',
@@ -24,11 +42,7 @@ export default function Modal({
   if (!isOpen) return null;
 
   return (
-    <div
-      className={styles.modalOverlay}
-      onClick={onClose}
-      role="presentation"
-    >
+    <div className={styles.overlay} onClick={onClose} role="presentation">
       <div
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
@@ -36,31 +50,24 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        {/* Botón cerrar */}
         <button className={styles.modalClose} onClick={onClose} aria-label="Cerrar">
           <IconX />
         </button>
 
-        {/* Ícono opcional (cuando NO se pasa imagen del burro) */}
         {icon && <div className={styles.modalIcon}>{icon}</div>}
 
         <h2 id="modal-title" className={styles.modalTitle}>{title}</h2>
 
-        {/* Aquí van los children (imagen del burro + descripción) */}
         {children}
 
         {!hideActions && (
           <div className={styles.modalBtns}>
-            <button
-              type="button"
-              className={styles.btnCancelar}
-              onClick={onCancel || onClose}
-            >
+            <button type="button" className={styles.btnCancelar} onClick={onCancel || onClose}>
               {cancelText}
             </button>
             <button
               type="button"
-              className={styles.btnConfirmar}
+              className={`${styles.btnConfirmar} ${confirmVariant === 'danger' ? styles.btnDanger : ''}`}
               onClick={onConfirm}
             >
               {confirmText}

@@ -1,4 +1,4 @@
-import SearchProperties from './arrendatario/miVivienda/MiArrendamientoActual';
+import SearchProperties from './arrendatario/detalle/DetallePropiedad';
 
 function App() {
   return <SearchProperties />
