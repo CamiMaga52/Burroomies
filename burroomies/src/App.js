@@ -1,4 +1,4 @@
-import SearchProperties from './arrendatario/detalle/DetallePropiedad';
+import SearchProperties from './auth/Registro';
 
 function App() {
   return <SearchProperties />
