@@ -1,4 +1,4 @@
-import SearchProperties from './auth/Registro';
+import SearchProperties from './auth/Restablecercontrasena';
 
 function App() {
   return <SearchProperties />
