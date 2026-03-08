@@ -1,0 +1,45 @@
+/* src/shared/components/UploadZone.module.css */
+@import '../styles/variables.css';
+
+.wrapper { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+
+.zone {
+  width: 100%; box-sizing: border-box;
+  border: 2.5px dashed var(--purple-light);
+  border-radius: 18px; background: #f7f5fc;
+  padding: 32px 24px; min-height: 220px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+.zone:hover { border-color: var(--purple-mid); background: #f0ecf8; }
+.dragging   { border-color: var(--purple-main); background: #ece6f7; transform: scale(1.01); }
+.ok         { border-color: #34d399; background: #f0fdf9; border-style: solid; }
+
+.contenido { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.pdfIcon   { width: 72px; height: 90px; }
+.texto {
+  font-family: var(--font-heading);
+  font-size: 1.1rem; font-weight: 600; color: var(--text-dark);
+  line-height: 1.5; margin: 0; white-space: pre-line;
+}
+.notas     { font-size: 0.78rem; color: var(--text-light); font-weight: 600; text-align: left; }
+.notas p   { margin: 0 0 4px; font-weight: 700; color: var(--text-mid); }
+.notas ul  { margin: 0; padding-left: 16px; }
+.notas li  { margin-bottom: 2px; }
+
+.archivoOk   { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.checkEmoji  { font-size: 2.8rem; }
+.nombre { font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: var(--text-dark); margin: 0; word-break: break-all; }
+.size   { font-size: 0.8rem; color: var(--text-light); font-weight: 600; margin: 0; }
+
+.btnQuitar {
+  background: none; border: 1.5px solid #fca5a5; color: var(--error);
+  border-radius: var(--radius-btn); padding: 5px 16px;
+  font-family: var(--font-body); font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s; margin-top: 4px;
+}
+.btnQuitar:hover { background: #fef2f2; }
+
+.hidden { display: none; }
+.error  { color: var(--error); font-size: 0.82rem; font-weight: 700; text-align: center; }

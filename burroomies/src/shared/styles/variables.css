@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Paleta morada */
+  --purple-light: #c8b8e8;
+  --purple-mid:   #a78fd0;
+  --purple-main:  #8B5CF6;
+  --purple-dark:  #6d3fc0;
+
+  /* Fondos */
+  --bg:           #dce8f8;
+  --bg2:          #e8daf5;
+  --input-bg:     #eceaf5;
+  --divider:      rgba(200,184,232,0.45);
+
+  /* Textos */
+  --text-dark:    #2d2550;
+  --text-mid:     #5a4e7a;
+  --text-light:   #8a7eaa;
+
+  /* Semáforo */
+  --success:      #22c55e;
+  --error:        #ef4444;
+  --warning:      #f59e0b;
+
+  /* Tipografía */
+  --font-heading: 'Poppins', sans-serif;
+  --font-body:    'Nunito', sans-serif;
+
+  /* Sombras */
+  --shadow-card:  0 4px 6px rgba(110,80,180,0.04), 0 12px 40px rgba(110,80,180,0.10);
+  --shadow-btn:   0 4px 16px rgba(139,92,246,0.38);
+  --shadow-btn-h: 0 8px 24px rgba(139,92,246,0.48);
+
+  /* Radios */
+  --radius-card:  24px;
+  --radius-input: 12px;
+  --radius-btn:   50px;
+}

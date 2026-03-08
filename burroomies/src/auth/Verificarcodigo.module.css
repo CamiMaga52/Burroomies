@@ -1,79 +1,12 @@
 /* src/auth/VerificarCodigo.module.css */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;600;700&display=swap');
-:root { --purple-mid:#a78fd0; --purple-main:#8B5CF6; --purple-dark:#6d3fc0; --bg:#dce8f8; --bg2:#e8daf5; --text-dark:#2d2550; --text-mid:#5a4e7a; --text-light:#8a7eaa; }
+@import '../shared/styles/variables.css';
 
-.page { font-family:'Nunito',sans-serif; background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 100%); min-height:100vh; display:flex; flex-direction:column; }
-
-.navbar { display:flex; align-items:center; justify-content:space-between; padding:12px 36px; background:rgba(255,255,255,0.85); backdrop-filter:blur(16px); border-bottom:1px solid rgba(200,184,232,0.3); position:sticky; top:0; z-index:100; animation:slideDown 0.4s ease both; }
-@keyframes slideDown { from{transform:translateY(-100%);opacity:0} to{transform:translateY(0);opacity:1} }
-.navbarBrand { display:flex; align-items:center; gap:10px; }
-.navbarLogo  { width:46px; height:46px; object-fit:contain; }
-.navbarTitle { font-family:'Poppins',sans-serif; font-size:1.45rem; font-weight:700; color:var(--text-dark); }
-.navbarRight { display:flex; align-items:center; gap:10px; }
-.btnNav { padding:8px 20px; border-radius:50px; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:700; cursor:pointer; border:none; transition:all 0.2s; }
-.btnGhost   { background:rgba(167,143,208,0.2); color:var(--purple-dark); }
-.btnGhost:hover { background:rgba(167,143,208,0.36); }
-.btnPrimary { background:linear-gradient(135deg,var(--purple-mid),var(--purple-main)); color:white; }
-
-.container { flex:1; display:flex; align-items:center; justify-content:center; padding:48px 24px; animation:fadeUp 0.45s ease 0.1s both; }
-@keyframes fadeUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-
-.card { background:white; border-radius:24px; border:1px solid rgba(200,184,232,0.25); box-shadow:0 4px 6px rgba(110,80,180,0.04),0 12px 40px rgba(110,80,180,0.10); padding:44px 48px 40px; width:100%; max-width:580px; display:flex; flex-direction:column; align-items:center; gap:28px; }
-
-.instruccion { font-family:'Poppins',sans-serif; font-size:1rem; font-weight:600; color:var(--text-dark); text-align:center; line-height:1.6; margin:0; }
-
-/* ── INPUTS CÓDIGO ── */
-.codigoRow { display:flex; gap:10px; justify-content:center; }
-.digitoInput {
-  width:52px; height:58px;
-  text-align:center;
-  font-family:'Poppins',sans-serif; font-size:1.4rem; font-weight:700; color:var(--text-dark);
-  background:#eceaf5;
-  border:2px solid transparent; border-radius:14px;
-  outline:none; caret-color:var(--purple-main);
-  transition:border-color 0.18s, background 0.18s, box-shadow 0.18s;
+.instruccion {
+  font-family: var(--font-heading);
+  font-size: 1rem; font-weight: 600; color: var(--text-dark);
+  text-align: center; line-height: 1.6; margin: 0;
 }
-.digitoInput:focus { border-color:var(--purple-main); background:white; box-shadow:0 0 0 3px rgba(139,92,246,0.12); }
-.digitoLleno { background:#ede9ff; border-color:var(--purple-mid); }
-
-/* Separador visual entre grupos de 4 */
-.digitoInput:nth-child(4) { margin-right:14px; }
-
-/* ── ACCIONES ── */
-.accionesRow { display:flex; align-items:center; justify-content:space-between; width:100%; gap:12px; flex-wrap:wrap; }
-.btnReenviar { background:none; border:none; cursor:pointer; font-family:'Nunito',sans-serif; font-size:0.82rem; font-weight:700; color:var(--text-light); transition:color 0.2s; padding:0; }
-.btnReenviar:hover { color:var(--purple-dark); text-decoration:underline; }
-.btnSiguiente { background:linear-gradient(135deg,var(--purple-mid),var(--purple-main)); color:white; border:none; border-radius:50px; padding:11px 32px; font-family:'Nunito',sans-serif; font-size:0.92rem; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(139,92,246,0.35); transition:all 0.22s; }
-.btnSiguiente:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(139,92,246,0.45); }
-.btnSiguiente:disabled { opacity:0.45; cursor:not-allowed; transform:none; }
-
-/* ── MODALES ── */
-.overlay { position:fixed; inset:0; background:rgba(45,37,80,0.45); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; z-index:500; animation:fadeIn 0.2s ease; }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
-.modal { background:white; border-radius:24px; padding:32px 28px 28px; max-width:380px; width:92%; text-align:center; box-shadow:0 28px 70px rgba(45,37,80,0.22); animation:scaleIn 0.28s cubic-bezier(0.34,1.56,0.64,1); position:relative; }
-@keyframes scaleIn { from{transform:scale(0.82);opacity:0} to{transform:scale(1);opacity:1} }
-
-.modalClose { position:absolute; top:12px; right:12px; background:rgba(200,184,232,0.2); border:none; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#5a4e7a; font-size:0.85rem; transition:background 0.2s; }
-.modalClose:hover { background:rgba(200,184,232,0.4); }
-
-.modalIconWrap { width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.1s both; }
-@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
-.rojo    { background:linear-gradient(135deg,#f87171,#ef4444); box-shadow:0 8px 24px rgba(239,68,68,0.35); }
-.amarillo { background:linear-gradient(135deg,#fcd34d,#f59e0b); box-shadow:0 8px 24px rgba(245,158,11,0.35); }
-.modalSvg { width:40px; height:40px; }
-
-.modalTexto { font-size:0.9rem; font-weight:700; color:var(--text-dark); margin:0 0 20px; line-height:1.5; }
-
-.btnReintentar { background:linear-gradient(135deg,var(--purple-mid),var(--purple-main)); color:white; border:none; border-radius:50px; padding:10px 32px; font-family:'Nunito',sans-serif; font-size:0.92rem; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(139,92,246,0.35); transition:all 0.22s; }
-.btnReintentar:hover { transform:translateY(-1px); }
-
-.btnReenviarModal { background:none; border:1.5px solid var(--purple-mid); color:var(--purple-dark); border-radius:50px; padding:9px 24px; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; cursor:pointer; transition:all 0.2s; }
-.btnReenviarModal:hover { background:rgba(167,143,208,0.12); }
-
-@media (max-width:520px) {
-  .card { padding:32px 16px 28px; }
-  .digitoInput { width:38px; height:46px; font-size:1.1rem; }
-  .codigoRow { gap:7px; }
-  .digitoInput:nth-child(4) { margin-right:10px; }
+.acciones {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; gap: 12px; flex-wrap: wrap;
 }

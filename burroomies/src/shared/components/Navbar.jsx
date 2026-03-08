@@ -1,8 +1,5 @@
 // ─────────────────────────────────────────────────────────
 //  src/shared/components/Navbar.jsx
-//  Navbar reutilizable. Reemplaza el navbar inline en:
-//  DetallePropiedad, MiArrendamientoActual, Propiedades, DejaResena
-// ─────────────────────────────────────────────────────────
 import styles from './Navbar.module.css';
 import burroLogo from '../../img/burroLogo.png';
 import { IconUser, IconLogout, IconSearch } from '../icons';

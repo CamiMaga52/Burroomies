@@ -1,0 +1,336 @@
+/* ============================================================
+   src/auth/auth.module.css
+   CSS MAESTRO — importado por TODOS los archivos en auth/.
+   Contiene: forms, inputs, labels, botones, checkboxes,
+             selects, radios, modales, mensajes de error.
+   ============================================================ */
+@import '../shared/styles/variables.css';
+
+/* ══════════════════════════════════════════════
+   TIPOGRAFÍA / ENCABEZADOS
+══════════════════════════════════════════════ */
+.titulo {
+  font-family: var(--font-heading);
+  font-size: 1.4rem; font-weight: 700; color: var(--text-dark);
+  text-align: center; margin: 0 0 4px; letter-spacing: -0.3px;
+}
+.tituloGradient {
+  font-family: var(--font-heading);
+  font-size: 1.8rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--text-dark), var(--purple-dark));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center; margin: 0 0 4px; letter-spacing: -0.3px;
+}
+.subtitulo {
+  font-size: 0.8rem; font-weight: 600; color: var(--purple-mid);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  text-align: center; margin: 0;
+}
+.descripcion {
+  font-size: 0.9rem; font-weight: 500; color: var(--text-mid);
+  line-height: 1.55; text-align: center; margin: 0;
+}
+.descripcion strong { color: var(--purple-dark); font-weight: 700; }
+
+/* ══════════════════════════════════════════════
+   FORMULARIO
+══════════════════════════════════════════════ */
+.form  { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+.campo { display: flex; flex-direction: column; gap: 7px; }
+
+.label {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 0.88rem; font-weight: 700; color: var(--text-dark);
+}
+.labelIcon { color: var(--purple-main); flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════
+   INPUTS
+══════════════════════════════════════════════ */
+
+/* Base */
+.input {
+  width: 100%; box-sizing: border-box;
+  background: var(--input-bg);
+  border: 2px solid transparent; border-radius: var(--radius-input);
+  padding: 11px 14px;
+  font-family: var(--font-body); font-size: 0.92rem; font-weight: 600;
+  color: var(--text-dark); outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+}
+.input::placeholder { color: #b0a8c8; font-weight: 500; }
+.input:focus {
+  border-color: var(--purple-main);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(139,92,246,0.1);
+}
+.input:hover:not(:focus) { background: #e6e2f2; }
+
+/* Con ícono a la izquierda */
+.inputIconWrapper { position: relative; display: flex; align-items: center; }
+.inputIcon { position: absolute; left: 13px; color: var(--text-light); pointer-events: none; }
+.inputWithIcon {
+  width: 100%; box-sizing: border-box;
+  background: var(--input-bg);
+  border: 2px solid transparent; border-radius: var(--radius-input);
+  padding: 11px 14px 11px 40px;
+  font-family: var(--font-body); font-size: 0.92rem; font-weight: 600;
+  color: var(--text-dark); outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+}
+.inputWithIcon::placeholder { color: #b0a8c8; font-weight: 500; }
+.inputWithIcon:focus {
+  border-color: var(--purple-main);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(139,92,246,0.1);
+}
+.inputWithIcon:hover:not(:focus) { background: #e6e2f2; }
+
+/* Con botón toggle (contraseña) */
+.inputWrapper { position: relative; }
+.inputWrapper .input { padding-right: 46px; }
+.togglePass {
+  position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; padding: 4px;
+  color: var(--text-light); display: flex; align-items: center;
+  transition: color 0.2s, transform 0.15s;
+}
+.togglePass:hover { color: var(--purple-dark); transform: translateY(-50%) scale(1.12); }
+
+/* ══════════════════════════════════════════════
+   SELECT
+══════════════════════════════════════════════ */
+.selectWrapper { position: relative; }
+.select {
+  width: 100%; box-sizing: border-box;
+  background: var(--input-bg);
+  border: 2px solid transparent; border-radius: var(--radius-input);
+  padding: 10px 36px 10px 14px;
+  font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
+  color: var(--text-dark); outline: none; appearance: none; cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+.select:focus { border-color: var(--purple-main); background: white; box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
+.select:hover:not(:focus) { background: #e6e2f2; }
+.selectArrow {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--text-light); font-size: 1.1rem; pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════
+   RADIOS
+══════════════════════════════════════════════ */
+.radioInput  { display: none; }
+.radioCustom {
+  width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--purple-mid); display: inline-block;
+  transition: all 0.18s;
+}
+.radioInput:checked + .radioCustom {
+  border-color: var(--purple-main);
+  background: var(--purple-main);
+  box-shadow: inset 0 0 0 3px white;
+}
+
+/* ══════════════════════════════════════════════
+   CHECKBOXES
+══════════════════════════════════════════════ */
+.checkInput  { display: none; }
+.checkCustom {
+  width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;
+  border: 2px solid var(--purple-mid); background: white;
+  transition: all 0.18s; position: relative;
+}
+.checkInput:checked + .checkCustom { background: var(--purple-main); border-color: var(--purple-main); }
+.checkInput:checked + .checkCustom::after {
+  content: '✓'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 0.72rem; font-weight: 900;
+}
+
+/* ══════════════════════════════════════════════
+   BOTONES
+══════════════════════════════════════════════ */
+
+/* Principal morado (ancho completo) */
+.btnPrincipal {
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  color: white; border: none; border-radius: var(--radius-btn);
+  padding: 13px 24px; width: 100%;
+  font-family: var(--font-body); font-size: 0.97rem; font-weight: 800;
+  cursor: pointer; box-shadow: var(--shadow-btn);
+  transition: all 0.22s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btnPrincipal:hover { transform: translateY(-2px); box-shadow: var(--shadow-btn-h); }
+.btnPrincipal:active { transform: translateY(0); }
+.btnPrincipal:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* Principal glass (IniciarSesion "Entrar") */
+.btnEntrar {
+  background: linear-gradient(135deg, #a78fd0 0%, #8B5CF6 50%, #7c3aed 100%);
+  color: white; border: none; border-radius: var(--radius-btn);
+  padding: 15px; width: 100%;
+  font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 15px rgba(139,92,246,0.4);
+  transition: all 0.28s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  position: relative; overflow: hidden; margin-top: 6px;
+}
+.btnEntrar::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  border-radius: inherit; pointer-events: none;
+}
+.btnEntrar:hover  { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139,92,246,0.5); }
+.btnEntrar:active { transform: translateY(0); }
+
+/* Cancelar (rojo) */
+.btnCancelar {
+  background: linear-gradient(135deg, #fda4af, #fb7185);
+  color: white; border: none; border-radius: var(--radius-btn);
+  padding: 12px 32px;
+  font-family: var(--font-body); font-size: 0.95rem; font-weight: 800;
+  cursor: pointer; box-shadow: 0 4px 14px rgba(251,113,133,0.32);
+  transition: all 0.22s;
+}
+.btnCancelar:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(251,113,133,0.42); }
+
+/* Éxito (verde) */
+.btnExito {
+  background: linear-gradient(135deg, #6ee7b7, #22c55e);
+  color: white; border: none; border-radius: var(--radius-btn);
+  padding: 12px 40px;
+  font-family: var(--font-body); font-size: 0.97rem; font-weight: 800;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(34,197,94,0.35);
+  transition: all 0.22s;
+}
+.btnExito:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(34,197,94,0.45); }
+
+/* Volver (transparente) */
+.btnVolver {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: none;
+  font-family: var(--font-body); font-size: 0.9rem; font-weight: 700;
+  color: var(--purple-dark); cursor: pointer;
+  padding: 8px 12px; border-radius: 30px;
+  transition: background 0.2s;
+}
+.btnVolver:hover { background: rgba(167,143,208,0.15); }
+
+/* Link subrayado */
+.btnLink {
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: var(--font-body); font-size: 0.87rem; font-weight: 800;
+  color: var(--purple-main);
+  text-decoration: underline; text-underline-offset: 2px;
+  text-decoration-color: rgba(139,92,246,0.35);
+  transition: color 0.2s;
+}
+.btnLink:hover { color: var(--purple-dark); text-decoration-color: var(--purple-dark); }
+
+/* Restablecer (pequeño, alineado a derecha) */
+.btnRestablecer {
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: var(--font-body); font-size: 0.82rem; font-weight: 700;
+  color: var(--purple-mid); align-self: flex-end;
+  transition: color 0.2s;
+}
+.btnRestablecer:hover { color: var(--purple-dark); text-decoration: underline; }
+
+/* Siguiente del Registro */
+.btnSiguiente {
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  color: white; border: none; border-radius: var(--radius-btn);
+  padding: 12px 36px;
+  font-family: var(--font-body); font-size: 0.97rem; font-weight: 800;
+  cursor: pointer; box-shadow: var(--shadow-btn);
+  transition: all 0.22s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btnSiguiente:hover { transform: translateY(-2px); box-shadow: var(--shadow-btn-h); }
+
+/* ══════════════════════════════════════════════
+   MENSAJES DE ERROR / PIE
+══════════════════════════════════════════════ */
+.errorMsg {
+  color: var(--error); font-size: 0.8rem; font-weight: 700;
+  text-align: center;
+  background: rgba(239,68,68,0.08);
+  padding: 8px 12px; border-radius: 30px;
+}
+.piePagina {
+  text-align: center; font-size: 0.87rem; font-weight: 600;
+  color: var(--text-mid); margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   ANIMACIONES DE ÉXITO (RegistroExitoso, Restablecer paso 4)
+══════════════════════════════════════════════ */
+.checkWrap { animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.checkSvg  { width: 96px; height: 96px; }
+.tituloExito {
+  font-family: var(--font-heading);
+  font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin: 0;
+}
+.textoExito {
+  font-size: 0.9rem; font-weight: 600; color: var(--text-mid);
+  line-height: 1.7; margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   MODALES (VerificarCodigo, SubirConstancia)
+══════════════════════════════════════════════ */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(45,37,80,0.45); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: white; border-radius: var(--radius-card);
+  padding: 36px 32px 30px;
+  max-width: 420px; width: 92%;
+  text-align: center;
+  box-shadow: 0 28px 70px rgba(45,37,80,0.25);
+  animation: scaleIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+@keyframes scaleIn {
+  from { transform: scale(0.82); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.modalClose {
+  position: absolute; top: 14px; right: 14px;
+  background: rgba(200,184,232,0.2); border: none;
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-mid); font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.modalClose:hover { background: rgba(200,184,232,0.4); }
+
+.modalIcon {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+  animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+}
+.modalIconAzul    { background: linear-gradient(135deg, #93c5fd, #60a5fa); box-shadow: 0 8px 24px rgba(96,165,250,0.38); }
+.modalIconRojo    { background: linear-gradient(135deg, #f87171, #ef4444); box-shadow: 0 8px 24px rgba(239,68,68,0.35);  }
+.modalIconAmarillo{ background: linear-gradient(135deg, #fcd34d, #f59e0b); box-shadow: 0 8px 24px rgba(245,158,11,0.35); }
+
+.modalTexto {
+  font-size: 0.87rem; font-weight: 600; color: var(--text-mid);
+  line-height: 1.65; margin: 0 0 22px;
+}
+.modalSvg { width: 40px; height: 40px; }

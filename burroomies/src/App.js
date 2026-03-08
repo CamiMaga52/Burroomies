@@ -1,4 +1,4 @@
-import SearchProperties from './auth/Restablecercontrasena';
+import SearchProperties from './auth/Iniciarsesion';
 
 function App() {
   return <SearchProperties />

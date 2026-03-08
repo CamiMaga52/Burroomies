@@ -1,0 +1,31 @@
+/* src/shared/components/AuthLayout.module.css */
+@import '../styles/variables.css';
+
+.page {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  color: var(--text-dark);
+}
+
+.container {
+  flex: 1;
+  padding: 48px 24px;
+  animation: fadeUp 0.45s ease 0.1s both;
+}
+@keyframes fadeUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Centrado (default para pantallas de una tarjeta) */
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 500px) {
+  .container { padding: 32px 16px; }
+}

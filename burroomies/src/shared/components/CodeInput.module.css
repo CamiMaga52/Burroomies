@@ -1,0 +1,32 @@
+/* src/shared/components/CodeInput.module.css */
+@import '../styles/variables.css';
+
+.row  { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+.input {
+  width: 52px; height: 58px;
+  text-align: center;
+  font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700;
+  color: var(--text-dark);
+  background: var(--input-bg);
+  border: 2px solid transparent; border-radius: 14px;
+  outline: none; caret-color: var(--purple-main);
+  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+}
+.input:focus {
+  border-color: var(--purple-main);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+}
+.lleno { background: #ede9ff; border-color: var(--purple-mid); }
+
+/* Separador visual entre grupos de 4 (VerificarCodigo de 8 dígitos) */
+.gap { margin-right: 14px; }
+
+@media (max-width: 520px) {
+  .input { width: 38px; height: 46px; font-size: 1.1rem; }
+  .gap   { margin-right: 10px; }
+}
+@media (max-width: 360px) {
+  .input { width: 32px; height: 40px; font-size: 0.95rem; }
+}

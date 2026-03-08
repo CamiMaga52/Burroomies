@@ -1,263 +1,69 @@
-/* src/auth/Validandoidentidad.module.css */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
-
-:root {
-  --purple-light: #c8b8e8;
-  --purple-mid:   #a78fd0;
-  --purple-main:  #8B5CF6;
-  --purple-dark:  #6d3fc0;
-  --bg:           #dce8f8;
-  --bg2:          #e8daf5;
-  --text-dark:    #2d2550;
-  --text-mid:     #5a4e7a;
-}
-
-.page {
-  font-family: 'Nunito', sans-serif;
-  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  color: var(--text-dark);
-}
-
-/* Navbar responsivo */
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 36px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(200, 184, 232, 0.3);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  animation: slideDown 0.4s ease both;
-}
-@keyframes slideDown {
-  from { transform: translateY(-100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-.navbarBrand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.navbarLogo {
-  width: 46px;
-  height: 46px;
-  object-fit: contain;
-}
-.navbarTitle {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: var(--text-dark);
-}
-.navbarRight {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.btnNav {
-  padding: 8px 20px;
-  border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
-}
-.btnGhost {
-  background: rgba(167, 143, 208, 0.2);
-  color: var(--purple-dark);
-}
-.btnGhost:hover {
-  background: rgba(167, 143, 208, 0.36);
-}
-.btnPrimary {
-  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
-  color: white;
-}
-.btnPrimary:hover {
-  transform: translateY(-1px);
-}
-
-/* Contenedor principal responsivo */
-.container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-  animation: fadeUp 0.5s ease 0.1s both;
-}
-@keyframes fadeUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+/* src/auth/ValidandoIdentidad.module.css
+   Solo los estilos únicos de esta pantalla (burro + burbujas + texto).
+   El fondo, navbar y footer vienen de AuthLayout / AuthNavbar. */
+@import '../shared/styles/variables.css';
 
 .contenido {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  max-width: 90%;
-  width: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 32px; max-width: 90%; width: 100%;
 }
 
-/* Contenedor del burro responsivo */
+/* Burro */
 .burroContainer {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: min(200px, 40vw);
-  height: min(200px, 40vw);
-  max-width: 250px;
-  max-height: 250px;
+  position: relative; display: flex;
+  justify-content: center; align-items: center;
+  width: min(200px, 40vw); height: min(200px, 40vw);
+  max-width: 250px; max-height: 250px;
 }
-
-.burroPensativo {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 18px rgba(110, 80, 180, 0.2));
+.burro {
+  width: 100%; height: auto; object-fit: contain;
+  filter: drop-shadow(0 6px 18px rgba(110,80,180,0.2));
   animation: float 3s ease-in-out infinite;
 }
-
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+  0%,100% { transform: translateY(0);    }
+  50%     { transform: translateY(-8px); }
 }
 
-/* Burbujas ajustables */
+/* Burbujas */
 .burbujas {
-  position: absolute;
-  top: -10%;
-  right: -5%;
-  display: flex;
-  gap: clamp(4px, 1vw, 8px);
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  position: absolute; top: -10%; right: -5%;
+  display: flex; gap: clamp(4px, 1vw, 8px);
+  flex-wrap: wrap; justify-content: flex-end;
   max-width: 80%;
 }
-
 .burbuja {
-  width: clamp(10px, 3vw, 16px);
-  height: clamp(10px, 3vw, 16px);
-  background: var(--purple-mid);
-  border-radius: 50%;
-  opacity: 0.7;
+  width: clamp(10px,3vw,16px); height: clamp(10px,3vw,16px);
+  background: var(--purple-mid); border-radius: 50%; opacity: 0.7;
   animation: bounce 1.2s infinite ease-in-out;
 }
-
-.burbuja:nth-child(2) {
-  animation-delay: 0.2s;
-  background: var(--purple-main);
-  width: clamp(12px, 3.5vw, 18px);
-  height: clamp(12px, 3.5vw, 18px);
-}
-.burbuja:nth-child(3) {
-  animation-delay: 0.4s;
-  background: var(--purple-light);
-  width: clamp(8px, 2.5vw, 14px);
-  height: clamp(8px, 2.5vw, 14px);
-}
-.burbuja:nth-child(4) {
-  animation-delay: 0.6s;
-  background: var(--purple-dark);
-  width: clamp(14px, 4vw, 20px);
-  height: clamp(14px, 4vw, 20px);
-}
-
+.burbuja:nth-child(2) { animation-delay: 0.2s; background: var(--purple-main); width: clamp(12px,3.5vw,18px); height: clamp(12px,3.5vw,18px); }
+.burbuja:nth-child(3) { animation-delay: 0.4s; background: var(--purple-light); width: clamp(8px,2.5vw,14px);  height: clamp(8px,2.5vw,14px);  }
+.burbuja:nth-child(4) { animation-delay: 0.6s; background: var(--purple-dark);  width: clamp(14px,4vw,20px);   height: clamp(14px,4vw,20px);   }
 @keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translateY(-15px) scale(1.2);
-    opacity: 1;
-  }
+  0%,100% { transform: translateY(0) scale(1);   opacity: 0.7; }
+  50%     { transform: translateY(-15px) scale(1.2); opacity: 1; }
 }
 
-/* Texto responsivo */
+/* Texto con puntos animados */
 .texto {
-  font-family: 'Poppins', sans-serif;
-  font-size: clamp(1rem, 4vw, 1.5rem);
-  font-weight: 600;
-  color: var(--text-dark);
-  text-align: center;
-  line-height: 1.65;
-  margin: 0;
-  max-width: 600px;
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 4vw, 1.5rem); font-weight: 600;
+  color: var(--text-dark); text-align: center; line-height: 1.65;
+  max-width: 600px; margin: 0;
 }
-
 .texto::after {
   content: '';
   animation: dots 1.8s steps(4, end) infinite;
 }
 @keyframes dots {
-  0% { content: ''; }
-  25% { content: '.'; }
-  50% { content: '..'; }
+  0%  { content: '';    }
+  25% { content: '.';   }
+  50% { content: '..';  }
   75% { content: '...'; }
 }
 
-/* Ajustes para móviles pequeños */
 @media (max-width: 480px) {
-  .navbar {
-    padding: 8px 16px;
-  }
-  .navbarLogo {
-    width: 36px;
-    height: 36px;
-  }
-  .navbarTitle {
-    font-size: 1.2rem;
-  }
-  .btnNav {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
-  .container {
-    padding: 24px 16px;
-  }
-  .contenido {
-    gap: 24px;
-  }
-  .burroContainer {
-    width: min(150px, 50vw);
-    height: min(150px, 50vw);
-  }
-}
-
-/* Ajustes para tablets */
-@media (min-width: 481px) and (max-width: 768px) {
-  .navbar {
-    padding: 10px 24px;
-  }
-  .container {
-    padding: 36px 20px;
-  }
-}
-
-/* Ajustes para pantallas muy grandes */
-@media (min-width: 1400px) {
-  .burroContainer {
-    width: 250px;
-    height: 250px;
-  }
-  .texto {
-    font-size: 1.75rem;
-  }
+  .burroContainer { width: min(150px,50vw); height: min(150px,50vw); }
+  .contenido { gap: 24px; }
 }

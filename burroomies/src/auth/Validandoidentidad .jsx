@@ -1,45 +1,32 @@
 // src/auth/ValidandoIdentidad.jsx
-import styles from './Validandoidentidad.module.css';
-import Footer from '../shared/components/Footer';
-import burroLogo from '../img/burroLogo.png';
+// Pantalla de espera mientras se valida la identidad del arrendador.
+import AuthLayout    from '../shared/components/AuthLayout';
+import AuthNavbar    from '../shared/components/AuthNavbar';
 import burroPensativo from '../img/burroPensativo1.png';
+import vs from './ValidandoIdentidad.module.css';
 
 export default function ValidandoIdentidad({ onPaginaPrincipal, onInicioSesion }) {
+  const navbar = (
+    <AuthNavbar botones={[
+      { label: 'Página principal', onClick: onPaginaPrincipal, variant: 'ghost'   },
+      { label: 'Inicio de sesión', onClick: onInicioSesion,    variant: 'primary' },
+    ]} />
+  );
+
   return (
-    <div className={styles.page}>
-      <header className={styles.navbar}>
-        <div className={styles.navbarBrand}>
-          <img src={burroLogo} alt="Burroomies" className={styles.navbarLogo} />
-          <span className={styles.navbarTitle}>Burroomies</span>
-        </div>
-        <div className={styles.navbarRight}>
-          <button type="button" className={`${styles.btnNav} ${styles.btnGhost}`} onClick={onPaginaPrincipal}>
-            Página principal
-          </button>
-          <button type="button" className={`${styles.btnNav} ${styles.btnPrimary}`} onClick={onInicioSesion}>
-            Inicio de sesión
-          </button>
-        </div>
-      </header>
-
-      <main className={styles.container}>
-        <div className={styles.contenido}>
-          <div className={styles.burroContainer}>
-            <img src={burroPensativo} alt="Burro pensativo" className={styles.burroPensativo} />
-            <div className={styles.burbujas}>
-              <span className={styles.burbuja}></span>
-              <span className={styles.burbuja}></span>
-              <span className={styles.burbuja}></span>
-              <span className={styles.burbuja}></span>
-            </div>
+    <AuthLayout navbar={navbar}>
+      <div className={vs.contenido}>
+        <div className={vs.burroContainer}>
+          <img src={burroPensativo} alt="Validando identidad" className={vs.burro} />
+          <div className={vs.burbujas}>
+            <span className={vs.burbuja} />
+            <span className={vs.burbuja} />
+            <span className={vs.burbuja} />
+            <span className={vs.burbuja} />
           </div>
-          <p className={styles.texto}>
-            Espera un momento en lo que validamos tu identidad
-          </p>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+        <p className={vs.texto}>Espera un momento en lo que validamos tu identidad</p>
+      </div>
+    </AuthLayout>
   );
 }
