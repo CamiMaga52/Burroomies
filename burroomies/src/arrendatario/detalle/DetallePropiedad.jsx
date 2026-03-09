@@ -1,13 +1,6 @@
-// ─────────────────────────────────────────────────────────
-//  src/arrendatario/detalle/DetallePropiedad.jsx
-//
-//  CAMBIOS vs versión anterior:
-//  - Navbar  → importado de shared/components/Navbar
-//  - Footer  → importado de shared/components/Footer
-//  - Íconos  → importados de shared/icons (elimina DetallePropiedadComponents)
-//  - Import de burroLogo eliminado (Navbar lo maneja internamente)
-//  - Se eliminó DetallePropiedadComponents.jsx
-// ─────────────────────────────────────────────────────────
+// src/arrendatario/detalle/DetallePropiedad.jsx
+// CAMBIO: recibe props onAtras, onMiVivienda, onCerrarSesion
+//         El botón "Atrás" ahora llama a onAtras()
 import { useState } from "react";
 import styles from "./DetallePropiedad.module.css";
 import { PROPIEDAD_DETALLE, RESENAS } from "./detallePropiedadData";
@@ -25,12 +18,14 @@ import {
   IconHeart,
 } from "../../shared/icons";
 
-export default function DetallePropiedad() {
+export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onCerrarSesion }) {
   const [tabResena, setTabResena] = useState("todas");
-  const p = PROPIEDAD_DETALLE;
+
+  // Usa los datos recibidos por prop o los datos de prueba como fallback
+  const p = propiedad || PROPIEDAD_DETALLE;
 
   const resenasFiltradas =
-    tabResena === "todas"    ? RESENAS
+    tabResena === "todas"       ? RESENAS
     : tabResena === "recientes" ? [...RESENAS].sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
     : tabResena === "antiguas"  ? [...RESENAS].sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
     : tabResena === "mejores"   ? [...RESENAS].sort((a, b) => b.corazones - a.corazones)
@@ -39,11 +34,18 @@ export default function DetallePropiedad() {
   return (
     <div className={styles.page}>
 
-      <Navbar showMiVivienda onCerrarSesion={() => {}} />
+      <Navbar
+        showMiVivienda={!!onMiVivienda}
+        onMiVivienda={onMiVivienda}
+        onCerrarSesion={onCerrarSesion}
+      />
 
       <div className={styles.container}>
 
-        <button className={styles.btnBack}><IconArrow /> Atrás</button>
+        {/* ↓ CONECTADO: regresa a la lista de propiedades */}
+        <button className={styles.btnBack} onClick={onAtras}>
+          <IconArrow /> Atrás
+        </button>
 
         {/* Galería */}
         <div className={styles.gallery}>
@@ -214,7 +216,6 @@ export default function DetallePropiedad() {
       </div>
 
       <Footer />
-
     </div>
   );
 }

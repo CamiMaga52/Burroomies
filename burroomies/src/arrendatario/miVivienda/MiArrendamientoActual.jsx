@@ -1,15 +1,8 @@
-// ─────────────────────────────────────────────────────────
-//  src/arrendatario/miVivienda/MiArrendamientoActual.jsx
-//
-//  CAMBIOS vs versión anterior:
-//  - Navbar  → importado de shared/components/Navbar
-//  - Footer  → importado de shared/components/Footer
-//  - Modal   → importado de shared/components/Modal
-//  - useModal→ importado de shared/hooks/useModal
-//  - Íconos  → importados de shared/icons
-//  - Se eliminó el componente Navbar() local
-//  - Se eliminó el componente Footer() local
-// ─────────────────────────────────────────────────────────
+// src/arrendatario/miVivienda/MiArrendamientoActual.jsx
+// CAMBIOS:
+//   - Recibe onFinalizar, onBuscar + props del dropdown Navbar
+//   - Al confirmar finalizar → llama onFinalizar() que lleva a DejaReseña
+//   - Se eliminó botón separado "Dejar reseña" (el flujo es: finalizar → reseña)
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './MiArrendamientoActual.module.css';
@@ -25,12 +18,10 @@ import {
   IconMail,
   IconPlus,
   IconWarning,
-  IconSearch,
 } from '../../shared/icons';
 
 import burroDudoso from '../../img/burroDudoso.png';
 
-// ── Datos de prueba (reemplazar por API en TT2) ──────────
 const ARRENDAMIENTO_DEFAULT = {
   titulo: 'Departamento cerca de ESCOM',
   descripcionCorta:
@@ -48,43 +39,57 @@ El edificio tiene seguridad 24/7 y áreas comunes como jardín y lavandería.`,
   },
 };
 
-// ── Componente principal ─────────────────────────────────
-export default function MiArrendamientoActual({ initialData = ARRENDAMIENTO_DEFAULT }) {
-  const [confirmed, setConfirmed] = useState(false);
-  const [data]                    = useState(initialData);
+export default function MiArrendamientoActual({
+  initialData            = ARRENDAMIENTO_DEFAULT,
+  onFinalizar,            // ← lleva a DejaReseña
+  onBuscar,
+  // Props dropdown Navbar
+  onVerPerfil,
+  onArrendamientoActual,
+  tieneArrendamiento,
+  onCerrarSesion,
+}) {
+  const [data] = useState(initialData);
 
   const finalizarModal = useModal();
   const verMasModal    = useModal();
 
+  const handleConfirmarFinalizar = () => {
+    finalizarModal.close();
+    onFinalizar?.();            // → ArrendatarioApp lleva a DejaReseña
+  };
+
   return (
     <div className={styles.page}>
 
-      <Navbar showBuscar onCerrarSesion={() => {}} />
+      <Navbar
+        showBuscar={!!onBuscar}
+        onBuscar={onBuscar}
+        onVerPerfil={onVerPerfil}
+        onArrendamientoActual={onArrendamientoActual}
+        tieneArrendamiento={tieneArrendamiento}
+        onCerrarSesion={onCerrarSesion}
+      />
 
       <main className={styles.container}>
 
-        {/* Encabezado de sección */}
         <header className={styles.viviendaHeader}>
           <div className={styles.viviendaHeaderIcon}><IconHome /></div>
           <h1 className={styles.viviendaHeaderTitle}>Mi arrendamiento actual</h1>
         </header>
 
-        {confirmed ? (
-          <EmptyState onSearch={() => alert('Ir a búsqueda')} />
-        ) : (
-          <>
-            <MainCard
-              propiedad={data}
-              arrendador={data.arrendador}
-              onVerMas={verMasModal.open}
-            />
-            <div className={styles.finalizarWrapper}>
-              <button type="button" className={styles.btnFinalizar} onClick={finalizarModal.open}>
-                <IconWarning aria-hidden="true" /> Finalizar arrendamiento
-              </button>
-            </div>
-          </>
-        )}
+        <MainCard
+          propiedad={data}
+          arrendador={data.arrendador}
+          onVerMas={verMasModal.open}
+        />
+
+        <div className={styles.finalizarWrapper}>
+          <button type="button" className={styles.btnFinalizar} onClick={finalizarModal.open}>
+            <IconWarning aria-hidden="true" /> Finalizar arrendamiento
+          </button>
+        </div>
+
       </main>
 
       <Footer />
@@ -96,14 +101,14 @@ export default function MiArrendamientoActual({ initialData = ARRENDAMIENTO_DEFA
         title="¿Finalizar arrendamiento?"
         confirmText="Sí, finalizar"
         cancelText="Cancelar"
-        onConfirm={() => { finalizarModal.close(); setConfirmed(true); }}
+        onConfirm={handleConfirmarFinalizar}
         onCancel={finalizarModal.close}
         confirmVariant="danger"
       >
         <img src={burroDudoso} alt="Burro dudoso" className={styles.modalBurro} />
         <p className={styles.modalDesc}>
-          Esta acción no se puede deshacer. ¿Estás seguro de que deseas finalizar
-          tu arrendamiento actual?
+          Al finalizar tu arrendamiento se te pedirá dejar una reseña.
+          ¿Estás seguro de que deseas continuar?
         </p>
       </Modal>
 
@@ -125,21 +130,16 @@ export default function MiArrendamientoActual({ initialData = ARRENDAMIENTO_DEFA
 }
 
 MiArrendamientoActual.propTypes = {
-  initialData: PropTypes.shape({
-    titulo:               PropTypes.string,
-    descripcionCorta:     PropTypes.string,
-    descripcionCompleta:  PropTypes.string,
-    arrendador: PropTypes.shape({
-      nombre:      PropTypes.string,
-      experiencia: PropTypes.number,
-      telefono:    PropTypes.string,
-      correo:      PropTypes.string,
-    }),
-  }),
+  initialData:           PropTypes.object,
+  onFinalizar:           PropTypes.func,
+  onBuscar:              PropTypes.func,
+  onVerPerfil:           PropTypes.func,
+  onArrendamientoActual: PropTypes.func,
+  tieneArrendamiento:    PropTypes.bool,
+  onCerrarSesion:        PropTypes.func,
 };
 
-// ── Subcomponentes ────────────────────────────────────────
-
+/* ── Subcomponentes ── */
 function MainCard({ propiedad, arrendador, onVerMas }) {
   return (
     <section className={styles.mainCard}>
@@ -177,19 +177,6 @@ function MainCard({ propiedad, arrendador, onVerMas }) {
           </a>
         </div>
       </div>
-    </section>
-  );
-}
-
-function EmptyState({ onSearch }) {
-  return (
-    <section className={styles.emptyCard}>
-      <div className={styles.emptyIcon}>🏠</div>
-      <h2 className={styles.emptyTitle}>No tienes un arrendamiento activo</h2>
-      <p className={styles.emptyDesc}>Tu arrendamiento fue finalizado exitosamente.</p>
-      <button type="button" className={styles.btnBuscar} onClick={onSearch}>
-        <IconSearch aria-hidden="true" /> Buscar vivienda
-      </button>
     </section>
   );
 }

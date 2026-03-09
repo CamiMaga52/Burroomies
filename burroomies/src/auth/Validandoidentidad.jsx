@@ -1,11 +1,22 @@
 // src/auth/ValidandoIdentidad.jsx
-// Pantalla de espera mientras se valida la identidad del arrendador.
-import AuthLayout    from '../shared/components/AuthLayout';
-import AuthNavbar    from '../shared/components/AuthNavbar';
+// CAMBIO: recibe onValidado — cuando el back termina de validar llama este callback.
+// Por ahora simula 3 segundos de espera y avanza automáticamente.
+import { useEffect } from 'react';
+import AuthLayout     from '../shared/components/AuthLayout';
+import AuthNavbar     from '../shared/components/AuthNavbar';
 import burroPensativo from '../img/burroPensativo1.png';
-import vs from './ValidandoIdentidad.module.css';
+import vs from './Validandoidentidad.module.css';
 
-export default function ValidandoIdentidad({ onPaginaPrincipal, onInicioSesion }) {
+export default function ValidandoIdentidad({ onPaginaPrincipal, onInicioSesion, onValidado }) {
+  // Simula respuesta del back tras 3 segundos.
+  // En producción: polling o websocket al API, y cuando responda llamar onValidado()
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onValidado?.();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [onValidado]);
+
   const navbar = (
     <AuthNavbar botones={[
       { label: 'Página principal', onClick: onPaginaPrincipal, variant: 'ghost'   },

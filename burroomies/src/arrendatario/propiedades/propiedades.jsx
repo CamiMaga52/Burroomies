@@ -1,14 +1,6 @@
-// ─────────────────────────────────────────────────────────
-//  src/arrendatario/propiedades/Propiedades.jsx
-//
-//  CAMBIOS vs versión anterior:
-//  - Navbar  → importado de shared/components/Navbar
-//  - Footer  → importado de shared/components/Footer
-//  - Íconos  → importados de shared/icons (elimina PropiedadesComponents)
-//  - Stars   → importado de shared/icons
-//  - BunnyLogo eliminado (reemplazado por burroLogo.png en Navbar)
-//  - Se eliminó PropiedadesComponents.jsx
-// ─────────────────────────────────────────────────────────
+// src/arrendatario/propiedades/Propiedades.jsx
+// CAMBIO: botón "Ver detalles" ahora llama a onVerDetalle(propiedad)
+//         en lugar de no hacer nada.
 import { useState } from "react";
 import styles from "./Propiedades.module.css";
 import { PROPERTIES, SERVICIOS_LIST } from "./propiedadesData";
@@ -17,7 +9,7 @@ import Navbar  from "../../shared/components/Navbar";
 import Footer  from "../../shared/components/Footer";
 import { IconSearch, IconFilter, IconDollar, IconMap, IconUsers, Stars } from "../../shared/icons";
 
-export default function Propiedades() {
+export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion }) {
   const [query,        setQuery]        = useState("");
   const [sortBy,       setSortBy]       = useState("novedades");
   const [maxPrice,     setMaxPrice]     = useState(12000);
@@ -44,7 +36,11 @@ export default function Propiedades() {
   return (
     <div className={styles.page}>
 
-      <Navbar showMiVivienda onCerrarSesion={() => {}} />
+      <Navbar
+        showMiVivienda={!!onMiVivienda}
+        onMiVivienda={onMiVivienda}
+        onCerrarSesion={onCerrarSesion}
+      />
 
       {/* Barra de búsqueda */}
       <div className={styles.searchWrap}>
@@ -145,7 +141,12 @@ export default function Propiedades() {
             </div>
           ) : (
             filtered.map((p, i) => (
-              <div className={styles.propCard} key={p.id} style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
+              <div
+                className={styles.propCard}
+                key={p.id}
+                style={{ animationDelay: `${0.1 + i * 0.08}s` }}
+                onClick={() => onVerDetalle?.(p)}
+              >
                 <div className={styles.propImgPlaceholder} style={{ background: p.color }}>{p.emoji}</div>
                 <div className={styles.propBody}>
                   <span className={styles.propTag}>{p.tipo} cerca de ESCOM</span>
@@ -172,7 +173,13 @@ export default function Propiedades() {
                     </div>
                   </div>
                   <div className={styles.propFooter}>
-                    <button className={styles.btnVer}>Ver detalles</button>
+                    {/* ↓ CONECTADO: navega al detalle de esta propiedad */}
+                    <button
+                      className={styles.btnVer}
+                      onClick={(e) => { e.stopPropagation(); onVerDetalle?.(p); }}
+                    >
+                      Ver detalles
+                    </button>
                   </div>
                 </div>
               </div>
