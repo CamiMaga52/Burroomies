@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,700&display=swap');
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Variables CSS globales ── */
+:root {
+  /* Colores */
+  --color-primary:       #7B2D6E;
+  --color-primary-dark:  #5a1f50;
+  --color-secondary:     #6B3FA0;
+  --color-secondary-dark:#4e2d7a;
+
+  --color-bg:            #ffffff;
+  --color-bg-section:    #f8edf5;
+  --color-bg-soft:       #f0e6f5;
+
+  --color-text-dark:     #2a0e23;
+  --color-text-body:     #4a2a40;
+  --color-text-muted:    #9b6b8e;
+
+  --color-success:       #16a34a;
+  --color-warning:       #d97706;
+  --color-error:         #dc2626;
+
+  --color-border:        rgba(123,45,110,0.12);
+
+  /* Tipografía */
+  --font-base: 'Nunito', sans-serif;
+
+  /* Radios */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-full: 9999px;
+
+  /* Sombras */
+  --shadow-sm: 0 2px 12px rgba(123,45,110,0.10);
+  --shadow-md: 0 6px 24px rgba(107,63,160,0.16);
+  --shadow-lg: 0 12px 40px rgba(107,63,160,0.22);
+}
+
+/* ── Base ── */
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-base);
+  background: var(--color-bg);
+  color: var(--color-text-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: #f0e6f5; }
+::-webkit-scrollbar-thumb  { background: #7B2D6E88; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #7B2D6E; }
+
+/* ── Selección de texto ── */
+::selection {
+  background: #7B2D6E33;
+  color: #2a0e23;
+}
+
+/* ── Links base ── */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Imágenes ── */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ── Animaciones globales ── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
