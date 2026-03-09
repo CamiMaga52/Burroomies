@@ -1,0 +1,22 @@
+/* src/arrendador/ArrendadorLayout.module.css */
+@import '../shared/styles/variables.css';
+
+.page {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  color: var(--text-dark);
+}
+.container {
+  flex: 1;
+  padding: 40px 24px;
+  animation: fadeUp 0.4s ease 0.08s both;
+}
+@keyframes fadeUp {
+  from { transform: translateY(18px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.center { display: flex; align-items: center; justify-content: center; }
+
+@media (max-width: 500px) { .container { padding: 28px 14px; } }
