@@ -14,7 +14,7 @@ import styles from './CodeInput.module.css';
 export default function CodeInput({ longitud = 6, value, onChange, inputsRef }) {
 
   const handleChange = (i, e) => {
-    const val = e.target.value.replace(/\D/g, '').slice(-1);
+    const val = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(-1).toUpperCase();
     const nuevos = [...value];
     nuevos[i] = val;
     onChange(nuevos);
@@ -28,7 +28,7 @@ export default function CodeInput({ longitud = 6, value, onChange, inputsRef }) 
   };
 
   const handlePaste = (e) => {
-    const txt = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, longitud);
+    const txt = e.clipboardData.getData('text').replace(/[^a-zA-Z0-9]/g, '').slice(0, longitud).toUpperCase();
     if (!txt) return;
     const nuevos = Array(longitud).fill('');
     txt.split('').forEach((c, i) => { nuevos[i] = c; });
@@ -45,7 +45,7 @@ export default function CodeInput({ longitud = 6, value, onChange, inputsRef }) 
           ref={(el) => (inputsRef.current[i] = el)}
           className={`${styles.input} ${d ? styles.lleno : ''} ${i === 3 && longitud === 8 ? styles.gap : ''}`}
           type="text"
-          inputMode="numeric"
+          inputMode="text"
           maxLength={1}
           value={d}
           onChange={(e) => handleChange(i, e)}

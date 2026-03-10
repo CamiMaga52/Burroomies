@@ -15,15 +15,15 @@
 //   onLoginExitoso: fn({ rol, tieneArrendamiento }) — llama al App padre para entrar a la app
 
 import { useState } from 'react';
-import IniciarSesion       from './IniciarSesion';
-import Registro            from './Registro';
-import SubirConstancia     from './SubirConstancia';
-import SubirCURP           from './SubirCurp';
-import RegistroExitoso     from './RegistroExitoso';
-import Validandoidentidad  from './Validandoidentidad';
+import IniciarSesion from './IniciarSesion';
+import Registro from './Registro';
+import SubirConstancia from './SubirConstancia';
+import SubirCURP from './SubirCurp';
+import RegistroExitoso from './RegistroExitoso';
+import Validandoidentidad from './Validandoidentidad';
 import BienvenidoArrendador from './BienvenidoArrendador';
 import RestablecerContrasena from './RestablecerContrasena';
-import VerificarCodigo     from './VerificarCodigo';
+import VerificarCodigo from './VerificarCodigo';
 
 // Pantallas:
 //   'login'               → IniciarSesion
@@ -60,15 +60,22 @@ export default function AuthApp({ onLoginExitoso }) {
   };
 
   /* ── VerificarCodigo: al verificar correctamente ── */
-  const handleVerificarSiguiente = (codigo, { setModal }) => {
-    // Simulación: código '12345678' es válido, cualquier otro es inválido
-    // En producción aquí va la llamada al API
-    if (codigo === '12345678') {
-      setPantalla('registroExitoso');
-    } else {
-      setModal('invalido');
+  const handleVerificarSiguiente = async (codigo, { setModal }) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/auth/verify/${codigo}`)
+      const data = await response.json()
+
+      if (!response.ok) {
+        setModal('invalido')
+        return
+      }
+
+      setPantalla('registroExitoso')
+
+    } catch (error) {
+      alert('No se pudo conectar con el servidor.')
     }
-  };
+  }
 
   /* ── RegistroExitoso: "Finalizar" → login ── */
   const handleRegistroFinalizar = () => setPantalla('login');
@@ -83,22 +90,38 @@ export default function AuthApp({ onLoginExitoso }) {
   };
 
   /* ── IniciarSesion: "Entrar" ── */
-  const handleEntrar = ({ correo, contrasena }) => {
-    // Simulación de roles — reemplazar por llamada al API
-    // correo que contenga "arrendador" → arrendador
-    if (correo.includes('arrendador')) {
-      onLoginExitoso?.({ rol: 'arrendador', tieneArrendamiento: false });
-    } else {
-      // Primer inicio de sesión → verificar código
-      // Si ya verificó antes → entrar directo
-      setPantalla('verificarCodigo');
-    }
-  };
+  /* ── IniciarSesion: "Entrar" ── */
+  const handleEntrar = async ({ correo, contrasena }) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuarioCorreo: correo, usuarioContra: contrasena })
+      })
 
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.message || 'Error al iniciar sesión')
+        return
+      }
+
+      // Guardar en localStorage
+      localStorage.setItem('burroomies_token', data.token)
+      localStorage.setItem('burroomies_user', JSON.stringify(data.usuario))
+      localStorage.setItem('burroomies_rol', data.rol)
+
+      // Navegar según rol
+      onLoginExitoso?.({ rol: data.rol, tieneArrendamiento: false })
+
+    } catch (error) {
+      alert('No se pudo conectar con el servidor.')
+    }
+  }
   /* ── Props comunes para las pantallas de auth ── */
   const comun = {
     onPaginaPrincipal: irA('login'), // TODO: reemplazar por landing page real
-    onInicioSesion:    irA('login'),
+    onInicioSesion: irA('login'),
   };
 
   return (

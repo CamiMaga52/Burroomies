@@ -12,36 +12,84 @@ import s from './auth.module.css';
 import rs from './Registro.module.css'; // estilos exclusivos del form grande
 
 /* ── Datos de opciones ─────────────────────────────────── */
-const UNIDADES  = ['UPALM', 'Zacatenco', 'Santo Tomás', 'Tepepan', 'Milpa Alta'];
-const CARRERAS  = ['ISC', 'IIA', 'LCD', 'IA', 'MCIC'];
-const SEMESTRES = ['1°','2°','3°','4°','5°','6°','7°','8°','9°','10°'];
+const UNIDADES = ['UPALM', 'Zacatenco', 'Santo Tomás', 'Tepepan', 'Milpa Alta'];
+const CARRERAS = ['ISC', 'IIA', 'LCD', 'IA', 'MCIC'];
+const SEMESTRES = ['1°', '2°', '3°', '4°', '5°', '6°', '7°', '8°', '9°', '10°'];
 
 const FORM_INICIAL = {
-  nombres:'', apellidoP:'', apellidoM:'',
-  correo:'', telefono:'', curp:'', fechaNac:'',
-  unidad:'', carrera:'', boleta:'', semestre:'',
-  cp:'', estado:'', municipio:'', colonia:'', calle:'', numExt:'', numInt:'',
-  contrasena:'', repetirContrasena:'',
+  nombres: '', apellidoP: '', apellidoM: '',
+  correo: '', telefono: '', curp: '', fechaNac: '',
+  unidad: '', carrera: '', boleta: '', semestre: '',
+  cp: '', estado: '', municipio: '', colonia: '', calle: '', numExt: '', numInt: '',
+  contrasena: '', repetirContrasena: '',
   avisoPrivacidad: false, terminosCondiciones: false,
 };
 
 export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguiente }) {
-  const [tipo,     setTipo]     = useState('estudiante');
-  const [form,     setForm]     = useState(FORM_INICIAL);
-  const [showP1,   setShowP1]   = useState(false);
-  const [showP2,   setShowP2]   = useState(false);
+  const [tipo, setTipo] = useState('estudiante');
+  const [form, setForm] = useState(FORM_INICIAL);
+  const [showP1, setShowP1] = useState(false);
+  const [showP2, setShowP2] = useState(false);
 
   const set = (field) => (e) => {
     const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setForm((prev) => ({ ...prev, [field]: val }));
   };
   const handleTipo = (t) => { setTipo(t); setForm(FORM_INICIAL); };
-  const handleSiguiente = (e) => { e.preventDefault(); onSiguiente?.({ tipo, ...form }); };
+  const handleSiguiente = async (e) => {
+    e.preventDefault()
+
+    // Validar contraseñas
+    if (form.contrasena !== form.repetirContrasena) {
+      alert('Las contraseñas no coinciden.')
+      return
+    }
+    if (form.contrasena.length < 8) {
+      alert('La contraseña debe tener mínimo 8 caracteres.')
+      return
+    }
+
+    try {
+      const body = {
+        usuarioNom: form.nombres,
+        usuarioApePat: form.apellidoP,
+        usuarioApeMat: form.apellidoM,
+        usuarioCorreo: form.correo,
+        usuarioContra: form.contrasena,
+        usuarioTel: form.telefono,
+        usuarioCurp: form.curp,
+        usuarioFechaNac: form.fechaNac,
+        rol: tipo,
+        // Campos de arrendatario
+        arrendatarioBoleta: form.boleta,
+        arrendatarioUnidadAca: form.unidad,
+      }
+
+      const response = await fetch('http://localhost:3001/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.message || 'Error al registrarse.')
+        return
+      }
+
+      // Registro exitoso → continuar flujo
+      onSiguiente?.({ tipo, ...form })
+
+    } catch (error) {
+      alert('No se pudo conectar con el servidor.')
+    }
+  }
 
   const navbar = (
     <AuthNavbar botones={[
-      { label: 'Página principal', onClick: onPaginaPrincipal, variant: 'ghost'   },
-      { label: 'Inicio de sesión', onClick: onInicioSesion,    variant: 'primary' },
+      { label: 'Página principal', onClick: onPaginaPrincipal, variant: 'ghost' },
+      { label: 'Inicio de sesión', onClick: onInicioSesion, variant: 'primary' },
     ]} />
   );
 
@@ -103,7 +151,7 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
           </div>
           <div className={rs.grid2}>
             <Campo label="CURP">
-              <input className={s.input} type="text" value={form.curp} onChange={set('curp')} maxLength={18} style={{ textTransform:'uppercase' }} />
+              <input className={s.input} type="text" value={form.curp} onChange={set('curp')} maxLength={18} style={{ textTransform: 'uppercase' }} />
             </Campo>
             <Campo label="Fecha de nacimiento">
               <div className={s.inputIconWrapper}>
@@ -255,8 +303,8 @@ function SeccionArrendador({ form, set, s, rs }) {
 /* ── Auxiliares ── */
 function Campo({ label, children }) {
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
-      <label style={{ fontSize:'0.82rem', fontWeight:700, color:'#2d2550' }}>{label}</label>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#2d2550' }}>{label}</label>
       {children}
     </div>
   );
