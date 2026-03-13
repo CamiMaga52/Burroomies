@@ -50,16 +50,26 @@ const register = async (req, res) => {
 
     // Crear perfil según rol
     if (rol === 'arrendador') {
-      await Arrendador.create({ usuario_idUsuario: usuario.idUsuario })
+      console.log('Datos arrendador:', req.body)
+      await Arrendador.create({
+        usuario_idUsuario: usuario.idUsuario,
+        arrendadorCalle: req.body.calle,
+        arrendadorNumExt: req.body.numExt,
+        arrendadorNumInt: req.body.numInt,
+        arrendadorColonia: req.body.colonia,
+        arrendadorMunicipio: req.body.municipio,
+        arrendadorEstado: req.body.estado,
+        arrendadorCp: req.body.cp,
+      })
     } else if (rol === 'arrendatario') {
+      console.log('Datos arrendatario recibidos:', req.body)
       await Arrendatario.create({
         usuario_idUsuario: usuario.idUsuario,
-        arrendatarioBoleta,
-        arrendatarioUnidadAca,
+        arrendatarioBoleta: req.body.arrendatarioBoleta,
+        arrendatarioUnidadAca: req.body.arrendatarioUnidadAca,
         arrendatarioFechaActua: new Date(),
       })
     }
-
     // TODO: Enviar correo de verificación con el código
     await enviarCodigoVerificacion(usuarioCorreo, codigo)
 

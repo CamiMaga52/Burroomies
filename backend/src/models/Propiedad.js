@@ -75,6 +75,10 @@ const Propiedad = sequelize.define('Propiedad', {
     type: DataTypes.STRING(200),
     allowNull: true,
   },
+  propiedadFotos: {
+    type: DataTypes.TEXT('long'),
+    allowNull: true,
+  },
   arrendador_idArrendador: {
     type: DataTypes.INTEGER,
     allowNull: false,

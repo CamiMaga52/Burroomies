@@ -16,21 +16,21 @@
 //   onVerPerfil:        fn
 
 import { useState } from 'react';
-import SinArrendamiento      from './miVivienda/Sinarrendamiento';
+import SinArrendamiento from './miVivienda/Sinarrendamiento';
 import MiArrendamientoActual from './miVivienda/MiArrendamientoActual';
-import Propiedades           from './propiedades/Propiedades';
-import DetallePropiedad      from './detalle/DetallePropiedad';
-import DejaResena            from './resena/DejaResena';
+import Propiedades from './propiedades/Propiedades';
+import DetallePropiedad from './detalle/DetallePropiedad';
+import DejaResena from './resena/DejaResena';
 
 export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSesion, onVerPerfil }) {
-  const [pantalla,              setPantalla]         = useState(tieneArrendamiento ? 'miArrendamiento' : 'sinArrendamiento');
+  const [pantalla, setPantalla] = useState(tieneArrendamiento ? 'miArrendamiento' : 'sinArrendamiento');
   const [propiedadSeleccionada, setPropSeleccionada] = useState(null);
-  const [hayArrendamiento,      setHayArrendamiento] = useState(tieneArrendamiento);
+  const [hayArrendamiento, setHayArrendamiento] = useState(tieneArrendamiento);
 
   /* ── Navegación ── */
-  const irABuscar          = () => setPantalla('propiedades');
+  const irABuscar = () => setPantalla('propiedades');
   const irAMiArrendamiento = () => setPantalla('miArrendamiento');
-  const irADejaResena      = () => setPantalla('dejaResena');
+  const irADejaResena = () => setPantalla('dejaResena');
 
   const irASinArrendamiento = () => {
     setHayArrendamiento(false);
@@ -49,36 +49,14 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
 
   // Mapeo de campos al ir al detalle
   const irADetalle = (propiedad = null) => {
-    const p = propiedad ? {
-      id:             propiedad.id,
-      titulo:         propiedad.titulo,
-      ocupacion:      propiedad.ocupacion    || 'Compartida',
-      lugaresDisp:    propiedad.lugares      ?? 1,
-      lugaresTotales: propiedad.totalLugares ?? 1,
-      calificacion:   propiedad.calificacion ?? 0,
-      numResenas:     propiedad.numResenas   ?? 0,
-      precio:         propiedad.precio       ?? 0,
-      calle:          propiedad.calle        || propiedad.ubicacion || 'Sin dirección',
-      interior:       propiedad.interior     || 'N/A',
-      colonia:        propiedad.colonia      || propiedad.ubicacion || '',
-      alcaldia:       propiedad.alcaldia     || '',
-      cp:             propiedad.cp           || '',
-      descripcion:    propiedad.descripcion  || 'Sin descripción disponible.',
-      servicios:      propiedad.servicios    || [],
-      calificaciones: propiedad.calificaciones || [],
-      arrendador:     propiedad.arrendador   || {
-        nombre: 'Sin información', experiencia: 0, telefono: '-', correo: '-',
-      },
-    } : null;
-    setPropSeleccionada(p);
+    setPropSeleccionada(propiedad); // pasar el objeto raw directamente
     setPantalla('detalle');
   };
-
   // Props del dropdown que se repiten en todas las pantallas
   const navbarDropdown = {
     onVerPerfil,
     onArrendamientoActual: handleArrendamientoActual,
-    tieneArrendamiento:    hayArrendamiento,
+    tieneArrendamiento: hayArrendamiento,
     onCerrarSesion,
   };
 

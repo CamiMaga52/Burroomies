@@ -24,6 +24,8 @@ import { IconUser, IconLogout, IconSearch } from '../icons';
  *  - onVerPerfil           (fn)   — navega al perfil
  *  - onArrendamientoActual (fn)   — navega a MiArrendamientoActual o SinArrendamiento
  *  - tieneArrendamiento    (bool) — cambia el label del item en el dropdown
+ *  - onMisArrendamientos   (fn)   — navega a Mis arrendamientos
+ *  - showMisArrendamientos (bool) — muestra la opción en el dropdown
  */
 export default function Navbar({
   showMiVivienda        = false,
@@ -34,6 +36,8 @@ export default function Navbar({
   onVerPerfil,
   onArrendamientoActual,
   tieneArrendamiento    = false,
+  onMisArrendamientos,
+  showMisArrendamientos = false,
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -114,6 +118,22 @@ export default function Navbar({
               </button>
 
               <div className={styles.dropdownDivider} />
+
+              {/* Registrar arrendamiento (solo para arrendador) */}
+              {showMisArrendamientos && (
+                <>
+                  <button
+                    type="button"
+                    className={styles.dropdownItem}
+                    role="menuitem"
+                    onClick={() => pick(onMisArrendamientos)}
+                  >
+                    <span className={styles.dropdownItemIcon}>📋</span>
+                    Registrar arrendamiento
+                  </button>
+                  <div className={styles.dropdownDivider} />
+                </>
+              )}
 
               {/* Cerrar sesión */}
               <button
