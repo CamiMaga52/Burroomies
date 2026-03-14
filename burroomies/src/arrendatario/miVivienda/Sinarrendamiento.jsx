@@ -8,11 +8,24 @@ import Navbar  from '../../shared/components/Navbar';
 import Footer  from '../../shared/components/Footer';
 import burroSolo from '../../img/burroTriste1.png'; // imagen del burro triste con maleta
 
-export default function SinArrendamiento({ onBuscar }) {
+export default function SinArrendamiento({
+  onBuscar,
+  onVerPerfil,
+  onArrendamientoActual,
+  tieneArrendamiento,
+  onCerrarSesion,
+}) {
   return (
     <div className={styles.page}>
 
-      <Navbar showBuscar onBuscar={onBuscar} onCerrarSesion={() => {}} />
+      <Navbar
+        showBuscar
+        onBuscar={onBuscar}
+        onVerPerfil={onVerPerfil}
+        onArrendamientoActual={onArrendamientoActual}
+        tieneArrendamiento={tieneArrendamiento}
+        onCerrarSesion={onCerrarSesion}
+      />
 
       <main className={styles.container}>
         <div className={styles.card}>

@@ -51,7 +51,14 @@ function StarRating({ value, onChange, large = false }) {
 }
 
 // ── Componente principal ─────────────────────────────────
-export default function DejaResena({ onCancel }) {
+export default function DejaResena({
+  onCancel,
+  onPublicar,
+  onVerPerfil,
+  onArrendamientoActual,
+  tieneArrendamiento,
+  onCerrarSesion,
+}) {
   const [cats, setCats]           = useState(Object.fromEntries(CATEGORIAS.map(c => [c.id, 0])));
   const [general, setGeneral]     = useState(0);
   const [texto, setTexto]         = useState('');
@@ -65,7 +72,13 @@ export default function DejaResena({ onCancel }) {
   return (
     <div className={styles.page}>
 
-      <Navbar showBuscar onCerrarSesion={() => {}} />
+      <Navbar
+        showBuscar
+        onVerPerfil={onVerPerfil}
+        onArrendamientoActual={onArrendamientoActual}
+        tieneArrendamiento={tieneArrendamiento}
+        onCerrarSesion={onCerrarSesion}
+      />
 
       <main className={styles.container}>
         <h1 className={styles.pageTitle}>¡Deja tu Reseña y calificación!</h1>

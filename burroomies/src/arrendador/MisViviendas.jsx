@@ -10,7 +10,6 @@ export default function MisViviendas({
   onEditar,
   onMisViviendas,
   onMisArrendamientos,
-  onVerPerfil,
   onCerrarSesion,
 }) {
   const [propiedades,   setPropiedades]   = useState([]);
@@ -63,7 +62,6 @@ export default function MisViviendas({
     <ArrendadorLayout
       onMisViviendas={onMisViviendas}
       onMisArrendamientos={onMisArrendamientos}
-      onVerPerfil={onVerPerfil}
       onCerrarSesion={onCerrarSesion}
       showMisViviendas
       center={false}
@@ -108,16 +106,38 @@ export default function MisViviendas({
             {propiedades.map((p) => (
               <div key={p.idPropiedad} className={s.propCard}>
 
-                {/* Imagen placeholder por tipo */}
-                <div className={s.propImg} style={{
-                  background: p.propiedadTipo === 'Casa' ? '#fff8e1'
-                    : p.propiedadTipo === 'Habitación' ? '#e3f2fd' : '#e8f5e9',
-                  display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', fontSize: '2.5rem',
-                }}>
-                  {p.propiedadTipo === 'Casa' ? '🏡'
-                    : p.propiedadTipo === 'Habitación' ? '🛏️' : '🏠'}
-                </div>
+                {/* Foto de la propiedad */}
+                {(() => {
+                  let primeraFoto = null;
+                  try {
+                    if (p.propiedadFotos) {
+                      const fotos = JSON.parse(p.propiedadFotos);
+                      primeraFoto = Array.isArray(fotos) && fotos.length > 0 ? fotos[0] : null;
+                    }
+                  } catch {}
+
+                  const colores = { 'Casa': '#fff8e1', 'Habitación': '#e3f2fd' };
+                  const emojis  = { 'Casa': '🏡', 'Habitación': '🛏️' };
+                  const bg      = colores[p.propiedadTipo] || '#e8f5e9';
+                  const emoji   = emojis[p.propiedadTipo]  || '🏠';
+
+                  return primeraFoto ? (
+                    <img
+                      src={primeraFoto}
+                      alt={p.propiedadTitulo}
+                      className={s.propImg}
+                      style={{ objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div className={s.propImg} style={{
+                      background: bg,
+                      display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', fontSize: '2.5rem',
+                    }}>
+                      {emoji}
+                    </div>
+                  );
+                })()}
 
                 <div className={s.propInfo}>
                   <p className={s.propNombre}>{p.propiedadTitulo}</p>

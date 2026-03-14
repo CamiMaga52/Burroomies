@@ -25,7 +25,7 @@ const getPropiedades = async (req, res) => {
       include: [
         {
           model: Arrendador,
-          include: [{ model: Usuario, attributes: ['usuarioNom', 'usuarioApePat', 'usuarioTel', 'usuarioCorreo'] }]
+          include: [{ model: Usuario, attributes: ['usuarioNom', 'usuarioApePat', 'usuarioTel', 'usuarioCorreo', 'usuarioFoto'] }]
         },
         { model: Resena, attributes: ['resenaCalGen'] }
       ],
@@ -46,7 +46,7 @@ const getPropiedadById = async (req, res) => {
       include: [
         {
           model: Arrendador,
-          include: [{ model: Usuario, attributes: ['usuarioNom', 'usuarioApePat', 'usuarioTel', 'usuarioCorreo'] }]
+          include: [{ model: Usuario, attributes: ['usuarioNom', 'usuarioApePat', 'usuarioTel', 'usuarioCorreo', 'usuarioFoto'] }]
         },
         { model: Resena }
       ]

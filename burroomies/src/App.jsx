@@ -24,7 +24,6 @@ export default function App() {
     <ArrendatarioApp
       tieneArrendamiento={usuario.tieneArrendamiento}
       onCerrarSesion={handleCerrarSesion}
-      onVerPerfil={() => console.log('Ver perfil')}
     />
   );
 }

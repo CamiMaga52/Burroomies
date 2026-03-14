@@ -6,7 +6,14 @@ import Navbar  from "../../shared/components/Navbar";
 import Footer  from "../../shared/components/Footer";
 import { IconSearch, IconFilter, IconDollar, IconMap, IconUsers, Stars } from "../../shared/icons";
 
-export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion }) {
+export default function Propiedades({
+  onVerDetalle,
+  onMiVivienda,
+  onVerPerfil,
+  onArrendamientoActual,
+  tieneArrendamiento,
+  onCerrarSesion,
+}) {
   const [propiedades,  setPropiedades]  = useState([]);
   const [cargando,     setCargando]     = useState(true);
   const [error,        setError]        = useState(null);
@@ -15,9 +22,7 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
   const [sortBy,       setSortBy]       = useState("novedades");
   const [maxPrice,     setMaxPrice]     = useState(12000);
   const [tipoVivienda, setTipoVivienda] = useState([]);
-  const [ocupacion,    setOcupacion]    = useState([]);
 
-  // ── Cargar propiedades del backend ──────────────────────────────
   useEffect(() => {
     const cargar = async () => {
       try {
@@ -40,14 +45,21 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
   const toggle = (arr, setArr, val) =>
     setArr(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val])
 
-  // ── Adaptar campos del backend al formato de la tarjeta ─────────
+  const parsearPrimeraFoto = (propiedadFotos) => {
+    if (!propiedadFotos) return null
+    try {
+      const fotos = JSON.parse(propiedadFotos)
+      return Array.isArray(fotos) && fotos.length > 0 ? fotos[0] : null
+    } catch { return null }
+  }
+
   const adaptar = (p) => {
     const calificaciones = p.Resenas?.map(r => parseFloat(r.resenaCalGen || 0)) || []
     const calPromedio = calificaciones.length
       ? (calificaciones.reduce((a, b) => a + b, 0) / calificaciones.length).toFixed(1)
       : '0.0'
 
-    const emojis = { 'Habitación': '🛏️', 'Casa': '🏡', 'Departamento': '🏠' }
+    const emojis  = { 'Habitación': '🛏️', 'Casa': '🏡', 'Departamento': '🏠' }
     const colores = { 'Habitación': '#e3f2fd', 'Casa': '#fff8e1', 'Departamento': '#e8f5e9' }
 
     return {
@@ -59,13 +71,13 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
       ubicacion:    [p.propiedadColonia, p.propiedadMunicipio, p.propiedadEstado].filter(Boolean).join(', '),
       calificacion: calPromedio,
       numResenas:   calificaciones.length,
+      fotoUrl:      parsearPrimeraFoto(p.propiedadFotos),
       emoji:        emojis[p.propiedadTipo] || '🏠',
       color:        colores[p.propiedadTipo] || '#f3f0ff',
       raw:          p,
     }
   }
 
-  // ── Filtrar y ordenar ───────────────────────────────────────────
   let filtered = propiedades
     .map(adaptar)
     .filter(p =>
@@ -86,10 +98,12 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
       <Navbar
         showMiVivienda={!!onMiVivienda}
         onMiVivienda={onMiVivienda}
+        onVerPerfil={onVerPerfil}
+        onArrendamientoActual={onArrendamientoActual}
+        tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
       />
 
-      {/* Barra de búsqueda */}
       <div className={styles.searchWrap}>
         <div className={styles.searchBar}>
           <input
@@ -104,7 +118,6 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
 
       <div className={styles.layout}>
 
-        {/* ── Sidebar filtros ── */}
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <span className={styles.sidebarTitle}>Filtros</span>
@@ -163,15 +176,14 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
             ))}
           </div>
 
-          <button className={styles.btnApply} onClick={() => { setTipoVivienda([]); setMaxPrice(12000); setSortBy('novedades') }}>
+          <button className={styles.btnApply}
+            onClick={() => { setTipoVivienda([]); setMaxPrice(12000); setSortBy('novedades') }}>
             Limpiar filtros
           </button>
         </aside>
 
-        {/* ── Resultados ── */}
         <main className={styles.results}>
 
-          {/* Estado: cargando */}
           {cargando && (
             <div className={styles.noResults}>
               <div className={styles.noResultsIcon}>⏳</div>
@@ -179,7 +191,6 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
             </div>
           )}
 
-          {/* Estado: error */}
           {!cargando && error && (
             <div className={styles.noResults}>
               <div className={styles.noResultsIcon}>⚠️</div>
@@ -191,19 +202,16 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
             </div>
           )}
 
-          {/* Estado: sin resultados */}
           {!cargando && !error && filtered.length === 0 && (
             <div className={styles.noResults}>
               <div className={styles.noResultsIcon}>🔍</div>
-              <p>
-                {propiedades.length === 0
-                  ? 'Aún no hay propiedades registradas.'
-                  : 'No se encontraron propiedades con esos filtros.'}
+              <p>{propiedades.length === 0
+                ? 'Aún no hay propiedades registradas.'
+                : 'No se encontraron propiedades con esos filtros.'}
               </p>
             </div>
           )}
 
-          {/* Estado: resultados */}
           {!cargando && !error && filtered.length > 0 && (
             <>
               <p className={styles.resultsInfo}>
@@ -217,12 +225,28 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
                   style={{ animationDelay: `${0.1 + i * 0.08}s` }}
                   onClick={() => onVerDetalle?.(p.raw)}
                 >
-                  <div className={styles.propImgPlaceholder} style={{ background: p.color }}>
-                    {p.emoji}
+                  {/* ── Imagen o emoji ── */}
+                  <div className={styles.propImgPlaceholder}
+                    style={{
+                      background: p.fotoUrl ? 'transparent' : p.color,
+                      padding: p.fotoUrl ? 0 : undefined,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {p.fotoUrl ? (
+                      <img
+                        src={p.fotoUrl}
+                        alt={p.titulo}
+                        style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
+                      />
+                    ) : (
+                      <span style={{ fontSize:'2.5rem' }}>{p.emoji}</span>
+                    )}
                   </div>
+
                   <div className={styles.propBody}>
                     <span className={styles.propTag}>{p.tipo}</span>
-                    <h3 style={{ margin: '4px 0 8px', fontSize: '1rem', color: '#2d2550', fontWeight: 700 }}>
+                    <h3 style={{ margin:'4px 0 8px', fontSize:'1rem', color:'#2d2550', fontWeight:700 }}>
                       {p.titulo}
                     </h3>
                     <div className={styles.propRating}>
@@ -233,9 +257,7 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
                     <div className={styles.propDetails}>
                       <div className={styles.propDetail}>
                         <IconDollar />
-                        <span>
-                          Precio <span className={styles.propPrice}>${p.precio.toLocaleString()} MXN</span> / mes
-                        </span>
+                        <span>Precio <span className={styles.propPrice}>${p.precio.toLocaleString()} MXN</span> / mes</span>
                       </div>
                       {p.lugares > 0 && (
                         <div className={styles.propDetail}>
@@ -248,8 +270,7 @@ export default function Propiedades({ onVerDetalle, onMiVivienda, onCerrarSesion
                       )}
                       {p.ubicacion && (
                         <div className={styles.propDetail}>
-                          <IconMap />
-                          <span>{p.ubicacion}</span>
+                          <IconMap /><span>{p.ubicacion}</span>
                         </div>
                       )}
                     </div>

@@ -1,11 +1,12 @@
-// src/arrendador/PerfilArrendador.jsx
+// src/arrendatario/perfil/PerfilArrendatario.jsx
 import { useState, useEffect, useRef } from 'react';
-import ArrendadorLayout from './ArrendadorLayout';
-import s from './arrendador.module.css';
-import styles from './PerfilArrendador.module.css';
+import styles from './PerfilArrendatario.module.css';
+import Navbar  from '../../shared/components/Navbar';
+import Footer  from '../../shared/components/Footer';
 
+/* ── Íconos ── */
 const IconCamera = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
     <circle cx="12" cy="13" r="4"/>
@@ -27,29 +28,30 @@ const IconEye = ({ open }) => open ? (
   </svg>
 );
 
-export default function PerfilArrendador({
-  onMisViviendas,
-  onMisArrendamientos,
+export default function PerfilArrendatario({
+  onAtras,
   onVerPerfil,
+  onArrendamientoActual,
+  tieneArrendamiento,
   onCerrarSesion,
 }) {
-  const [perfil,    setPerfil]    = useState(null);
-  const [cargando,  setCargando]  = useState(true);
-  const [enviando,  setEnviando]  = useState(false);
-  const [showExito, setShowExito] = useState(false);
-  const [seccion,   setSeccion]   = useState('perfil'); // 'perfil' | 'contrasena'
+  const [perfil,      setPerfil]      = useState(null);
+  const [cargando,    setCargando]    = useState(true);
+  const [enviando,    setEnviando]    = useState(false);
+  const [showExito,   setShowExito]   = useState(false);
+  const [seccion,     setSeccion]     = useState('perfil'); // 'perfil' | 'contrasena'
 
-  /* Campos editables */
+  /* Editables */
   const [telefono,    setTelefono]    = useState('');
   const [fotoPreview, setFotoPreview] = useState(null);
   const [fotoFile,    setFotoFile]    = useState(null);
 
   /* Contraseña */
-  const [passActual,    setPassActual]    = useState('');
-  const [passNueva,     setPassNueva]     = useState('');
-  const [passConfirm,   setPassConfirm]   = useState('');
-  const [showPass,      setShowPass]      = useState({ actual: false, nueva: false, confirm: false });
-  const [errPass,       setErrPass]       = useState({});
+  const [passActual,  setPassActual]  = useState('');
+  const [passNueva,   setPassNueva]   = useState('');
+  const [passConfirm, setPassConfirm] = useState('');
+  const [showPass,    setShowPass]    = useState({ actual: false, nueva: false, confirm: false });
+  const [errPass,     setErrPass]     = useState({});
 
   const fotoRef = useRef(null);
 
@@ -83,12 +85,12 @@ export default function PerfilArrendador({
     setFotoPreview(URL.createObjectURL(file));
   };
 
-  /* ── Guardar perfil (teléfono + foto) ── */
+  /* ── Guardar perfil ── */
   const handleGuardarPerfil = async () => {
     setEnviando(true);
     try {
       const token = localStorage.getItem('burroomies_token');
-      let fotoBase64 = perfil?.usuarioFoto || perfil?.fotoPerfil || null;
+      let fotoBase64 = perfil?.fotoPerfil || null;
       if (fotoFile) {
         fotoBase64 = await new Promise((res, rej) => {
           const r = new FileReader();
@@ -114,9 +116,9 @@ export default function PerfilArrendador({
   /* ── Cambiar contraseña ── */
   const handleCambiarPass = async () => {
     const errs = {};
-    if (!passActual)                      errs.actual   = 'Ingresa tu contraseña actual';
-    if (passNueva.length < 8)             errs.nueva    = 'Mínimo 8 caracteres';
-    if (passNueva !== passConfirm)        errs.confirm  = 'Las contraseñas no coinciden';
+    if (!passActual)               errs.actual  = 'Ingresa tu contraseña actual';
+    if (passNueva.length < 8)      errs.nueva   = 'Mínimo 8 caracteres';
+    if (passNueva !== passConfirm) errs.confirm = 'Las contraseñas no coinciden';
     setErrPass(errs);
     if (Object.keys(errs).length > 0) return;
 
@@ -144,24 +146,36 @@ export default function PerfilArrendador({
 
   const toggleShow = (key) => setShowPass(p => ({ ...p, [key]: !p[key] }));
 
+  const nombreCompleto = perfil
+    ? `${perfil.usuarioNom || perfil.nombre || ''} ${perfil.usuarioApePat || perfil.apellidos || ''}`.trim()
+    : '';
+  const correo = perfil?.usuarioCorreo || perfil?.correo || '';
+  const inicial = nombreCompleto.charAt(0) || '?';
+
   if (cargando) return (
-    <ArrendadorLayout onMisViviendas={onMisViviendas} onMisArrendamientos={onMisArrendamientos} onVerPerfil={onVerPerfil} onCerrarSesion={onCerrarSesion}>
-      <p style={{ color: 'var(--purple-dark)', fontWeight: 600 }}>Cargando perfil...</p>
-    </ArrendadorLayout>
+    <div className={styles.page}>
+      <Navbar onVerPerfil={onVerPerfil} onArrendamientoActual={onArrendamientoActual}
+        tieneArrendamiento={tieneArrendamiento} onCerrarSesion={onCerrarSesion} />
+      <main className={styles.container}>
+        <p className={styles.msgCargando}>Cargando perfil...</p>
+      </main>
+      <Footer />
+    </div>
   );
 
   return (
-    <ArrendadorLayout
-      onMisViviendas={onMisViviendas}
-      onMisArrendamientos={onMisArrendamientos}
-      onVerPerfil={onVerPerfil}
-      onCerrarSesion={onCerrarSesion}
-      showMisViviendas
-      center={false}
-    >
-      <div className={styles.wrapper}>
+    <div className={styles.page}>
 
-        <h1 className={s.pageTitle}>Mi perfil</h1>
+      <Navbar
+        onVerPerfil={onVerPerfil}
+        onArrendamientoActual={onArrendamientoActual}
+        tieneArrendamiento={tieneArrendamiento}
+        onCerrarSesion={onCerrarSesion}
+      />
+
+      <main className={styles.container}>
+
+        <h1 className={styles.pageTitle}>Mi perfil</h1>
 
         {/* Tabs */}
         <div className={styles.tabs}>
@@ -177,56 +191,61 @@ export default function PerfilArrendador({
           </button>
         </div>
 
-        {/* ── SECCIÓN: DATOS PERSONALES ── */}
+        {/* ── DATOS PERSONALES ── */}
         {seccion === 'perfil' && (
-          <div className={s.formCard}>
+          <div className={styles.card}>
 
             {/* Avatar */}
             <div className={styles.avatarSection}>
               <div className={styles.avatarWrapper}>
                 {fotoPreview
                   ? <img src={fotoPreview} alt="Foto de perfil" className={styles.avatarImg} />
-                  : <div className={styles.avatarPlaceholder}>{(perfil?.usuarioNom || perfil?.nombre || '?').charAt(0)}</div>
+                  : <div className={styles.avatarPlaceholder}>{inicial}</div>
                 }
                 <button type="button" className={styles.avatarEditBtn}
-                  onClick={() => fotoRef.current?.click()}
-                  title="Cambiar foto">
+                  onClick={() => fotoRef.current?.click()} title="Cambiar foto">
                   <IconCamera />
                 </button>
                 <input ref={fotoRef} type="file" accept="image/*"
                   style={{ display: 'none' }} onChange={handleFoto} />
               </div>
               <div className={styles.avatarInfo}>
-                <p className={styles.avatarNombre}>{perfil?.usuarioNom || perfil?.nombre || ''} {perfil?.usuarioApePat || perfil?.apellidos || ''}</p>
-                <p className={styles.avatarCorreo}>{perfil?.usuarioCorreo || perfil?.correo || ''}</p>
+                <p className={styles.avatarNombre}>{nombreCompleto || 'Sin nombre'}</p>
+                <p className={styles.avatarCorreo}>{correo}</p>
               </div>
             </div>
 
-            {/* Campos de solo lectura */}
-            <div className={s.grid2} style={{ marginBottom: 18 }}>
-              <div className={s.campo}>
-                <label className={s.label}>Nombre(s)</label>
-                <div className={styles.inputReadonly}>{perfil?.usuarioNom || perfil?.nombre || '—'}</div>
+            {/* Campos solo lectura */}
+            <div className={styles.grid2}>
+              <div className={styles.campo}>
+                <label className={styles.label}>Nombre(s)</label>
+                <div className={styles.inputReadonly}>
+                  {perfil?.usuarioNom || perfil?.nombre || '—'}
+                </div>
               </div>
-              <div className={s.campo}>
-                <label className={s.label}>Apellidos</label>
-                <div className={styles.inputReadonly}>{perfil?.usuarioApePat || perfil?.apellidos || '—'}</div>
+              <div className={styles.campo}>
+                <label className={styles.label}>Apellidos</label>
+                <div className={styles.inputReadonly}>
+                  {perfil?.usuarioApePat || perfil?.apellidos || '—'}
+                </div>
               </div>
-              <div className={s.campo}>
-                <label className={s.label}>Correo electrónico</label>
-                <div className={styles.inputReadonly}>{perfil?.usuarioCorreo || perfil?.correo || '—'}</div>
+              <div className={styles.campo}>
+                <label className={styles.label}>Correo electrónico</label>
+                <div className={styles.inputReadonly}>{correo || '—'}</div>
               </div>
             </div>
 
-            {/* Teléfono — editable */}
-            <div className={s.campo} style={{ maxWidth: 320 }}>
-              <label className={s.label}>Teléfono</label>
-              <input className={s.input} type="tel" placeholder="55 1234 5678"
-                value={telefono} onChange={e => setTelefono(e.target.value)} />
+            {/* Teléfono editable */}
+            <div className={styles.campo} style={{ maxWidth: 320, marginTop: 4 }}>
+              <label className={styles.label}>Teléfono</label>
+              <input className={styles.input} type="tel"
+                placeholder="55 1234 5678"
+                value={telefono}
+                onChange={e => setTelefono(e.target.value)} />
             </div>
 
             <div className={styles.guardarRow}>
-              <button type="button" className={s.btnSiguiente}
+              <button type="button" className={styles.btnGuardar}
                 onClick={handleGuardarPerfil} disabled={enviando}>
                 {enviando ? 'Guardando...' : 'Guardar cambios »'}
               </button>
@@ -234,16 +253,15 @@ export default function PerfilArrendador({
           </div>
         )}
 
-        {/* ── SECCIÓN: CONTRASEÑA ── */}
+        {/* ── CONTRASEÑA ── */}
         {seccion === 'contrasena' && (
-          <div className={s.formCard}>
-            <div className={s.formSection}>
+          <div className={styles.card}>
+            <div className={styles.formSection}>
 
-              {/* Contraseña actual */}
-              <div className={s.campo}>
-                <label className={s.label}>Contraseña actual</label>
+              <div className={styles.campo}>
+                <label className={styles.label}>Contraseña actual</label>
                 <div className={styles.passWrapper}>
-                  <input className={s.input}
+                  <input className={styles.input}
                     type={showPass.actual ? 'text' : 'password'}
                     value={passActual} onChange={e => setPassActual(e.target.value)} />
                   <button type="button" className={styles.eyeBtn} onClick={() => toggleShow('actual')}>
@@ -253,11 +271,10 @@ export default function PerfilArrendador({
                 {errPass.actual && <span className={styles.err}>{errPass.actual}</span>}
               </div>
 
-              {/* Nueva contraseña */}
-              <div className={s.campo}>
-                <label className={s.label}>Nueva contraseña</label>
+              <div className={styles.campo}>
+                <label className={styles.label}>Nueva contraseña</label>
                 <div className={styles.passWrapper}>
-                  <input className={s.input}
+                  <input className={styles.input}
                     type={showPass.nueva ? 'text' : 'password'}
                     value={passNueva} onChange={e => setPassNueva(e.target.value)} />
                   <button type="button" className={styles.eyeBtn} onClick={() => toggleShow('nueva')}>
@@ -267,11 +284,10 @@ export default function PerfilArrendador({
                 {errPass.nueva && <span className={styles.err}>{errPass.nueva}</span>}
               </div>
 
-              {/* Confirmar contraseña */}
-              <div className={s.campo}>
-                <label className={s.label}>Confirmar nueva contraseña</label>
+              <div className={styles.campo}>
+                <label className={styles.label}>Confirmar nueva contraseña</label>
                 <div className={styles.passWrapper}>
-                  <input className={s.input}
+                  <input className={styles.input}
                     type={showPass.confirm ? 'text' : 'password'}
                     value={passConfirm} onChange={e => setPassConfirm(e.target.value)} />
                   <button type="button" className={styles.eyeBtn} onClick={() => toggleShow('confirm')}>
@@ -282,7 +298,7 @@ export default function PerfilArrendador({
               </div>
 
               <div className={styles.guardarRow}>
-                <button type="button" className={s.btnSiguiente}
+                <button type="button" className={styles.btnGuardar}
                   onClick={handleCambiarPass} disabled={enviando}>
                   {enviando ? 'Cambiando...' : 'Cambiar contraseña »'}
                 </button>
@@ -292,27 +308,32 @@ export default function PerfilArrendador({
           </div>
         )}
 
-      </div>
+      </main>
+
+      <Footer />
 
       {/* Modal éxito */}
       {showExito && (
-        <div className={s.overlay} onClick={() => setShowExito(false)}>
-          <div className={s.modal} onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
-            <div className={`${s.modalIcon} ${s.modalIconVerde}`}>
-              <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
-                <path d="M10 20 L17 28 L30 12" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+        <div className={styles.overlay} onClick={() => setShowExito(false)}>
+          <div className={styles.successModal} onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
+            <button className={styles.modalClose} onClick={() => setShowExito(false)}>✕</button>
+            <div className={styles.successIcon}>
+              <svg viewBox="0 0 24 24" fill="none" width="32" height="32">
+                <polyline points="20 6 9 17 4 12" stroke="white" strokeWidth="3"
+                  strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <p className={s.modalTexto}>
+            <p className={styles.successText}>¡Listo!</p>
+            <p className={styles.successSub}>
               {seccion === 'perfil' ? 'Perfil actualizado correctamente.' : 'Contraseña cambiada correctamente.'}
             </p>
-            <button type="button" className={s.btnAceptar} onClick={() => setShowExito(false)}>
+            <button type="button" className={styles.btnAceptar} onClick={() => setShowExito(false)}>
               Aceptar »
             </button>
           </div>
         </div>
       )}
 
-    </ArrendadorLayout>
+    </div>
   );
 }

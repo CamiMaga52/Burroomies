@@ -213,15 +213,49 @@ const getProfile = async (req, res) => {
 // ── Actualizar perfil ─────────────────────────────────────────────
 const updateProfile = async (req, res) => {
   try {
-    const { usuarioNom, usuarioApePat, usuarioApeMat, usuarioTel } = req.body
-    await Usuario.update(
-      { usuarioNom, usuarioApePat, usuarioApeMat, usuarioTel },
-      { where: { idUsuario: req.user.idUsuario } }
-    )
+    const { usuarioNom, usuarioApePat, usuarioApeMat, usuarioTel, usuarioFoto } = req.body
+    const campos = { usuarioNom, usuarioApePat, usuarioApeMat, usuarioTel }
+    // Solo actualizar foto si viene en el body
+    if (usuarioFoto !== undefined) campos.usuarioFoto = usuarioFoto
+    await Usuario.update(campos, { where: { idUsuario: req.user.idUsuario } })
     res.json({ message: 'Perfil actualizado correctamente.' })
   } catch (error) {
     res.status(500).json({ message: 'Error al actualizar el perfil.' })
   }
 }
 
-module.exports = { register, login, verifyEmail, forgotPassword, resetPassword, getProfile, updateProfile }
+// ── Verificar código de restablecimiento ──────────────────────────
+const verifyResetCode = async (req, res) => {
+  try {
+    const { codigo } = req.body
+    const usuario = await Usuario.findOne({ where: { usuarioCC: codigo } })
+    if (!usuario) {
+      return res.status(400).json({ message: 'Código inválido o expirado.' })
+    }
+    res.json({ message: 'Código válido.' })
+  } catch (error) {
+    console.error('Error en verifyResetCode:', error)
+    res.status(500).json({ message: 'Error al verificar el código.' })
+  }
+}
+
+// ── Cambiar contraseña (usuario autenticado) ──────────────────────
+const changePassword = async (req, res) => {
+  try {
+    const { contrasenaActual, contrasenaNueva } = req.body
+    const usuario = await Usuario.findByPk(req.user.idUsuario)
+    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado.' })
+    const match = await bcrypt.compare(contrasenaActual, usuario.usuarioContra)
+    if (!match) return res.status(400).json({ message: 'La contraseña actual es incorrecta.' })
+    if (!contrasenaNueva || contrasenaNueva.length < 8)
+      return res.status(400).json({ message: 'La nueva contraseña debe tener al menos 8 caracteres.' })
+    const hash = await bcrypt.hash(contrasenaNueva, 10)
+    await usuario.update({ usuarioContra: hash })
+    res.json({ message: 'Contraseña cambiada correctamente.' })
+  } catch (error) {
+    console.error('Error en changePassword:', error)
+    res.status(500).json({ message: 'Error al cambiar la contraseña.' })
+  }
+}
+
+module.exports = { register, login, verifyEmail, forgotPassword, resetPassword, verifyResetCode, getProfile, updateProfile, changePassword }

@@ -236,8 +236,14 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
             <div className={styles.divider} />
             <section className={styles.section}>
               <div className={styles.arrendadorCard}>
-                <div className={styles.arrendadorAvatar}>
-                  {usuario.usuarioNom?.charAt(0) || 'A'}
+                <div className={styles.arrendadorAvatar} style={{ overflow: 'hidden', padding: 0 }}>
+                  {usuario.usuarioFoto
+                    ? <img src={usuario.usuarioFoto} alt={usuario.usuarioNom}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                    : <span style={{ fontSize: '1.6rem', fontWeight: 800, color: 'white' }}>
+                        {usuario.usuarioNom?.charAt(0) || 'A'}
+                      </span>
+                  }
                 </div>
                 <div className={styles.arrendadorInfo}>
                   <div className={styles.arrendadorLabel}>Arrendador</div>
