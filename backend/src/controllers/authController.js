@@ -63,6 +63,9 @@ const register = async (req, res) => {
       })
     } else if (rol === 'arrendatario') {
       console.log('Datos arrendatario recibidos:', req.body)
+      // Generar código único EST-XXXX para el arrendatario
+      const codigoEst = 'EST-' + String(usuario.idUsuario).padStart(4, '0')
+      await usuario.update({ usuarioCodigo: codigoEst })
       await Arrendatario.create({
         usuario_idUsuario: usuario.idUsuario,
         arrendatarioBoleta: req.body.arrendatarioBoleta,
@@ -215,7 +218,6 @@ const updateProfile = async (req, res) => {
   try {
     const { usuarioNom, usuarioApePat, usuarioApeMat, usuarioTel, usuarioFoto } = req.body
     const campos = { usuarioNom, usuarioApePat, usuarioApeMat, usuarioTel }
-    // Solo actualizar foto si viene en el body
     if (usuarioFoto !== undefined) campos.usuarioFoto = usuarioFoto
     await Usuario.update(campos, { where: { idUsuario: req.user.idUsuario } })
     res.json({ message: 'Perfil actualizado correctamente.' })
@@ -224,22 +226,7 @@ const updateProfile = async (req, res) => {
   }
 }
 
-// ── Verificar código de restablecimiento ──────────────────────────
-const verifyResetCode = async (req, res) => {
-  try {
-    const { codigo } = req.body
-    const usuario = await Usuario.findOne({ where: { usuarioCC: codigo } })
-    if (!usuario) {
-      return res.status(400).json({ message: 'Código inválido o expirado.' })
-    }
-    res.json({ message: 'Código válido.' })
-  } catch (error) {
-    console.error('Error en verifyResetCode:', error)
-    res.status(500).json({ message: 'Error al verificar el código.' })
-  }
-}
-
-// ── Cambiar contraseña (usuario autenticado) ──────────────────────
+// ── Cambiar contraseña ────────────────────────────────────────────
 const changePassword = async (req, res) => {
   try {
     const { contrasenaActual, contrasenaNueva } = req.body
@@ -255,6 +242,20 @@ const changePassword = async (req, res) => {
   } catch (error) {
     console.error('Error en changePassword:', error)
     res.status(500).json({ message: 'Error al cambiar la contraseña.' })
+  }
+}
+
+const verifyResetCode = async (req, res) => {
+  try {
+    const { codigo } = req.body
+    const usuario = await Usuario.findOne({ where: { usuarioCC: codigo } })
+    if (!usuario) {
+      return res.status(400).json({ message: 'Código inválido o expirado.' })
+    }
+    res.json({ message: 'Código válido.' })
+  } catch (error) {
+    console.error('Error en verifyResetCode:', error)
+    res.status(500).json({ message: 'Error al verificar el código.' })
   }
 }
 

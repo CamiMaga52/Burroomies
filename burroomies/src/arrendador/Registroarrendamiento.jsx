@@ -8,18 +8,18 @@ import styles from './RegistroArrendamiento.module.css';
 const IconRegistro = () => (
   <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-    <line x1="19" y1="8" x2="19" y2="14"/>
-    <line x1="22" y1="11" x2="16" y2="11"/>
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+    <line x1="19" y1="8" x2="19" y2="14" />
+    <line x1="22" y1="11" x2="16" y2="11" />
   </svg>
 );
 
 const IconArrowLeft = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="11 17 6 12 11 7"/>
-    <polyline points="17 17 12 12 17 7"/>
+    <polyline points="11 17 6 12 11 7" />
+    <polyline points="17 17 12 12 17 7" />
   </svg>
 );
 
@@ -38,9 +38,9 @@ export default function RegistroArrendamiento({
   onCerrarSesion,
   onExito,
 }) {
-  const [form,      setForm]      = useState(FORM_INICIAL);
-  const [errores,   setErrores]   = useState({});
-  const [enviando,  setEnviando]  = useState(false);
+  const [form, setForm] = useState(FORM_INICIAL);
+  const [errores, setErrores] = useState({});
+  const [enviando, setEnviando] = useState(false);
   const [showExito, setShowExito] = useState(false);
 
   const setField = (key) => (e) => {
@@ -51,8 +51,8 @@ export default function RegistroArrendamiento({
   const validar = () => {
     const errs = {};
     if (!form.codigoArrendatario.trim()) errs.codigoArrendatario = 'Campo requerido';
-    if (!form.codigoPropiedad.trim())    errs.codigoPropiedad    = 'Campo requerido';
-    if (!form.fechaInicio)               errs.fechaInicio        = 'Campo requerido';
+    if (!form.codigoPropiedad.trim()) errs.codigoPropiedad = 'Campo requerido';
+    if (!form.fechaInicio) errs.fechaInicio = 'Campo requerido';
     if (!form.precioAcordado || isNaN(Number(form.precioAcordado)) || Number(form.precioAcordado) <= 0)
       errs.precioAcordado = 'Ingresa un precio válido';
     setErrores(errs);
@@ -71,17 +71,20 @@ export default function RegistroArrendamiento({
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          codigoArrendatario: form.codigoArrendatario,
-          idPropiedad:        form.codigoPropiedad,
-          fechaInicio:        form.fechaInicio,
-          precioAcordado:     Number(form.precioAcordado),
+          codigoEstudiante: form.codigoArrendatario,
+          codigoPropiedad: form.codigoPropiedad,
+          arrendamientoRenta: Number(form.precioAcordado),
+          arrendamientoDescrip: '',
         }),
       });
-      if (!res.ok) throw new Error('Error al registrar');
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Error al registrar');
+      }
       setShowExito(true);
     } catch (err) {
       console.error(err);
-      alert('No se pudo registrar el arrendamiento. Verifica los datos.');
+      alert(err.message || 'No se pudo registrar el arrendamiento. Verifica los datos.');
     } finally {
       setEnviando(false);
     }
@@ -196,11 +199,11 @@ export default function RegistroArrendamiento({
             <div className={`${s.modalIcon} ${s.modalIconVerde}`}>
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
                 stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
             <p className={s.modalTexto}>
-              ¡Arrendamiento registrado exitosamente!<br/>
+              ¡Arrendamiento registrado exitosamente!<br />
               El arrendatario ha sido vinculado a la propiedad.
             </p>
             <button

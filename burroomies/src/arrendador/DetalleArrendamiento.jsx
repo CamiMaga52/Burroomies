@@ -103,9 +103,9 @@ export default function DetalleArrendamiento({
     try {
       const token = localStorage.getItem('burroomies_token');
       const res = await fetch(
-        `http://localhost:3001/api/arrendamientos/${a.idArrendamiento}/finalizar`,
+        `http://localhost:3001/api/arrendamientos/${a.idArrendamiento}/terminar`,
         {
-          method: 'PATCH',
+          method: 'PUT',
           headers: { Authorization: `Bearer ${token}` },
         }
       );

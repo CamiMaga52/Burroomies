@@ -90,7 +90,8 @@ export default function PerfilArrendatario({
     setEnviando(true);
     try {
       const token = localStorage.getItem('burroomies_token');
-      let fotoBase64 = perfil?.fotoPerfil || null;
+      // Usar foto existente como fallback correcto
+      let fotoBase64 = perfil?.usuarioFoto || null;
       if (fotoFile) {
         fotoBase64 = await new Promise((res, rej) => {
           const r = new FileReader();
@@ -105,6 +106,11 @@ export default function PerfilArrendatario({
         body: JSON.stringify({ usuarioTel: telefono, usuarioFoto: fotoBase64 }),
       });
       if (!res.ok) throw new Error();
+      // Actualizar estado local para que persista sin recargar
+      setPerfil(prev => ({ ...prev, usuarioTel: telefono, usuarioFoto: fotoBase64 }));
+      setFotoFile(null);
+      // Notificar al Navbar para que actualice la foto
+      window.dispatchEvent(new Event("perfilActualizado"));
       setShowExito(true);
     } catch {
       alert('No se pudo guardar el perfil.');
@@ -242,6 +248,25 @@ export default function PerfilArrendatario({
                 placeholder="55 1234 5678"
                 value={telefono}
                 onChange={e => setTelefono(e.target.value)} />
+            </div>
+
+            {/* Código de arrendatario — solo lectura, para compartir con arrendador */}
+            <div className={styles.codigoBox}>
+              <span className={styles.codigoLabel}>Tu código de arrendatario</span>
+              <div className={styles.codigoValor}>
+                {perfil?.usuarioCodigo ? (
+                  <>
+                    <span className={styles.codigoBadge}>{perfil.usuarioCodigo}</span>
+                    <span className={styles.codigoHint}>
+                      Comparte este código con tu arrendador para registrar el arrendamiento
+                    </span>
+                  </>
+                ) : (
+                  <span className={styles.codigoHint}>
+                    Tu código aún no ha sido asignado. Contacta al administrador.
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className={styles.guardarRow}>

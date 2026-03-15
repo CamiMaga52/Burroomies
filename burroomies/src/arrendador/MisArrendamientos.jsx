@@ -40,12 +40,18 @@ export default function MisArrendamientos({
       try {
         setCargando(true); setError(null);
         const token = localStorage.getItem('burroomies_token');
-        const res = await fetch('http://localhost:3001/api/arrendamientos/arrendador', {
+        const res = await fetch('http://localhost:3001/api/arrendamientos/mis-arrendamientos', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error('Error al cargar');
-        const data = await res.json();
-        setArrendamientos(data);
+        const lista = await res.json();
+        // El backend ya devuelve la lista plana de arrendamientos
+        setArrendamientos(lista.map(a => ({
+          ...a,
+          fechaInicio: a.fechaInicio
+            ? new Date(a.fechaInicio).toLocaleDateString('es-MX')
+            : '—',
+        })));
       } catch (err) {
         console.error(err);
         setError('No se pudieron cargar los arrendamientos.');

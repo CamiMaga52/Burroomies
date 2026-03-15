@@ -10,6 +10,7 @@ export default function MisViviendas({
   onEditar,
   onMisViviendas,
   onMisArrendamientos,
+  onVerPerfil,
   onCerrarSesion,
 }) {
   const [propiedades,   setPropiedades]   = useState([]);
@@ -62,6 +63,7 @@ export default function MisViviendas({
     <ArrendadorLayout
       onMisViviendas={onMisViviendas}
       onMisArrendamientos={onMisArrendamientos}
+      onVerPerfil={onVerPerfil}
       onCerrarSesion={onCerrarSesion}
       showMisViviendas
       center={false}
@@ -149,6 +151,24 @@ export default function MisViviendas({
                   <p style={{ fontSize: '0.8rem', color: '#888', margin: '4px 0' }}>
                     {p.propiedadTipo} · {p.propiedadLugares ? `${p.propiedadLugares} lugares` : 'Privada'}
                   </p>
+                  {/* Código de propiedad */}
+                  {p.propiedadCodigo && (
+                    <p style={{
+                      fontSize: '0.78rem', margin: '4px 0 0',
+                      display: 'flex', alignItems: 'center', gap: 6,
+                    }}>
+                      <span style={{ color: '#8a7eaa', fontWeight: 600 }}>Código:</span>
+                      <span style={{
+                        background: 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(109,63,192,0.08))',
+                        border: '1px solid rgba(139,92,246,0.25)',
+                        color: '#6d3fc0', fontWeight: 800,
+                        padding: '2px 10px', borderRadius: 50,
+                        fontFamily: 'monospace', letterSpacing: '0.5px',
+                      }}>
+                        {p.propiedadCodigo}
+                      </span>
+                    </p>
+                  )}
                   <div className={s.propActions}>
                     <button type="button" className={s.btnEditar}
                       onClick={() => onEditar?.(p.idPropiedad)}>

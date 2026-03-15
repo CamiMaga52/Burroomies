@@ -1,5 +1,5 @@
 // src/arrendatario/ArrendatarioApp.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SinArrendamiento    from './miVivienda/Sinarrendamiento';
 import MiArrendamientoActual from './miVivienda/MiArrendamientoActual';
 import Propiedades         from './propiedades/Propiedades';
@@ -11,6 +11,24 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
   const [pantalla,  setPantalla]  = useState(tieneArrendamiento ? 'miArrendamiento' : 'sinArrendamiento');
   const [propSelec, setPropSelec] = useState(null);
   const [hayArr,    setHayArr]    = useState(tieneArrendamiento);
+
+  /* ── Verificar arrendamiento al montar (por si cambió desde el login) ── */
+  useEffect(() => {
+    const verificar = async () => {
+      try {
+        const token = localStorage.getItem('burroomies_token');
+        const res = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const tiene = res.ok;
+        setHayArr(tiene);
+        if (tiene && pantalla === 'sinArrendamiento') {
+          setPantalla('miArrendamiento');
+        }
+      } catch {}
+    };
+    verificar();
+  }, []);
 
   /* ── Navegación ── */
   const ir = (p) => () => setPantalla(p);
@@ -25,8 +43,24 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
     setPantalla('sinArrendamiento');
   };
 
-  const handleArrendamientoActual = () =>
-    setPantalla(hayArr ? 'miArrendamiento' : 'sinArrendamiento');
+  // Verifica en tiempo real si el arrendatario tiene arrendamiento
+  const handleArrendamientoActual = async () => {
+    try {
+      const token = localStorage.getItem('burroomies_token');
+      const res = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setHayArr(true);
+        setPantalla('miArrendamiento');
+      } else {
+        setHayArr(false);
+        setPantalla('sinArrendamiento');
+      }
+    } catch {
+      setPantalla(hayArr ? 'miArrendamiento' : 'sinArrendamiento');
+    }
+  };
 
   /* ── Props comunes del dropdown Navbar ── */
   const navbarDropdown = {

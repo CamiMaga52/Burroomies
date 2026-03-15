@@ -262,3 +262,33 @@
   .guardarRow { justify-content: center; }
   .container { padding: 20px 14px 40px; }
 }
+
+/* ── CÓDIGO DE ARRENDATARIO ── */
+.codigoBox {
+  margin-top: 16px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(109,63,192,0.04));
+  border: 1.5px solid rgba(139,92,246,0.2);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.codigoLabel {
+  font-size: 0.78rem; font-weight: 800;
+  color: var(--text-mid); text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.codigoValor {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.codigoBadge {
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  color: white; font-family: monospace;
+  font-size: 1.1rem; font-weight: 800;
+  padding: 6px 18px; border-radius: 50px;
+  letter-spacing: 1px;
+  box-shadow: 0 3px 10px rgba(139,92,246,0.3);
+}
+.codigoHint {
+  font-size: 0.8rem; color: var(--text-light);
+  font-weight: 500; line-height: 1.4; flex: 1;
+}

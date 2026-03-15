@@ -111,8 +111,19 @@ export default function AuthApp({ onLoginExitoso }) {
       localStorage.setItem('burroomies_user', JSON.stringify(data.usuario))
       localStorage.setItem('burroomies_rol', data.rol)
 
+      // Si es arrendatario, verificar si tiene arrendamiento activo
+      let tieneArrendamiento = false
+      if (data.rol === 'arrendatario') {
+        try {
+          const resArr = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
+            headers: { Authorization: `Bearer ${data.token}` }
+          })
+          tieneArrendamiento = resArr.ok // 200 = tiene arrendamiento, 404 = no tiene
+        } catch {}
+      }
+
       // Navegar según rol
-      onLoginExitoso?.({ rol: data.rol, tieneArrendamiento: false })
+      onLoginExitoso?.({ rol: data.rol, tieneArrendamiento })
 
     } catch (error) {
       alert('No se pudo conectar con el servidor.')

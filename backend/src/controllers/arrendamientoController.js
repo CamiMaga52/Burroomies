@@ -52,7 +52,13 @@ const getMiArrendamiento = async (req, res) => {
     }
 
     const arrendamiento = await Arrendamiento.findByPk(arrendatario.arrendamiento_idArrendamiento, {
-      include: [{ model: Propiedad }]
+      include: [{
+        model: Propiedad,
+        include: [{
+          model: Arrendador,
+          include: [{ model: Usuario, attributes: ['usuarioNom', 'usuarioApePat', 'usuarioTel', 'usuarioCorreo', 'usuarioFoto'] }]
+        }]
+      }]
     })
 
     res.json(arrendamiento)
@@ -68,12 +74,40 @@ const getMisArrendamientos = async (req, res) => {
     const arrendador = await Arrendador.findOne({ where: { usuario_idUsuario: req.user.idUsuario } })
     if (!arrendador) return res.status(404).json({ message: 'Arrendador no encontrado.' })
 
+    // Buscar propiedades del arrendador que tengan arrendamiento activo
     const propiedades = await Propiedad.findAll({
       where: { arrendador_idArrendador: arrendador.idArrendador },
-      include: [{ model: Arrendamiento, include: [{ model: Arrendatario, include: [{ model: Usuario }] }] }]
+      include: [{
+        model: Arrendamiento,
+        include: [{
+          model: Arrendatario,
+          include: [{ model: Usuario, attributes: ['usuarioNom', 'usuarioApePat', 'usuarioCorreo', 'usuarioTel'] }]
+        }]
+      }]
     })
 
-    res.json(propiedades)
+    // Aplanar: devolver solo los arrendamientos activos con info del arrendatario
+    const lista = []
+    propiedades.forEach(prop => {
+      const arr = prop.Arrendamiento // hasOne → singular
+      if (arr) {
+        const arrendatario = arr.Arrendatario
+        const usuario = arrendatario?.Usuario
+        lista.push({
+          idArrendamiento: arr.idArrendamiento,
+          propiedadTitulo: prop.propiedadTitulo,
+          idPropiedad: prop.idPropiedad,
+          arrendatarioNombre: usuario
+            ? `${usuario.usuarioNom} ${usuario.usuarioApePat}`
+            : `Arrendatario ${arrendatario?.idArrendatario || ''}`,
+          fechaInicio: arr.arrendamientoFechaInicio,
+          precioAcordado: arr.arrendamientoRenta || 0,
+          idArrendatario: arrendatario?.idArrendatario,
+        })
+      }
+    })
+
+    res.json(lista)
   } catch (error) {
     console.error('Error en getMisArrendamientos:', error)
     res.status(500).json({ message: 'Error al obtener los arrendamientos.' })

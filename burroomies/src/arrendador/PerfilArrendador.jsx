@@ -88,7 +88,7 @@ export default function PerfilArrendador({
     setEnviando(true);
     try {
       const token = localStorage.getItem('burroomies_token');
-      let fotoBase64 = perfil?.usuarioFoto || perfil?.fotoPerfil || null;
+      let fotoBase64 = perfil?.usuarioFoto || null;
       if (fotoFile) {
         fotoBase64 = await new Promise((res, rej) => {
           const r = new FileReader();
@@ -103,6 +103,11 @@ export default function PerfilArrendador({
         body: JSON.stringify({ usuarioTel: telefono, usuarioFoto: fotoBase64 }),
       });
       if (!res.ok) throw new Error();
+      // Actualizar estado local para que persista sin recargar
+      setPerfil(prev => ({ ...prev, usuarioTel: telefono, usuarioFoto: fotoBase64 }));
+      setFotoFile(null);
+      // Notificar al Navbar para que actualice la foto
+      window.dispatchEvent(new Event("perfilActualizado"));
       setShowExito(true);
     } catch {
       alert('No se pudo guardar el perfil.');
