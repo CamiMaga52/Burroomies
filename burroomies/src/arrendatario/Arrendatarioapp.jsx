@@ -11,24 +11,42 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
   const [pantalla,  setPantalla]  = useState(tieneArrendamiento ? 'miArrendamiento' : 'sinArrendamiento');
   const [propSelec, setPropSelec] = useState(null);
   const [hayArr,    setHayArr]    = useState(tieneArrendamiento);
+  const [idPropResena, setIdPropResena] = useState(null);
 
   /* ── Verificar arrendamiento al montar (por si cambió desde el login) ── */
   useEffect(() => {
     const verificar = async () => {
       try {
         const token = localStorage.getItem('burroomies_token');
+
+        // Verificar si hay reseña pendiente guardada
+        const resenaPendiente = localStorage.getItem('burroomies_resena_pendiente');
+
         const res = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const tiene = res.ok;
         setHayArr(tiene);
+
         if (tiene && pantalla === 'sinArrendamiento') {
           setPantalla('miArrendamiento');
+        }
+
+        // Si ya no tiene arrendamiento y hay reseña pendiente → ir a DejaReseña
+        if (!tiene && resenaPendiente) {
+          try {
+            const { idPropiedad } = JSON.parse(resenaPendiente);
+            setIdPropResena(idPropiedad);
+            localStorage.removeItem('burroomies_resena_pendiente');
+            setPantalla('dejaResena');
+          } catch {}
         }
       } catch {}
     };
     verificar();
-  }, []);
+    const interval = setInterval(verificar, 15000);
+    return () => clearInterval(interval);
+  }, [pantalla]);
 
   /* ── Navegación ── */
   const ir = (p) => () => setPantalla(p);
@@ -39,6 +57,7 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
   };
 
   const irASinArrendamiento = () => {
+    localStorage.removeItem('burroomies_resena_pendiente');
     setHayArr(false);
     setPantalla('sinArrendamiento');
   };
@@ -98,7 +117,7 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
 
       {pantalla === 'miArrendamiento' && (
         <MiArrendamientoActual
-          onFinalizar={ir('dejaResena')}
+          onFinalizar={(idPropiedad) => { setIdPropResena(idPropiedad); setPantalla('dejaResena'); }}
           onBuscar={ir('propiedades')}
           {...navbarDropdown}
         />
@@ -106,6 +125,7 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
 
       {pantalla === 'dejaResena' && (
         <DejaResena
+          idPropiedad={idPropResena}
           onPublicar={irASinArrendamiento}
           onCancel={irASinArrendamiento}
           {...navbarDropdown}

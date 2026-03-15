@@ -236,11 +236,11 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
             <div className={styles.divider} />
             <section className={styles.section}>
               <div className={styles.arrendadorCard}>
-                <div className={styles.arrendadorAvatar} style={{ overflow: 'hidden', padding: 0 }}>
+                <div className={styles.arrendadorAvatar} style={{ overflow:'hidden', padding:0 }}>
                   {usuario.usuarioFoto
                     ? <img src={usuario.usuarioFoto} alt={usuario.usuarioNom}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                    : <span style={{ fontSize: '1.6rem', fontWeight: 800, color: 'white' }}>
+                        style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                    : <span style={{ fontSize:'1.6rem', fontWeight:800, color:'white' }}>
                         {usuario.usuarioNom?.charAt(0) || 'A'}
                       </span>
                   }
@@ -291,27 +291,44 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
                 ))}
               </div>
               <div className={styles.resenasGrid}>
-                {resenasFiltradas.map((r, i) => (
-                  <div key={i} className={styles.resenaCard}>
-                    <div className={styles.resenaHeader}>
-                      <div className={styles.resenaAvatar}><IconUser /></div>
-                      <div>
-                        <div className={styles.resenaAutor}>Estudiante</div>
-                        <div className={styles.resenaFecha}>
-                          {r.createdAt ? new Date(r.createdAt).toLocaleDateString('es-MX') : ''}
+                {resenasFiltradas.map((r, i) => {
+                  const usuarioR = r.Arrendatario?.Usuario;
+                  const nombreR  = usuarioR
+                    ? `${usuarioR.usuarioNom} ${usuarioR.usuarioApePat}`
+                    : 'Estudiante';
+                  const fotoR    = usuarioR?.usuarioFoto || null;
+                  const fechaR   = r.resenaFechaCreacion || r.createdAt;
+                  const cal      = parseFloat(r.resenaCalGen || 0);
+
+                  return (
+                    <div key={i} className={styles.resenaCard}>
+                      <div className={styles.resenaHeader}>
+                        <div className={styles.resenaAvatar} style={{ overflow:'hidden', padding:0 }}>
+                          {fotoR
+                            ? <img src={fotoR} alt={nombreR}
+                                style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                            : <IconUser />
+                          }
+                        </div>
+                        <div>
+                          <div className={styles.resenaAutor}>{nombreR}</div>
+                          <div className={styles.resenaFecha}>
+                            {fechaR ? new Date(fechaR).toLocaleDateString('es-MX') : ''}
+                          </div>
+                        </div>
+                        {/* Estrellas en lugar de corazones */}
+                        <div className={styles.resenaStars} style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:2 }}>
+                          {[1,2,3,4,5].map(j => (
+                            <span key={j} style={{ color: j <= Math.round(cal) ? '#f59e0b' : '#ddd', fontSize:'0.95rem' }}>★</span>
+                          ))}
                         </div>
                       </div>
-                      <div className={styles.resenaCorazones}>
-                        <IconHeart filled={true} />
-                        <span className={styles.resenaCorazonNum}>{r.resenaCalGen}</span>
-                        <span className={styles.resenaCorazonLabel}>Calificación</span>
-                      </div>
+                      <p className={styles.resenaTexto}>
+                        {r.resenaDescrip || r.resenaComentario || 'Sin comentario.'}
+                      </p>
                     </div>
-                    <p className={styles.resenaTexto}>
-                      {r.resenaComentario || 'Sin comentario.'}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </>
           )}

@@ -50,17 +50,34 @@ export default function MiArrendamientoActual({
     cargar();
   }, []);
 
+  const [esperandoArrendador, setEsperandoArrendador] = useState(false);
+
   /* ── Finalizar ── */
   const handleConfirmarFinalizar = async () => {
     finalizarModal.close();
     try {
       const token = localStorage.getItem('burroomies_token');
-      await fetch(
+      const res = await fetch(
         `http://localhost:3001/api/arrendamientos/${arrendamiento.idArrendamiento}/terminar`,
         { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }
       );
-    } catch {}
-    onFinalizar?.();
+      if (res.ok) {
+        const data = await res.json();
+        const idPropiedad = propiedad?.idPropiedad || arrendamiento?.propiedad_idPropiedad;
+        // Guardar reseña pendiente en localStorage por si el usuario cierra sesión
+        localStorage.setItem('burroomies_resena_pendiente', JSON.stringify({ idPropiedad }));
+        // Si ambos confirmaron → ir a DejaReseña
+        if (data.message?.includes('terminado correctamente')) {
+          localStorage.removeItem('burroomies_resena_pendiente');
+          onFinalizar?.(idPropiedad);
+        } else {
+          // Solo el arrendatario confirmó → esperar al arrendador
+          setEsperandoArrendador(true);
+        }
+      }
+    } catch {
+      setEsperandoArrendador(true);
+    }
   };
 
   /* ── Datos mapeados ── */
@@ -118,7 +135,18 @@ export default function MiArrendamientoActual({
           </div>
         )}
 
-        {!cargando && !error && arrendamiento && (
+        {!cargando && !error && arrendamiento && esperandoArrendador && (
+          <div className={styles.sinArrendamiento}>
+            <div style={{ fontSize: '3rem' }}>⏳</div>
+            <p className={styles.sinArrTitulo}>Confirmación registrada</p>
+            <p className={styles.sinArrSub}>
+              Tu solicitud de finalización fue enviada.<br/>
+              Cuando el arrendador confirme, podrás dejar tu reseña.
+            </p>
+          </div>
+        )}
+
+        {!cargando && !error && arrendamiento && !esperandoArrendador && (
           <>
             <section className={styles.mainCard}>
               <div className={styles.propiedadImgBanner}

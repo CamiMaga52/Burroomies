@@ -1,4 +1,4 @@
-const { Resena, Arrendatario, Propiedad, Usuario } = require('../models')
+const { Resena, Arrendatario, Arrendamiento, Propiedad, Usuario } = require('../models')
 
 // ── Obtener reseñas de una propiedad ─────────────────────────────
 const getResenasByPropiedad = async (req, res) => {

@@ -1,4 +1,4 @@
-const { Propiedad, Arrendador, Usuario, Resena } = require('../models')
+const { Propiedad, Arrendador, Arrendatario, Usuario, Resena } = require('../models')
 const { Op } = require('sequelize')
 
 // Códigos postales autorizados (colindantes a UPALM)
@@ -48,7 +48,13 @@ const getPropiedadById = async (req, res) => {
           model: Arrendador,
           include: [{ model: Usuario, attributes: ['usuarioNom', 'usuarioApePat', 'usuarioTel', 'usuarioCorreo', 'usuarioFoto'] }]
         },
-        { model: Resena }
+        {
+          model: Resena,
+          include: [{
+            model: Arrendatario,
+            include: [{ model: Usuario, attributes: ['usuarioNom', 'usuarioApePat', 'usuarioFoto'] }]
+          }]
+        }
       ]
     })
 
