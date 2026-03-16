@@ -14,17 +14,6 @@ import styles from './Navbar.module.css';
 import burroLogo from '../../img/burroLogo.png';
 import { IconUser, IconLogout, IconSearch } from '../icons';
 
-/**
- * Props:
- *  - showMiVivienda        (bool) — muestra botón "Mi vivienda" en navbar
- *  - showBuscar            (bool) — muestra botón "Buscar vivienda" en navbar
- *  - onMiVivienda          (fn)
- *  - onBuscar              (fn)
- *  - onCerrarSesion        (fn)
- *  - onVerPerfil           (fn)   — navega al perfil
- *  - onArrendamientoActual (fn)   — navega a MiArrendamientoActual o SinArrendamiento
- *  - tieneArrendamiento    (bool) — cambia el label del item en el dropdown
- */
 export default function Navbar({
   showMiVivienda        = false,
   showBuscar            = false,
@@ -34,9 +23,33 @@ export default function Navbar({
   onVerPerfil,
   onArrendamientoActual,
   tieneArrendamiento    = false,
+  onMisArrendamientos,
+  showMisArrendamientos = false,
 }) {
-  const [open, setOpen] = useState(false);
+  const [open,      setOpen]      = useState(false);
+  const [fotoPerfil, setFotoPerfil] = useState(null);
   const ref = useRef(null);
+
+  // Cargar foto de perfil del usuario autenticado
+  useEffect(() => {
+    const cargarFoto = async () => {
+      try {
+        const token = localStorage.getItem('burroomies_token');
+        if (!token) return;
+        const res = await fetch('http://localhost:3001/api/auth/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.usuarioFoto) setFotoPerfil(data.usuarioFoto);
+        else setFotoPerfil(null);
+      } catch {}
+    };
+    cargarFoto();
+    // Escuchar evento cuando el perfil se actualiza
+    window.addEventListener('perfilActualizado', cargarFoto);
+    return () => window.removeEventListener('perfilActualizado', cargarFoto);
+  }, []);
 
   // Cierra el dropdown al hacer clic fuera
   useEffect(() => {
@@ -82,7 +95,11 @@ export default function Navbar({
             aria-label="Menú de usuario"
             aria-expanded={open}
           >
-            <IconUser />
+            {fotoPerfil
+              ? <img src={fotoPerfil} alt="Perfil"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+              : <IconUser />
+            }
           </button>
 
           {open && (
@@ -114,6 +131,22 @@ export default function Navbar({
               </button>
 
               <div className={styles.dropdownDivider} />
+
+              {/* Registrar arrendamiento (solo para arrendador) */}
+              {showMisArrendamientos && (
+                <>
+                  <button
+                    type="button"
+                    className={styles.dropdownItem}
+                    role="menuitem"
+                    onClick={() => pick(onMisArrendamientos)}
+                  >
+                    <span className={styles.dropdownItemIcon}>📋</span>
+                    Registrar arrendamiento
+                  </button>
+                  <div className={styles.dropdownDivider} />
+                </>
+              )}
 
               {/* Cerrar sesión */}
               <button

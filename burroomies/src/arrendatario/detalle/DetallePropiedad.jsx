@@ -1,35 +1,99 @@
 // src/arrendatario/detalle/DetallePropiedad.jsx
-// CAMBIO: recibe props onAtras, onMiVivienda, onCerrarSesion
-//         El botón "Atrás" ahora llama a onAtras()
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./DetallePropiedad.module.css";
-import { PROPIEDAD_DETALLE, RESENAS } from "./detallePropiedadData";
-
 import Navbar from "../../shared/components/Navbar";
 import Footer from "../../shared/components/Footer";
-
 import {
-  IconArrow,
-  IconLocation,
-  IconPhone,
-  IconMail,
-  IconUser,
-  IconCamera,
-  IconHeart,
+  IconArrow, IconLocation, IconPhone,
+  IconMail, IconUser, IconCamera, IconHeart,
 } from "../../shared/icons";
 
 export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onCerrarSesion }) {
-  const [tabResena, setTabResena] = useState("todas");
+  const [detalle,    setDetalle]    = useState(null);
+  const [cargando,   setCargando]   = useState(true);
+  const [fotoActiva, setFotoActiva] = useState(0);
+  const [lightbox,   setLightbox]   = useState(null); // índice o null = cerrado
+  const [tabResena,  setTabResena]  = useState("todas");
 
-  // Usa los datos recibidos por prop o los datos de prueba como fallback
-  const p = propiedad || PROPIEDAD_DETALLE;
+  // ── Cargar detalle completo del backend ──────────────────────────
+  useEffect(() => {
+    if (!propiedad?.idPropiedad) { setCargando(false); return; }
+    const cargar = async () => {
+      try {
+        const res  = await fetch(`http://localhost:3001/api/propiedades/${propiedad.idPropiedad}`)
+        const data = await res.json()
+        setDetalle(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setCargando(false)
+      }
+    }
+    cargar()
+  }, [propiedad])
+
+  // ── Navegar con teclado en lightbox ─────────────────────────────
+  useEffect(() => {
+    if (lightbox === null) return;
+    const handler = (e) => {
+      if (e.key === 'ArrowRight') setLightbox(i => (i + 1) % fotos.length);
+      if (e.key === 'ArrowLeft')  setLightbox(i => (i - 1 + fotos.length) % fotos.length);
+      if (e.key === 'Escape')     setLightbox(null);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [lightbox]); // eslint-disable-line
+  const parsearFotos = (p) => {
+    if (!p?.propiedadFotos) return []
+    try { return JSON.parse(p.propiedadFotos) }
+    catch { return [] }
+  }
+
+  // ── Parsear servicios ────────────────────────────────────────────
+  const parsearServicios = (str) =>
+    str ? str.split(',').map(s => s.trim()).filter(Boolean) : []
+
+  // ── Calcular promedio ────────────────────────────────────────────
+  const calcularPromedio = (resenas) => {
+    if (!resenas?.length) return '0.0'
+    const sum = resenas.reduce((acc, r) => acc + parseFloat(r.resenaCalGen || 0), 0)
+    return (sum / resenas.length).toFixed(1)
+  }
+
+  if (cargando) return (
+    <div className={styles.page}>
+      <Navbar showMiVivienda={!!onMiVivienda} onMiVivienda={onMiVivienda} onCerrarSesion={onCerrarSesion} />
+      <div className={styles.container} style={{ textAlign:'center', paddingTop:80 }}>
+        <p style={{ color:'#6d3fc0', fontSize:'1.1rem' }}>Cargando propiedad...</p>
+      </div>
+      <Footer />
+    </div>
+  )
+
+  const p           = detalle || propiedad
+  const fotos       = parsearFotos(p)
+  const resenas     = detalle?.Resenas || []
+  const calPromedio = calcularPromedio(resenas)
+
+  const iconosServicios = {
+    'Agua':'💧','Luz':'💡','Gas':'🔥','Internet':'📶','TV por cable':'📺',
+    'Amueblada':'🛋️','Estacionamiento':'🚗','Gimnasio o alberca':'🏊',
+    'Mantenimiento y limpieza':'🧹','Seguridad':'🔒','Elevador':'🛗',
+  }
+
+  const todosServicios = [
+    ...parsearServicios(p?.propiedadSerBasicos),
+    ...parsearServicios(p?.propiedadSerComEnt),
+    ...parsearServicios(p?.propiedadSerAdicio),
+  ].map(nombre => ({ nombre, icon: iconosServicios[nombre] || '✅' }))
+
+  const arrendador = detalle?.Arrendador
+  const usuario    = arrendador?.Usuario
 
   const resenasFiltradas =
-    tabResena === "todas"       ? RESENAS
-    : tabResena === "recientes" ? [...RESENAS].sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
-    : tabResena === "antiguas"  ? [...RESENAS].sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
-    : tabResena === "mejores"   ? [...RESENAS].sort((a, b) => b.corazones - a.corazones)
-    :                             [...RESENAS].sort((a, b) => a.corazones - b.corazones);
+    tabResena === "recientes" ? [...resenas].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+    : tabResena === "antiguas" ? [...resenas].sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt))
+    : resenas
 
   return (
     <div className={styles.page}>
@@ -42,180 +106,344 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
 
       <div className={styles.container}>
 
-        {/* ↓ CONECTADO: regresa a la lista de propiedades */}
         <button className={styles.btnBack} onClick={onAtras}>
           <IconArrow /> Atrás
         </button>
 
-        {/* Galería */}
+        {/* ── Galería ── */}
         <div className={styles.gallery}>
           <div className={styles.galleryMain}>
-            <div className={styles.imgPlaceholderMain}><IconCamera /></div>
+            {fotos.length > 0 ? (
+              <img src={fotos[fotoActiva]} alt={`Foto ${fotoActiva + 1}`}
+                onClick={() => setLightbox(fotoActiva)}
+                style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:12, cursor:'zoom-in' }} />
+            ) : (
+              <div className={styles.imgPlaceholderMain}><IconCamera /></div>
+            )}
           </div>
+
           <div className={styles.galleryGrid}>
-            {[1, 2, 3].map(i => (
-              <div key={i} className={styles.imgPlaceholderThumb}><IconCamera /></div>
-            ))}
-            <button className={styles.btnVerFotos}>Ver todas las fotos</button>
+            {fotos.length > 0 ? (
+              <>
+                {fotos.slice(0, 3).map((foto, i) => (
+                  <div key={i} className={styles.imgPlaceholderThumb}
+                    style={{
+                      cursor:'pointer', padding:0, overflow:'hidden',
+                      border: fotoActiva === i ? '3px solid #8B5CF6' : '3px solid transparent',
+                      borderRadius:8,
+                    }}
+                    onClick={() => { setFotoActiva(i); setLightbox(i); }}
+                  >
+                    <img src={foto} alt={`Miniatura ${i+1}`}
+                      style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  </div>
+                ))}
+                {fotos.length > 3 ? (
+                  <button className={styles.btnVerFotos}
+                    onClick={() => setFotoActiva((fotoActiva + 1) % fotos.length)}>
+                    +{fotos.length - 3} fotos más
+                  </button>
+                ) : (
+                  <button className={styles.btnVerFotos} style={{ opacity:0.5, cursor:'default' }}>
+                    {fotos.length} foto{fotos.length !== 1 ? 's' : ''}
+                  </button>
+                )}
+              </>
+            ) : (
+              <>
+                {[1,2,3].map(i => (
+                  <div key={i} className={styles.imgPlaceholderThumb}><IconCamera /></div>
+                ))}
+                <button className={styles.btnVerFotos}>Sin fotos</button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Encabezado */}
+        {/* ── Encabezado ── */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
-            <h1 className={styles.titulo}>{p.titulo}</h1>
+            <h1 className={styles.titulo}>{p?.propiedadTitulo || 'Sin título'}</h1>
             <div className={styles.subtitulo}>
-              <span className={`${styles.badge} ${styles.badgeComp}`}>{p.ocupacion}</span>
-              <span className={styles.lugares}>lugares {p.lugaresDisp}/{p.lugaresTotales}</span>
-            </div>
-
-            <div className={styles.corazonesTotales}>
-              <IconHeart filled={true} />
-              <span className={styles.corazonesTotalesNum}>
-                {RESENAS.reduce((sum, r) => sum + r.corazones, 0)}
-              </span>
-              <span className={styles.corazonesTotalesLabel}>Me encanta</span>
+              <span className={`${styles.badge} ${styles.badgeComp}`}>{p?.propiedadTipo}</span>
+              {p?.propiedadLugares && (
+                <span className={styles.lugares}>{p.propiedadLugares} lugares disponibles</span>
+              )}
             </div>
 
             <div className={styles.calGeneral}>
               <div className={styles.stars}>
                 {[1,2,3,4,5].map(i => (
-                  <span key={i} className={i <= Math.round(p.calificacion) ? styles.starF : styles.starE}>★</span>
+                  <span key={i} className={i <= Math.round(calPromedio) ? styles.starF : styles.starE}>★</span>
                 ))}
               </div>
-              <span className={styles.calNum}>Calificación general {p.calificacion}</span>
-              <span className={styles.calCount}>({p.numResenas})</span>
+              <span className={styles.calNum}>Calificación general {calPromedio}</span>
+              <span className={styles.calCount}>({resenas.length} reseñas)</span>
             </div>
 
             <div className={styles.ubicacion}>
               <IconLocation />
               <div>
-                <div>{p.calle}, Interior {p.interior}</div>
-                <div>Colonia {p.colonia}</div>
-                <div>{p.alcaldia}, C.P. {p.cp}</div>
+                {p?.propiedadCalle && (
+                  <div>{p.propiedadCalle} {p?.propiedadNumExt || ''}</div>
+                )}
+                {p?.propiedadColonia && <div>Colonia {p.propiedadColonia}</div>}
+                <div>{[p?.propiedadMunicipio, p?.propiedadEstado].filter(Boolean).join(', ')}</div>
               </div>
             </div>
           </div>
 
           <div className={styles.precioCard}>
             <div className={styles.precioLabel}>Precio</div>
-            <div className={styles.precioMonto}>${p.precio.toLocaleString()} MXN</div>
+            <div className={styles.precioMonto}>
+              ${parseInt(p?.propiedadPrecio || 0).toLocaleString()} MXN
+            </div>
             <div className={styles.precioPorPersona}>por persona / mes</div>
           </div>
         </div>
 
         <div className={styles.divider} />
 
-        {/* Descripción */}
+        {/* ── Descripción ── */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Descripción</h2>
-          <p className={styles.descripcion}>{p.descripcion}</p>
+          <p className={styles.descripcion}>
+            {p?.propiedadDescripcion || 'Sin descripción disponible.'}
+          </p>
         </section>
 
-        <div className={styles.divider} />
-
-        {/* Servicios */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Servicios que incluye</h2>
-          <div className={styles.serviciosGrid}>
-            {p.servicios.map((s, i) => (
-              <div key={i} className={styles.servicioItem}>
-                <span className={styles.servicioIcon}>{s.icon}</span>
-                <span className={styles.servicioNombre}>{s.nombre}</span>
+        {/* ── Servicios ── */}
+        {todosServicios.length > 0 && (
+          <>
+            <div className={styles.divider} />
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Servicios que incluye</h2>
+              <div className={styles.serviciosGrid}>
+                {todosServicios.map((sv, i) => (
+                  <div key={i} className={styles.servicioItem}>
+                    <span className={styles.servicioIcon}>{sv.icon}</span>
+                    <span className={styles.servicioNombre}>{sv.nombre}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
+          </>
+        )}
 
-        <div className={styles.divider} />
-
-        {/* Arrendador */}
-        <section className={styles.section}>
-          <div className={styles.arrendadorCard}>
-            <div className={styles.arrendadorAvatar}>{p.arrendador.nombre.charAt(0)}</div>
-            <div className={styles.arrendadorInfo}>
-              <div className={styles.arrendadorLabel}>Arrendador</div>
-              <div className={styles.arrendadorNombre}>{p.arrendador.nombre}</div>
-              <div className={styles.arrendadorExp}>{p.arrendador.experiencia} años de experiencia</div>
-            </div>
-            <div className={styles.arrendadorContacto}>
-              <div className={styles.contactoLabel}>Información de contacto:</div>
-              <div className={styles.contactoItem}><IconPhone /><span>{p.arrendador.telefono}</span></div>
-              <div className={styles.contactoItem}><IconMail /><span>{p.arrendador.correo}</span></div>
-            </div>
-          </div>
-        </section>
-
-        <div className={styles.divider} />
-
-        {/* Calificaciones por categoría */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Calificaciones</h2>
-          <div className={styles.calGrid}>
-            {p.calificaciones.map((c, i) => (
-              <div key={i} className={styles.calItem}>
-                <span className={styles.calItemIcon}>{c.icon}</span>
-                <div className={styles.calItemStars}>
-                  {[1,2,3,4,5].map(j => (
-                    <span key={j} className={j <= Math.round(c.valor) ? styles.starF : styles.starE}>★</span>
-                  ))}
+        {/* ── Arrendador ── */}
+        {usuario && (
+          <>
+            <div className={styles.divider} />
+            <section className={styles.section}>
+              <div className={styles.arrendadorCard}>
+                <div className={styles.arrendadorAvatar} style={{ overflow:'hidden', padding:0 }}>
+                  {usuario.usuarioFoto
+                    ? <img src={usuario.usuarioFoto} alt={usuario.usuarioNom}
+                        style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                    : <span style={{ fontSize:'1.6rem', fontWeight:800, color:'white' }}>
+                        {usuario.usuarioNom?.charAt(0) || 'A'}
+                      </span>
+                  }
                 </div>
-                <div className={styles.calItemNombre}>{c.nombre}</div>
-                <div className={styles.calItemValor}>{c.valor}</div>
+                <div className={styles.arrendadorInfo}>
+                  <div className={styles.arrendadorLabel}>Arrendador</div>
+                  <div className={styles.arrendadorNombre}>
+                    {usuario.usuarioNom} {usuario.usuarioApePat}
+                  </div>
+                </div>
+                <div className={styles.arrendadorContacto}>
+                  <div className={styles.contactoLabel}>Información de contacto:</div>
+                  {usuario.usuarioTel && (
+                    <div className={styles.contactoItem}>
+                      <IconPhone /><span>{usuario.usuarioTel}</span>
+                    </div>
+                  )}
+                  {usuario.usuarioCorreo && (
+                    <div className={styles.contactoItem}>
+                      <IconMail /><span>{usuario.usuarioCorreo}</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
+          </>
+        )}
 
         <div className={styles.divider} />
 
-        {/* Reseñas */}
+        {/* ── Reseñas ── */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Reseñas</h2>
-          <div className={styles.tabs}>
-            {[
-              ["todas",     "Todas"],
-              ["recientes", "Más recientes"],
-              ["antiguas",  "Más antiguas"],
-              ["mejores",   "Más me encanta"],
-              ["peores",    "Menos me encanta"],
-            ].map(([val, label]) => (
-              <button
-                key={val}
-                className={`${styles.tab} ${tabResena === val ? styles.tabActive : ""}`}
-                onClick={() => setTabResena(val)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
 
-          <div className={styles.resenasGrid}>
-            {resenasFiltradas.map((r, i) => (
-              <div key={i} className={styles.resenaCard}>
-                <div className={styles.resenaHeader}>
-                  <div className={styles.resenaAvatar}><IconUser /></div>
-                  <div>
-                    <div className={styles.resenaAutor}>{r.autor}</div>
-                    <div className={styles.resenaFecha}>Ingresó {r.fecha}</div>
-                  </div>
-                  <div className={styles.resenaCorazones}>
-                    <IconHeart filled={true} />
-                    <span className={styles.resenaCorazonNum}>{r.corazones}</span>
-                    <span className={styles.resenaCorazonLabel}>Me encanta</span>
-                  </div>
-                </div>
-                <div className={styles.resenaAutorNombre}>{r.nombreCompleto}</div>
-                <p className={styles.resenaTexto}>{r.texto}</p>
-                <div className={styles.resenaDuracion}>Duración: <strong>{r.duracion}</strong></div>
+          {resenas.length === 0 ? (
+            <p style={{ color:'#888', fontStyle:'italic' }}>
+              Esta propiedad aún no tiene reseñas.
+            </p>
+          ) : (
+            <>
+              <div className={styles.tabs}>
+                {[["todas","Todas"],["recientes","Más recientes"],["antiguas","Más antiguas"]].map(([val, label]) => (
+                  <button key={val}
+                    className={`${styles.tab} ${tabResena === val ? styles.tabActive : ""}`}
+                    onClick={() => setTabResena(val)}>
+                    {label}
+                  </button>
+                ))}
               </div>
-            ))}
-          </div>
+              <div className={styles.resenasGrid}>
+                {resenasFiltradas.map((r, i) => {
+                  const usuarioR = r.Arrendatario?.Usuario;
+                  const nombreR  = usuarioR
+                    ? `${usuarioR.usuarioNom} ${usuarioR.usuarioApePat}`
+                    : 'Estudiante';
+                  const fotoR    = usuarioR?.usuarioFoto || null;
+                  const fechaR   = r.resenaFechaCreacion || r.createdAt;
+                  const cal      = parseFloat(r.resenaCalGen || 0);
+
+                  return (
+                    <div key={i} className={styles.resenaCard}>
+                      <div className={styles.resenaHeader}>
+                        <div className={styles.resenaAvatar} style={{ overflow:'hidden', padding:0 }}>
+                          {fotoR
+                            ? <img src={fotoR} alt={nombreR}
+                                style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                            : <IconUser />
+                          }
+                        </div>
+                        <div>
+                          <div className={styles.resenaAutor}>{nombreR}</div>
+                          <div className={styles.resenaFecha}>
+                            {fechaR ? new Date(fechaR).toLocaleDateString('es-MX') : ''}
+                          </div>
+                        </div>
+                        {/* Estrellas en lugar de corazones */}
+                        <div className={styles.resenaStars} style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:2 }}>
+                          {[1,2,3,4,5].map(j => (
+                            <span key={j} style={{ color: j <= Math.round(cal) ? '#f59e0b' : '#ddd', fontSize:'0.95rem' }}>★</span>
+                          ))}
+                        </div>
+                      </div>
+                      <p className={styles.resenaTexto}>
+                        {r.resenaDescrip || r.resenaComentario || 'Sin comentario.'}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </section>
 
       </div>
 
       <Footer />
+
+      {/* ── LIGHTBOX ── */}
+      {lightbox !== null && fotos.length > 0 && (
+        <div
+          onClick={() => setLightbox(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: 'rgba(0,0,0,0.92)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            animation: 'fadeIn 0.18s ease',
+          }}
+        >
+          {/* Cerrar */}
+          <button
+            onClick={() => setLightbox(null)}
+            style={{
+              position: 'absolute', top: 20, right: 24,
+              background: 'rgba(255,255,255,0.15)', border: 'none',
+              borderRadius: '50%', width: 40, height: 40,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: 'white', fontSize: '1.2rem',
+              transition: 'background 0.2s',
+            }}
+          >✕</button>
+
+          {/* Contador */}
+          <div style={{
+            position: 'absolute', top: 24, left: '50%', transform: 'translateX(-50%)',
+            color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontWeight: 600,
+          }}>
+            {lightbox + 1} / {fotos.length}
+          </div>
+
+          {/* Flecha izquierda */}
+          {fotos.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightbox(i => (i - 1 + fotos.length) % fotos.length); }}
+              style={{
+                position: 'absolute', left: 20,
+                background: 'rgba(255,255,255,0.15)', border: 'none',
+                borderRadius: '50%', width: 48, height: 48,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', color: 'white', fontSize: '1.4rem',
+                transition: 'background 0.2s',
+              }}
+            >‹</button>
+          )}
+
+          {/* Imagen principal */}
+          <img
+            src={fotos[lightbox]}
+            alt={`Foto ${lightbox + 1}`}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '88vw', maxHeight: '85vh',
+              objectFit: 'contain', borderRadius: 12,
+              boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
+              animation: 'scaleIn 0.2s ease',
+            }}
+          />
+
+          {/* Flecha derecha */}
+          {fotos.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightbox(i => (i + 1) % fotos.length); }}
+              style={{
+                position: 'absolute', right: 20,
+                background: 'rgba(255,255,255,0.15)', border: 'none',
+                borderRadius: '50%', width: 48, height: 48,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', color: 'white', fontSize: '1.4rem',
+                transition: 'background 0.2s',
+              }}
+            >›</button>
+          )}
+
+          {/* Miniaturas abajo */}
+          {fotos.length > 1 && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'absolute', bottom: 20,
+                display: 'flex', gap: 8,
+                maxWidth: '90vw', overflowX: 'auto', padding: '4px 8px',
+              }}
+            >
+              {fotos.map((foto, i) => (
+                <img
+                  key={i}
+                  src={foto}
+                  alt={`Miniatura ${i + 1}`}
+                  onClick={() => setLightbox(i)}
+                  style={{
+                    width: 60, height: 60, objectFit: 'cover',
+                    borderRadius: 8, cursor: 'pointer', flexShrink: 0,
+                    border: lightbox === i ? '3px solid #8B5CF6' : '3px solid rgba(255,255,255,0.3)',
+                    opacity: lightbox === i ? 1 : 0.6,
+                    transition: 'all 0.15s',
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+        </div>
+      )}
+
     </div>
   );
 }

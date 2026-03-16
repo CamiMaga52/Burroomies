@@ -1,18 +1,21 @@
 // src/arrendador/InicioArrendador.jsx
-// Pantalla de bienvenida del arrendador cuando no tiene propiedades.
-// Props:
-//   onAgregarVivienda: fn
-//   onMisViviendas:    fn
-//   onCerrarSesion:    fn
 import ArrendadorLayout from './ArrendadorLayout';
 import burroLentes from '../img/burroLentes1.png';
 import s from './arrendador.module.css';
 import styles from './InicioArrendador.module.css';
 
-export default function InicioArrendador({ onAgregarVivienda, onMisViviendas, onCerrarSesion }) {
+export default function InicioArrendador({
+  onAgregarVivienda,
+  onMisViviendas,
+  onMisArrendamientos,
+  onVerPerfil,
+  onCerrarSesion,
+}) {
   return (
     <ArrendadorLayout
       onMisViviendas={onMisViviendas}
+      onMisArrendamientos={onMisArrendamientos}
+      onVerPerfil={onVerPerfil}
       onCerrarSesion={onCerrarSesion}
       showMisViviendas={false}
     >

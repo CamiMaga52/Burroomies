@@ -7,3 +7,13 @@
   .btnRow { flex-direction: column; align-items: center; }
   .btnSig { max-width: 100%; }
 }
+/* ── Zona de carga ── */
+.uploadZone {
+  border: 2px dashed var(--purple-mid);
+  border-radius: 16px;
+  padding: 28px 20px;
+  background: rgba(139,92,246,0.04);
+  transition: border-color 0.2s, background 0.2s;
+  margin-top: 16px;
+}
+.uploadZone:hover { border-color: var(--purple-main); background: rgba(139,92,246,0.07); }

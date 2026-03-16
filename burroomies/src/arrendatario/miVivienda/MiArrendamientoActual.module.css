@@ -398,3 +398,36 @@
   .footerLinks     { flex-direction: column; gap: 8px; align-items: center; }
   .btnNav          { padding: 7px 12px; font-size: 0.8rem; }
 }
+/* ── SIN ARRENDAMIENTO ── */
+.sinArrendamiento {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 14px;
+  padding: 52px 24px; text-align: center;
+}
+.burroTriste {
+  width: 180px; height: 180px; object-fit: contain;
+  filter: drop-shadow(0 6px 16px rgba(110,80,180,0.15));
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.sinArrTitulo {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--text-dark); margin: 0;
+}
+.sinArrSub {
+  font-size: 0.88rem; color: var(--text-light);
+  font-weight: 600; margin: 0; line-height: 1.6;
+}
+.btnBuscar {
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  color: white; border: none; border-radius: 50px;
+  padding: 11px 32px; font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.3); transition: all 0.22s;
+  margin-top: 8px;
+}
+.btnBuscar:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(139,92,246,0.4); }

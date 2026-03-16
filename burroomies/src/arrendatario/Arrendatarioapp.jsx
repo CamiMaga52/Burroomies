@@ -1,93 +1,99 @@
 // src/arrendatario/ArrendatarioApp.jsx
-// Controlador de navegación para todas las pantallas del arrendatario.
-//
-// Flujo:
-//   SinArrendamiento ──(buscar)──► Propiedades ──(ver)──► DetallePropiedad
-//   MiArrendamientoActual ──(finalizar)──► DejaResena ──(publicar)──► SinArrendamiento
-//
-//   Dropdown Navbar (ícono usuario):
-//     · Ver perfil           → onVerPerfil
-//     · Arrendamiento actual → MiArrendamientoActual (si tiene) | SinArrendamiento (si no)
-//     · Cerrar sesión        → onCerrarSesion
-//
-// Props:
-//   tieneArrendamiento: bool
-//   onCerrarSesion:     fn
-//   onVerPerfil:        fn
-
-import { useState } from 'react';
-import SinArrendamiento      from './miVivienda/Sinarrendamiento';
+import { useState, useEffect } from 'react';
+import SinArrendamiento    from './miVivienda/Sinarrendamiento';
 import MiArrendamientoActual from './miVivienda/MiArrendamientoActual';
-import Propiedades           from './propiedades/Propiedades';
-import DetallePropiedad      from './detalle/DetallePropiedad';
-import DejaResena            from './resena/DejaResena';
+import Propiedades         from './propiedades/Propiedades';
+import DetallePropiedad    from './detalle/DetallePropiedad';
+import DejaResena          from './resena/DejaResena';
+import PerfilArrendatario  from './perfil/PerfilArrendatario';
 
-export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSesion, onVerPerfil }) {
-  const [pantalla,              setPantalla]         = useState(tieneArrendamiento ? 'miArrendamiento' : 'sinArrendamiento');
-  const [propiedadSeleccionada, setPropSeleccionada] = useState(null);
-  const [hayArrendamiento,      setHayArrendamiento] = useState(tieneArrendamiento);
+export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSesion }) {
+  const [pantalla,  setPantalla]  = useState(tieneArrendamiento ? 'miArrendamiento' : 'sinArrendamiento');
+  const [propSelec, setPropSelec] = useState(null);
+  const [hayArr,    setHayArr]    = useState(tieneArrendamiento);
+  const [idPropResena, setIdPropResena] = useState(null);
+
+  /* ── Verificar arrendamiento al montar (por si cambió desde el login) ── */
+  useEffect(() => {
+    const verificar = async () => {
+      try {
+        const token = localStorage.getItem('burroomies_token');
+
+        // Verificar si hay reseña pendiente guardada
+        const resenaPendiente = localStorage.getItem('burroomies_resena_pendiente');
+
+        const res = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const tiene = res.ok;
+        setHayArr(tiene);
+
+        if (tiene && pantalla === 'sinArrendamiento') {
+          setPantalla('miArrendamiento');
+        }
+
+        // Si ya no tiene arrendamiento y hay reseña pendiente → ir a DejaReseña
+        if (!tiene && resenaPendiente) {
+          try {
+            const { idPropiedad } = JSON.parse(resenaPendiente);
+            setIdPropResena(idPropiedad);
+            localStorage.removeItem('burroomies_resena_pendiente');
+            setPantalla('dejaResena');
+          } catch {}
+        }
+      } catch {}
+    };
+    verificar();
+    const interval = setInterval(verificar, 15000);
+    return () => clearInterval(interval);
+  }, [pantalla]);
 
   /* ── Navegación ── */
-  const irABuscar          = () => setPantalla('propiedades');
-  const irAMiArrendamiento = () => setPantalla('miArrendamiento');
-  const irADejaResena      = () => setPantalla('dejaResena');
+  const ir = (p) => () => setPantalla(p);
 
-  const irASinArrendamiento = () => {
-    setHayArrendamiento(false);
-    setPantalla('sinArrendamiento');
-  };
-
-  // Finalizar arrendamiento → DejaReseña (obligatoria antes de salir)
-  const handleFinalizar = () => irADejaResena();
-
-  // Al terminar la reseña (publicar o cancelar) → SinArrendamiento
-  const handleResenaTerminada = () => irASinArrendamiento();
-
-  // Dropdown Navbar: "Arrendamiento actual"
-  const handleArrendamientoActual = () =>
-    setPantalla(hayArrendamiento ? 'miArrendamiento' : 'sinArrendamiento');
-
-  // Mapeo de campos al ir al detalle
-  const irADetalle = (propiedad = null) => {
-    const p = propiedad ? {
-      id:             propiedad.id,
-      titulo:         propiedad.titulo,
-      ocupacion:      propiedad.ocupacion    || 'Compartida',
-      lugaresDisp:    propiedad.lugares      ?? 1,
-      lugaresTotales: propiedad.totalLugares ?? 1,
-      calificacion:   propiedad.calificacion ?? 0,
-      numResenas:     propiedad.numResenas   ?? 0,
-      precio:         propiedad.precio       ?? 0,
-      calle:          propiedad.calle        || propiedad.ubicacion || 'Sin dirección',
-      interior:       propiedad.interior     || 'N/A',
-      colonia:        propiedad.colonia      || propiedad.ubicacion || '',
-      alcaldia:       propiedad.alcaldia     || '',
-      cp:             propiedad.cp           || '',
-      descripcion:    propiedad.descripcion  || 'Sin descripción disponible.',
-      servicios:      propiedad.servicios    || [],
-      calificaciones: propiedad.calificaciones || [],
-      arrendador:     propiedad.arrendador   || {
-        nombre: 'Sin información', experiencia: 0, telefono: '-', correo: '-',
-      },
-    } : null;
-    setPropSeleccionada(p);
+  const irADetalle = (propiedad) => {
+    setPropSelec(propiedad);
     setPantalla('detalle');
   };
 
-  // Props del dropdown que se repiten en todas las pantallas
+  const irASinArrendamiento = () => {
+    localStorage.removeItem('burroomies_resena_pendiente');
+    setHayArr(false);
+    setPantalla('sinArrendamiento');
+  };
+
+  // Verifica en tiempo real si el arrendatario tiene arrendamiento
+  const handleArrendamientoActual = async () => {
+    try {
+      const token = localStorage.getItem('burroomies_token');
+      const res = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setHayArr(true);
+        setPantalla('miArrendamiento');
+      } else {
+        setHayArr(false);
+        setPantalla('sinArrendamiento');
+      }
+    } catch {
+      setPantalla(hayArr ? 'miArrendamiento' : 'sinArrendamiento');
+    }
+  };
+
+  /* ── Props comunes del dropdown Navbar ── */
   const navbarDropdown = {
-    onVerPerfil,
+    onVerPerfil:           ir('perfil'),
     onArrendamientoActual: handleArrendamientoActual,
-    tieneArrendamiento:    hayArrendamiento,
+    tieneArrendamiento:    hayArr,
     onCerrarSesion,
   };
 
-  /* ── Renderizado ── */
   return (
     <>
       {pantalla === 'sinArrendamiento' && (
         <SinArrendamiento
-          onBuscar={irABuscar}
+          onBuscar={ir('propiedades')}
           {...navbarDropdown}
         />
       )}
@@ -95,32 +101,40 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
       {pantalla === 'propiedades' && (
         <Propiedades
           onVerDetalle={irADetalle}
-          onMiVivienda={hayArrendamiento ? irAMiArrendamiento : undefined}
+          onMiVivienda={hayArr ? ir('miArrendamiento') : undefined}
           {...navbarDropdown}
         />
       )}
 
       {pantalla === 'detalle' && (
         <DetallePropiedad
-          propiedad={propiedadSeleccionada}
-          onAtras={() => setPantalla('propiedades')}
-          onMiVivienda={hayArrendamiento ? irAMiArrendamiento : undefined}
+          propiedad={propSelec}
+          onAtras={ir('propiedades')}
+          onMiVivienda={hayArr ? ir('miArrendamiento') : undefined}
           {...navbarDropdown}
         />
       )}
 
       {pantalla === 'miArrendamiento' && (
         <MiArrendamientoActual
-          onFinalizar={handleFinalizar}
-          onBuscar={irABuscar}
+          onFinalizar={(idPropiedad) => { setIdPropResena(idPropiedad); setPantalla('dejaResena'); }}
+          onBuscar={ir('propiedades')}
           {...navbarDropdown}
         />
       )}
 
       {pantalla === 'dejaResena' && (
         <DejaResena
-          onPublicar={handleResenaTerminada}
-          onCancel={handleResenaTerminada}
+          idPropiedad={idPropResena}
+          onPublicar={irASinArrendamiento}
+          onCancel={irASinArrendamiento}
+          {...navbarDropdown}
+        />
+      )}
+
+      {pantalla === 'perfil' && (
+        <PerfilArrendatario
+          onAtras={() => setPantalla(hayArr ? 'miArrendamiento' : 'sinArrendamiento')}
           {...navbarDropdown}
         />
       )}

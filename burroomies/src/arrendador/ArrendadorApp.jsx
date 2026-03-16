@@ -1,70 +1,99 @@
 // src/arrendador/ArrendadorApp.jsx
-// Controlador de navegación para las pantallas del arrendador.
-//
-// Pantallas:
-//   'inicio'       → InicioArrendador  (sin propiedades aún)
-//   'agregar'      → AgregarPropiedad  (formulario 3 pasos)
-//   'misViviendas' → MisViviendas      (listado de propiedades)
-//
-// Props:
-//   onCerrarSesion: fn — callback para redirigir al login
-
 import { useState } from 'react';
-import InicioArrendador from './InicioArrendador';
-import AgregarPropiedad from './AgregarPropiedad';
-import MisViviendas     from './MisViviendas';
+import InicioArrendador      from './InicioArrendador';
+import AgregarPropiedad      from './AgregarPropiedad';
+import EditarPropiedad       from './EditarPropiedad';
+import MisViviendas          from './MisViviendas';
+import MisArrendamientos     from './Misarrendamientos';
+import RegistroArrendamiento from './RegistroArrendamiento';
+import DetalleArrendamiento  from './Detallearrendamiento';
+import PerfilArrendador      from './PerfilArrendador';
 
 export default function ArrendadorApp({ onCerrarSesion }) {
-  const [pantalla,    setPantalla]    = useState('inicio');
-  const [propiedades, setPropiedades] = useState([]);
+  const [pantalla,            setPantalla]            = useState('inicio');
+  const [arrendamientoActivo, setArrendamientoActivo] = useState(null);
+  const [propiedadEditar,     setPropiedadEditar]     = useState(null); // idPropiedad
 
-  const irAAgregar      = () => setPantalla('agregar');
-  const irAMisViviendas = () => setPantalla('misViviendas');
+  const ir = (p) => () => setPantalla(p);
 
-  /* Agrega la nueva propiedad al estado y navega a MisViviendas */
-  const handleGuardar = (datos) => {
-    const nueva = {
-      id:        Date.now(),
-      nombre:    datos.titulo    || 'Nueva propiedad',
-      direccion: datos.direccion || 'Sin dirección',
-      precio:    Number(datos.renta) || 0,
-      activa:    true,
-      foto:      datos.fotos?.[0] || 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&q=80',
-    };
-    setPropiedades((prev) => [nueva, ...prev]);
+  const verDetalle = (arrendamiento) => {
+    setArrendamientoActivo(arrendamiento);
+    setPantalla('detalleArrendamiento');
   };
 
-  /* Elimina una propiedad por id */
-  const handleEliminar = (id) => {
-    setPropiedades((prev) => prev.filter((p) => p.id !== id));
+  const editarPropiedad = (idPropiedad) => {
+    setPropiedadEditar(idPropiedad);
+    setPantalla('editarPropiedad');
+  };
+
+  // Props comunes de navegación para todas las pantallas
+  const navProps = {
+    onMisViviendas:      ir('misViviendas'),
+    onMisArrendamientos: ir('registroArrendamiento'),
+    onVerPerfil:         ir('perfil'),
+    onCerrarSesion,
   };
 
   return (
     <>
       {pantalla === 'inicio' && (
         <InicioArrendador
-          onAgregarVivienda={irAAgregar}
-          onMisViviendas={irAMisViviendas}
-          onCerrarSesion={onCerrarSesion}
+          {...navProps}
+          onAgregarVivienda={ir('agregar')}
+          showMisViviendas={false}
         />
       )}
 
       {pantalla === 'agregar' && (
-        <AgregarPropiedad
-          onGuardar={handleGuardar}
-          onMisViviendas={irAMisViviendas}
-          onCerrarSesion={onCerrarSesion}
+        <AgregarPropiedad {...navProps} />
+      )}
+
+      {pantalla === 'editarPropiedad' && (
+        <EditarPropiedad
+          {...navProps}
+          idPropiedad={propiedadEditar}
         />
       )}
 
       {pantalla === 'misViviendas' && (
         <MisViviendas
-          propiedades={propiedades}
-          onAgregarProp={irAAgregar}
-          onEliminar={handleEliminar}
-          onMisViviendas={irAMisViviendas}
-          onCerrarSesion={onCerrarSesion}
+          {...navProps}
+          onAgregarProp={ir('agregar')}
+          onEditar={editarPropiedad}
+          showMisViviendas
         />
+      )}
+
+      {pantalla === 'misArrendamientos' && (
+        <MisArrendamientos
+          {...navProps}
+          onRegistrar={ir('registroArrendamiento')}
+          onVerDetalle={verDetalle}
+          showMisViviendas
+        />
+      )}
+
+      {pantalla === 'registroArrendamiento' && (
+        <RegistroArrendamiento
+          {...navProps}
+          onAtras={ir('misArrendamientos')}
+          onExito={ir('misArrendamientos')}
+          showMisViviendas
+        />
+      )}
+
+      {pantalla === 'detalleArrendamiento' && (
+        <DetalleArrendamiento
+          {...navProps}
+          arrendamiento={arrendamientoActivo}
+          onRegresar={ir('misArrendamientos')}
+          onArrendamientoFinalizado={() => {}}
+          showMisViviendas
+        />
+      )}
+
+      {pantalla === 'perfil' && (
+        <PerfilArrendador {...navProps} showMisViviendas />
       )}
     </>
   );

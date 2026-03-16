@@ -1,0 +1,74 @@
+/* src/arrendador/MisArrendamientos.module.css */
+@import '../shared/styles/variables.css';
+
+.wrapper {
+  width: 100%; max-width: 600px;
+  margin: 0 auto;
+  display: flex; flex-direction: column; gap: 24px;
+}
+
+.header {
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+
+.titulo {
+  font-family: var(--font-heading);
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--text-dark); margin: 0;
+  /* Centrar cuando no hay botón */
+  flex: 1; text-align: center;
+}
+
+/* BOTÓN REGISTRAR */
+.btnRegistrar {
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  color: white; border: none; border-radius: var(--radius-btn);
+  padding: 9px 20px; font-family: var(--font-body);
+  font-size: 0.88rem; font-weight: 800; cursor: pointer;
+  box-shadow: var(--shadow-btn); transition: all 0.22s;
+  white-space: nowrap;
+}
+.btnRegistrar:hover { transform: translateY(-2px); box-shadow: var(--shadow-btn-h); }
+
+/* ESTADO VACÍO */
+.vacio {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 22px; padding: 60px 24px;
+}
+
+/* LISTA — TARJETAS ROSAS */
+.lista {
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+.cardBtn {
+  width: 100%;
+  background: linear-gradient(135deg, #fecdd3, #fda4af);
+  border: none; border-radius: 50px;
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.22s;
+  box-shadow: 0 3px 12px rgba(251,113,133,0.2);
+}
+.cardBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(251,113,133,0.32);
+}
+
+.cardNombre {
+  font-family: var(--font-body);
+  font-size: 0.97rem; font-weight: 700;
+  color: #7f1d1d;
+}
+
+/* MENSAJES */
+.msg      { text-align: center; color: var(--purple-dark); margin-top: 40px; font-weight: 600; }
+.msgError { text-align: center; color: #e53e3e; margin-top: 40px; font-weight: 600; }
+
+@media (max-width: 500px) {
+  .header { flex-direction: column; align-items: center; }
+  .titulo { text-align: center; }
+}

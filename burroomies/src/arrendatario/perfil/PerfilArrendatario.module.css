@@ -1,0 +1,294 @@
+/* src/arrendatario/perfil/PerfilArrendatario.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --purple-light: #c8b8e8;
+  --purple-mid:   #a78fd0;
+  --purple-main:  #8B5CF6;
+  --purple-dark:  #6d3fc0;
+  --bg:           #dce8f8;
+  --bg2:          #e8daf5;
+  --card-bg:      rgba(255,255,255,0.97);
+  --text-dark:    #2d2550;
+  --text-mid:     #5a4e7a;
+  --text-light:   #8a7eaa;
+  --footer-bg:    #c5d8f0;
+  --input-bg:     #eeebf5;
+  --shadow-card:  0 8px 36px rgba(110,80,180,0.11);
+}
+
+.page {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  color: var(--text-dark);
+}
+
+.container {
+  max-width: 620px; margin: 0 auto;
+  padding: 36px 24px 56px;
+  width: 100%; flex: 1;
+  animation: fadeUp 0.45s ease 0.1s both;
+}
+@keyframes fadeUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.pageTitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--text-dark);
+  text-align: center; margin-bottom: 20px;
+}
+
+.msgCargando {
+  text-align: center; color: var(--purple-dark);
+  font-weight: 600; margin-top: 60px;
+}
+
+/* TABS */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 2px solid rgba(200,184,232,0.35);
+  margin-bottom: 20px;
+}
+.tab {
+  padding: 10px 22px;
+  background: transparent; border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem; font-weight: 700;
+  color: var(--text-light); cursor: pointer;
+  position: relative; transition: color 0.2s;
+}
+.tab::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 0; right: 0;
+  height: 2px; background: var(--purple-main);
+  transform: scaleX(0); transition: transform 0.2s;
+  border-radius: 2px;
+}
+.tab:hover { color: var(--purple-dark); }
+.tabActive { color: var(--purple-dark); }
+.tabActive::after { transform: scaleX(1); }
+
+/* CARD */
+.card {
+  background: var(--card-bg);
+  border-radius: 22px;
+  border: 1.5px solid rgba(200,184,232,0.28);
+  box-shadow: var(--shadow-card);
+  padding: 24px 28px;
+}
+
+/* AVATAR */
+.avatarSection {
+  display: flex; align-items: center; gap: 18px;
+  margin-bottom: 22px; padding-bottom: 20px;
+  border-bottom: 1px solid rgba(200,184,232,0.3);
+}
+.avatarWrapper { position: relative; flex-shrink: 0; }
+.avatarImg {
+  width: 80px; height: 80px; border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--purple-light);
+  box-shadow: 0 4px 14px rgba(110,80,180,0.15);
+}
+.avatarPlaceholder {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(145deg, var(--purple-mid), var(--purple-main));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 800; color: white;
+  border: 3px solid var(--purple-light);
+}
+.avatarEditBtn {
+  position: absolute; bottom: 2px; right: 2px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--purple-main); color: white;
+  border: 2px solid white;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.2s;
+}
+.avatarEditBtn:hover { background: var(--purple-dark); }
+.avatarInfo { display: flex; flex-direction: column; gap: 4px; }
+.avatarNombre {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--text-dark); margin: 0;
+}
+.avatarCorreo {
+  font-size: 0.85rem; color: var(--text-light);
+  font-weight: 500; margin: 0;
+}
+
+/* FORM */
+.formSection { display: flex; flex-direction: column; gap: 18px; }
+.grid2 {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 4px;
+}
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.label {
+  font-size: 0.83rem; font-weight: 700;
+  color: var(--text-dark);
+}
+.input {
+  width: 100%; box-sizing: border-box;
+  background: var(--input-bg);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+  color: var(--text-dark); outline: none;
+  transition: border-color 0.18s, background 0.18s;
+}
+.input:focus {
+  border-color: var(--purple-main);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.1);
+}
+.inputReadonly {
+  background: rgba(200,184,232,0.12);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+  color: var(--text-mid); min-height: 42px;
+}
+
+/* CONTRASEÑA */
+.passWrapper { position: relative; display: flex; align-items: center; }
+.eyeBtn {
+  position: absolute; right: 12px;
+  background: transparent; border: none;
+  color: var(--text-light); cursor: pointer;
+  display: flex; align-items: center;
+  transition: color 0.2s;
+}
+.eyeBtn:hover { color: var(--purple-dark); }
+.err {
+  font-size: 0.78rem; color: #e53e3e;
+  font-weight: 600;
+}
+
+/* GUARDAR */
+.guardarRow {
+  display: flex; justify-content: flex-end;
+  margin-top: 20px;
+}
+.btnGuardar {
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  color: white; border: none; border-radius: 50px;
+  padding: 11px 30px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem; font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.3);
+  transition: all 0.22s;
+}
+.btnGuardar:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(139,92,246,0.4); }
+.btnGuardar:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* MODAL ÉXITO */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(45,37,80,0.45);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500; animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.successModal {
+  background: white; border-radius: 26px;
+  padding: 36px 32px 28px;
+  max-width: 340px; width: 90%;
+  text-align: center; position: relative;
+  box-shadow: 0 28px 70px rgba(45,37,80,0.25);
+  animation: scaleIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes scaleIn {
+  from { transform: scale(0.82); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.modalClose {
+  position: absolute; top: 14px; right: 14px;
+  background: rgba(200,184,232,0.2); border: none;
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-mid); font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.modalClose:hover { background: rgba(200,184,232,0.4); }
+.successIcon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, #6ee7b7, #34d399);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+  box-shadow: 0 8px 24px rgba(52,211,153,0.38);
+  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+}
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.successText {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--text-dark); margin: 0 0 4px;
+}
+.successSub {
+  font-size: 0.87rem; color: var(--text-mid);
+  font-weight: 600; margin: 0 0 22px; line-height: 1.5;
+}
+.btnAceptar {
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  color: white; border: none; border-radius: 50px;
+  padding: 10px 32px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.32);
+  transition: all 0.2s;
+}
+.btnAceptar:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(139,92,246,0.4); }
+
+/* RESPONSIVE */
+@media (max-width: 500px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .avatarSection { flex-direction: column; text-align: center; }
+  .guardarRow { justify-content: center; }
+  .container { padding: 20px 14px 40px; }
+}
+
+/* ── CÓDIGO DE ARRENDATARIO ── */
+.codigoBox {
+  margin-top: 16px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(109,63,192,0.04));
+  border: 1.5px solid rgba(139,92,246,0.2);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.codigoLabel {
+  font-size: 0.78rem; font-weight: 800;
+  color: var(--text-mid); text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.codigoValor {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.codigoBadge {
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  color: white; font-family: monospace;
+  font-size: 1.1rem; font-weight: 800;
+  padding: 6px 18px; border-radius: 50px;
+  letter-spacing: 1px;
+  box-shadow: 0 3px 10px rgba(139,92,246,0.3);
+}
+.codigoHint {
+  font-size: 0.8rem; color: var(--text-light);
+  font-weight: 500; line-height: 1.4; flex: 1;
+}

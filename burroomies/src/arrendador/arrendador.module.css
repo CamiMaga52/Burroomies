@@ -65,7 +65,7 @@
 /* CARD PROPIEDAD */
 .propCard { background:white; border-radius:18px; border:1px solid rgba(200,184,232,0.2); box-shadow:0 2px 8px rgba(110,80,180,0.06),0 6px 24px rgba(110,80,180,0.08); display:flex; align-items:stretch; overflow:hidden; transition:box-shadow 0.22s,transform 0.2s; animation:appear 0.3s ease both; }
 .propCard:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(110,80,180,0.14); }
-.propImg  { width:160px; min-height:120px; object-fit:cover; flex-shrink:0; }
+.propImg  { width:160px; min-height:120px; object-fit:cover; flex-shrink:0; overflow:hidden; border-radius:0; }
 .propInfo { flex:1; padding:14px 18px; display:flex; flex-direction:column; gap:6px; }
 .propNombre   { font-family:var(--font-heading); font-size:1rem; font-weight:700; color:var(--text-dark); margin:0; }
 .propDireccion { font-size:0.78rem; color:var(--text-light); font-weight:600; display:flex; align-items:flex-start; gap:4px; margin:0; line-height:1.4; }
