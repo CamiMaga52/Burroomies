@@ -27,7 +27,7 @@ const fileToBase64 = (file) => new Promise((resolve, reject) => {
   reader.readAsDataURL(file);
 });
 
-export default function AgregarPropiedad({ onMisViviendas, onMisArrendamientos, onCerrarSesion }) {
+export default function AgregarPropiedad({ onMisViviendas, onCerrarSesion }) {
   const [paso,      setPaso]      = useState(1);
   const [form,      setForm]      = useState(FORM_INICIAL);
   const [errores,   setErrores]   = useState({});
@@ -81,7 +81,7 @@ export default function AgregarPropiedad({ onMisViviendas, onMisArrendamientos, 
   const validarPaso2 = () => {
     const e = {};
     if (!form.calle.trim())     e.calle     = 'La calle es obligatoria.';
-    if (!form.colonia.trim())   e.colonia   = 'La colonia es obligatoria.';
+    if (!String(form.colonia || '').trim())   e.colonia   = 'La colonia es obligatoria.';
     if (!form.municipio.trim()) e.municipio = 'El municipio es obligatorio.';
     if (!form.estado.trim())    e.estado    = 'El estado es obligatorio.';
     if (!form.cp.trim())        e.cp        = 'El código postal es obligatorio.';
@@ -120,6 +120,7 @@ export default function AgregarPropiedad({ onMisViviendas, onMisArrendamientos, 
         propiedadColonia:     form.colonia,
         propiedadMunicipio:   form.municipio,
         propiedadEstado:      form.estado,
+        propiedadCp:          form.cp,
         propiedadSerBasicos:  form.serBasicos.join(', '),
         propiedadSerComEnt:   form.serComEnt.join(', '),
         propiedadSerAdicio:   form.serAdicio.join(', '),
@@ -137,7 +138,15 @@ export default function AgregarPropiedad({ onMisViviendas, onMisArrendamientos, 
       });
 
       const data = await res.json();
-      if (!res.ok) { alert(data.message || 'Error al agregar la propiedad.'); return; }
+      if (!res.ok) {
+        if (data.message?.includes('código postal') || data.message?.includes('zona') || data.message?.includes('CP')) {
+          setErrores(prev => ({ ...prev, cp: data.message }));
+          setPaso(2);
+        } else {
+          alert(data.message || 'Error al agregar la propiedad.');
+        }
+        return;
+      }
 
       setShowExito(true);
     } catch (err) {
@@ -158,7 +167,7 @@ export default function AgregarPropiedad({ onMisViviendas, onMisArrendamientos, 
     : null;
 
   return (
-    <ArrendadorLayout onMisViviendas={onMisViviendas} onMisArrendamientos={onMisArrendamientos} onCerrarSesion={onCerrarSesion}>
+    <ArrendadorLayout onMisViviendas={onMisViviendas} onCerrarSesion={onCerrarSesion}>
       <div style={{ width:'100%', maxWidth:720 }}>
 
         <h1 className={s.pageTitle}>Agregar Propiedad</h1>
@@ -269,7 +278,33 @@ export default function AgregarPropiedad({ onMisViviendas, onMisArrendamientos, 
                   </div>
                   <div className={s.campo}>
                     <label className={s.label}>Código postal</label>
-                    <input className={s.input} type="text" maxLength={5} value={form.cp} onChange={setField('cp')} />
+                    <input className={s.input} type="text" maxLength={5} value={form.cp}
+                      onChange={async (e) => {
+                        const cp = e.target.value;
+                        setForm(f => ({ ...f, cp }));
+                        setErrores(prev => ({ ...prev, cp: '' }));
+                        if (/^\d{5}$/.test(cp)) {
+                          try {
+                            const res = await fetch(
+                              `https://api.copomex.com/query/info_cp/${cp}?type=simplified&token=4db2db82-8f5e-4108-8754-1b24d572a41a`
+                            );
+                            const data = await res.json();
+                            const info = data.response || data;
+                            if (info && !data.error) {
+                              const colonia = Array.isArray(info.asentamiento)
+                                ? info.asentamiento[0]
+                                : (info.asentamiento || info.colonia || '');
+                              setForm(f => ({
+                                ...f, cp, colonia,
+                                municipio: info.municipio || f.municipio,
+                                estado:    info.estado    || f.estado,
+                              }));
+                              setErrores(prev => ({ ...prev, cp: '', colonia: '', municipio: '', estado: '' }));
+                            }
+                          } catch {}
+                        }
+                      }}
+                    />
                     <Err campo="cp" />
                   </div>
                 </div>

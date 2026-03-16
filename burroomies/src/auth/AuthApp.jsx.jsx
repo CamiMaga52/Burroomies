@@ -1,138 +1,141 @@
 // src/auth/AuthApp.jsx
-// Controlador de navegación para todas las pantallas de autenticación.
-//
-// Flujo estudiante:
-//   IniciarSesion → VerificarCodigo → [ArrendatarioApp]
-//   IniciarSesion → Registro → SubirConstancia → RegistroExitoso → IniciarSesion
-//
-// Flujo arrendador:
-//   IniciarSesion → Registro → SubirCURP → ValidandoIdentidad → BienvenidoArrendador → [ArrendadorApp]
-//
-// Restablecer contraseña (flujo interno en RestablecerContrasena.jsx):
-//   IniciarSesion → RestablecerContrasena → IniciarSesion
-//
-// Props:
-//   onLoginExitoso: fn({ rol, tieneArrendamiento }) — llama al App padre para entrar a la app
-
 import { useState } from 'react';
-import IniciarSesion from './IniciarSesion';
-import Registro from './Registro';
-import SubirConstancia from './SubirConstancia';
-import SubirCURP from './SubirCurp';
-import RegistroExitoso from './RegistroExitoso';
-import Validandoidentidad from './Validandoidentidad';
-import BienvenidoArrendador from './BienvenidoArrendador';
+import IniciarSesion         from './IniciarSesion';
+import Registro              from './Registro';
+import SubirConstancia       from './Subirconstancia';
+import SubirCURP             from './Subircurp';
+import RegistroExitoso       from './RegistroExitoso';
+import Validandoidentidad    from './Validandoidentidad';
+import BienvenidoArrendador  from './BienvenidoArrendador';
 import RestablecerContrasena from './RestablecerContrasena';
-import VerificarCodigo from './VerificarCodigo';
-
-// Pantallas:
-//   'login'               → IniciarSesion
-//   'registro'            → Registro
-//   'subirConstancia'     → SubirConstancia    (estudiante)
-//   'subirCurp'           → SubirCURP          (arrendador)
-//   'verificarCodigo'     → VerificarCodigo
-//   'registroExitoso'     → RegistroExitoso    (estudiante)
-//   'validandoIdentidad'  → ValidandoIdentidad (arrendador)
-//   'bienvenidoArrendador'→ BienvenidoArrendador
-//   'restablecer'         → RestablecerContrasena
+import VerificarCodigo       from './VerificarCodigo';
 
 export default function AuthApp({ onLoginExitoso }) {
-  const [pantalla, setPantalla] = useState('login');
-  const [datosRegistro, setDatosRegistro] = useState(null); // guarda tipo + form del registro
+  const [pantalla,       setPantalla]       = useState('login');
+  const [datosRegistro,  setDatosRegistro]  = useState(null);
+  const [correoRegistro, setCorreoRegistro] = useState('');
 
-  /* ── Helpers de navegación ── */
   const irA = (p) => () => setPantalla(p);
 
-  /* ── Registro: al dar "Siguiente" en el form ── */
+  // ── PASO 1: Registro → solo guarda en memoria ────────────────────
   const handleRegistroSiguiente = (datos) => {
     setDatosRegistro(datos);
-    // Según tipo va a subir constancia o CURP
     setPantalla(datos.tipo === 'arrendador' ? 'subirCurp' : 'subirConstancia');
   };
 
-  /* ── SubirConstancia / SubirCURP: al dar "Siguiente" ── */
-  const handleArchivoSiguiente = () => {
-    if (datosRegistro?.tipo === 'arrendador') {
-      setPantalla('validandoidentidad');
-    } else {
-      setPantalla('verificarCodigo');
+  // ── PASO 2a: Constancia verificada → registrar y pedir código ────
+  const handleArchivoSiguiente = async () => {
+    await registrarUsuario();
+    // Ambos roles verifican correo primero
+    setPantalla('verificarCodigo');
+  };
+
+  // ── PASO 2b: Saltar constancia → registrar sin verificar ─────────
+  const handleSaltarConstancia = async () => {
+    await registrarUsuario();
+    setPantalla('verificarCodigo');
+  };
+
+  // ── Registrar usuario en el backend ─────────────────────────────
+  const registrarUsuario = async () => {
+    if (!datosRegistro) return;
+    try {
+      const body = {
+        usuarioNom:      datosRegistro.nombres,
+        usuarioApePat:   datosRegistro.apellidoP,
+        usuarioApeMat:   datosRegistro.apellidoM,
+        usuarioCorreo:   datosRegistro.correo,
+        usuarioContra:   datosRegistro.contrasena,
+        usuarioTel:      datosRegistro.telefono,
+        usuarioCurp:     datosRegistro.curp,
+        usuarioFechaNac: datosRegistro.fechaNac,
+        rol: datosRegistro.tipo === 'estudiante' ? 'arrendatario' : 'arrendador',
+        arrendatarioBoleta:    datosRegistro.boleta,
+        arrendatarioUnidadAca: datosRegistro.unidad,
+        calle:     datosRegistro.calle,
+        numExt:    datosRegistro.numExt,
+        numInt:    datosRegistro.numInt,
+        colonia:   datosRegistro.colonia,
+        municipio: datosRegistro.municipio,
+        estado:    datosRegistro.estado,
+        cp:        datosRegistro.cp,
+      };
+
+      const res  = await fetch('http://localhost:3001/api/auth/register', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || 'Error al registrar usuario.');
+        setPantalla('registro');
+        return;
+      }
+
+      setCorreoRegistro(datosRegistro.correo);
+
+    } catch {
+      alert('No se pudo conectar con el servidor.');
+      setPantalla('registro');
     }
   };
 
-  /* ── VerificarCodigo: al verificar correctamente ── */
+  // ── PASO 3: Verificar código del correo ──────────────────────────
   const handleVerificarSiguiente = async (codigo, { setModal }) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/auth/verify/${codigo}`)
-      const data = await response.json()
-
-      if (!response.ok) {
-        setModal('invalido')
-        return
+      const res  = await fetch(`http://localhost:3001/api/auth/verify/${codigo}`)
+      const data = await res.json()
+      if (!res.ok) { setModal('invalido'); return; }
+      // Ruta según rol
+      if (datosRegistro?.tipo === 'arrendador') {
+        setPantalla('validandoidentidad');
+      } else {
+        setPantalla('registroExitoso');
       }
-
-      setPantalla('registroExitoso')
-
-    } catch (error) {
-      alert('No se pudo conectar con el servidor.')
+    } catch {
+      alert('No se pudo conectar con el servidor.');
     }
-  }
-
-  /* ── RegistroExitoso: "Finalizar" → login ── */
-  const handleRegistroFinalizar = () => setPantalla('login');
-
-  /* ── ValidandoIdentidad → BienvenidoArrendador ──
-     En producción esto lo dispara el back cuando termina de validar.
-     Por ahora se simula con un timeout al montar la pantalla. ── */
-
-  /* ── BienvenidoArrendador: "Siguiente" → entra a la app ── */
-  const handleBienvenidoSiguiente = () => {
-    onLoginExitoso?.({ rol: 'arrendador', tieneArrendamiento: false });
   };
 
-  /* ── IniciarSesion: "Entrar" ── */
-  /* ── IniciarSesion: "Entrar" ── */
+  // ── Reenviar código de verificación (8 chars) ────────────────────
+  const handleReenviar = async () => {
+    try {
+      await fetch('http://localhost:3001/api/auth/resend-verification', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ usuarioCorreo: correoRegistro }),
+      });
+    } catch {
+      console.error('Error al reenviar código');
+    }
+  };
+
+  // ── Login ────────────────────────────────────────────────────────
   const handleEntrar = async ({ correo, contrasena }) => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
-        method: 'POST',
+      const res  = await fetch('http://localhost:3001/api/auth/login', {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuarioCorreo: correo, usuarioContra: contrasena })
-      })
+        body:    JSON.stringify({ usuarioCorreo: correo, usuarioContra: contrasena }),
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.message || 'Error al iniciar sesión'); return; }
 
-      const data = await response.json()
+      localStorage.setItem('burroomies_token', data.token);
+      localStorage.setItem('burroomies_user',  JSON.stringify(data.usuario));
+      localStorage.setItem('burroomies_rol',   data.rol);
 
-      if (!response.ok) {
-        alert(data.message || 'Error al iniciar sesión')
-        return
-      }
-
-      // Guardar en localStorage
-      localStorage.setItem('burroomies_token', data.token)
-      localStorage.setItem('burroomies_user', JSON.stringify(data.usuario))
-      localStorage.setItem('burroomies_rol', data.rol)
-
-      // Si es arrendatario, verificar si tiene arrendamiento activo
-      let tieneArrendamiento = false
-      if (data.rol === 'arrendatario') {
-        try {
-          const resArr = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
-            headers: { Authorization: `Bearer ${data.token}` }
-          })
-          tieneArrendamiento = resArr.ok // 200 = tiene arrendamiento, 404 = no tiene
-        } catch {}
-      }
-
-      // Navegar según rol
-      onLoginExitoso?.({ rol: data.rol, tieneArrendamiento })
-
-    } catch (error) {
-      alert('No se pudo conectar con el servidor.')
+      onLoginExitoso?.({ rol: data.rol });
+    } catch {
+      alert('No se pudo conectar con el servidor.');
     }
-  }
-  /* ── Props comunes para las pantallas de auth ── */
+  };
+
   const comun = {
-    onPaginaPrincipal: irA('login'), // TODO: reemplazar por landing page real
-    onInicioSesion: irA('login'),
+    onPaginaPrincipal: irA('login'),
+    onInicioSesion:    irA('login'),
   };
 
   return (
@@ -149,6 +152,7 @@ export default function AuthApp({ onLoginExitoso }) {
       {pantalla === 'registro' && (
         <Registro
           onSiguiente={handleRegistroSiguiente}
+          datosIniciales={datosRegistro}
           {...comun}
         />
       )}
@@ -157,6 +161,8 @@ export default function AuthApp({ onLoginExitoso }) {
         <SubirConstancia
           onSiguiente={handleArchivoSiguiente}
           onCancelar={irA('registro')}
+          onSaltar={handleSaltarConstancia}
+          datosRegistro={datosRegistro}
           {...comun}
         />
       )}
@@ -165,6 +171,8 @@ export default function AuthApp({ onLoginExitoso }) {
         <SubirCURP
           onSiguiente={handleArchivoSiguiente}
           onCancelar={irA('registro')}
+          onSaltar={handleSaltarConstancia}
+          datosRegistro={datosRegistro}
           {...comun}
         />
       )}
@@ -172,28 +180,28 @@ export default function AuthApp({ onLoginExitoso }) {
       {pantalla === 'verificarCodigo' && (
         <VerificarCodigo
           onSiguiente={handleVerificarSiguiente}
-          onReenviar={() => console.log('Reenviar código')}
+          onReenviar={handleReenviar}
           {...comun}
         />
       )}
 
       {pantalla === 'registroExitoso' && (
         <RegistroExitoso
-          onFinalizar={handleRegistroFinalizar}
+          onFinalizar={irA('login')}
           {...comun}
         />
       )}
 
       {pantalla === 'validandoidentidad' && (
         <Validandoidentidad
-          onValidado={irA('bienvenidoArrendador')} // el padre llama esto cuando el back responde
+          onValidado={irA('bienvenidoArrendador')}
           {...comun}
         />
       )}
 
       {pantalla === 'bienvenidoArrendador' && (
         <BienvenidoArrendador
-          onSiguiente={handleBienvenidoSiguiente}
+          onSiguiente={() => onLoginExitoso?.({ rol: 'arrendador' })}
           {...comun}
         />
       )}

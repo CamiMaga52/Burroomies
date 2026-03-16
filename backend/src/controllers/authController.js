@@ -10,17 +10,13 @@ const register = async (req, res) => {
       usuarioNom, usuarioApePat, usuarioApeMat,
       usuarioCorreo, usuarioContra, usuarioTel,
       usuarioCurp, usuarioFechaNac, rol,
-      // Campos específicos de arrendatario
-      arrendatarioBoleta, arrendatarioUnidadAca,
     } = req.body
 
-    // Verificar si el correo ya existe
     const existeCorreo = await Usuario.findOne({ where: { usuarioCorreo } })
     if (existeCorreo) {
       return res.status(400).json({ message: 'El correo ya está registrado.' })
     }
 
-    // Verificar si el CURP ya existe
     if (usuarioCurp) {
       const existeCurp = await Usuario.findOne({ where: { usuarioCurp } })
       if (existeCurp) {
@@ -28,56 +24,42 @@ const register = async (req, res) => {
       }
     }
 
-    // Hashear contraseña
-    const hash = await bcrypt.hash(usuarioContra, 10)
-
-    // Código de verificación de email
+    const hash   = await bcrypt.hash(usuarioContra, 10)
     const codigo = Math.random().toString(36).substring(2, 10).toUpperCase()
-    // Crear usuario
+
     const usuario = await Usuario.create({
-      usuarioNom,
-      usuarioApePat,
-      usuarioApeMat,
-      usuarioCorreo,
-      usuarioContra: hash,
-      usuarioTel,
-      usuarioCurp,
-      usuarioFechaNac,
-      usuarioCC: codigo,
-      usuarioVCC: '0',
-      usuarioFCC: new Date(),
+      usuarioNom, usuarioApePat, usuarioApeMat,
+      usuarioCorreo, usuarioContra: hash, usuarioTel,
+      usuarioCurp, usuarioFechaNac,
+      usuarioCC: codigo, usuarioVCC: '0', usuarioFCC: new Date(),
     })
 
-    // Crear perfil según rol
     if (rol === 'arrendador') {
-      console.log('Datos arrendador:', req.body)
       await Arrendador.create({
-        usuario_idUsuario: usuario.idUsuario,
-        arrendadorCalle: req.body.calle,
-        arrendadorNumExt: req.body.numExt,
-        arrendadorNumInt: req.body.numInt,
-        arrendadorColonia: req.body.colonia,
+        usuario_idUsuario:   usuario.idUsuario,
+        arrendadorCalle:     req.body.calle,
+        arrendadorNumExt:    req.body.numExt,
+        arrendadorNumInt:    req.body.numInt,
+        arrendadorColonia:   req.body.colonia,
         arrendadorMunicipio: req.body.municipio,
-        arrendadorEstado: req.body.estado,
-        arrendadorCp: req.body.cp,
+        arrendadorEstado:    req.body.estado,
+        arrendadorCp:        req.body.cp,
       })
     } else if (rol === 'arrendatario') {
-      console.log('Datos arrendatario recibidos:', req.body)
-      // Generar código único EST-XXXX para el arrendatario
       const codigoEst = 'EST-' + String(usuario.idUsuario).padStart(4, '0')
       await usuario.update({ usuarioCodigo: codigoEst })
       await Arrendatario.create({
-        usuario_idUsuario: usuario.idUsuario,
-        arrendatarioBoleta: req.body.arrendatarioBoleta,
-        arrendatarioUnidadAca: req.body.arrendatarioUnidadAca,
+        usuario_idUsuario:      usuario.idUsuario,
+        arrendatarioBoleta:     req.body.arrendatarioBoleta,
+        arrendatarioUnidadAca:  req.body.arrendatarioUnidadAca,
         arrendatarioFechaActua: new Date(),
       })
     }
-    // TODO: Enviar correo de verificación con el código
+
     await enviarCodigoVerificacion(usuarioCorreo, codigo)
 
     res.status(201).json({
-      message: 'Usuario registrado correctamente. Verifica tu correo.',
+      message:   'Usuario registrado correctamente. Verifica tu correo.',
       idUsuario: usuario.idUsuario,
     })
   } catch (error) {
@@ -92,43 +74,33 @@ const login = async (req, res) => {
     const { usuarioCorreo, usuarioContra } = req.body
 
     const usuario = await Usuario.findOne({ where: { usuarioCorreo } })
-    if (!usuario) {
-      return res.status(401).json({ message: 'Credenciales incorrectas.' })
-    }
+    if (!usuario) return res.status(401).json({ message: 'Credenciales incorrectas.' })
 
-    // Verificar si el email está verificado
     if (usuario.usuarioVCC !== '1') {
       return res.status(401).json({ message: 'Debes verificar tu correo antes de iniciar sesión.' })
     }
 
-    // Verificar contraseña
     const match = await bcrypt.compare(usuarioContra, usuario.usuarioContra)
-    if (!match) {
-      return res.status(401).json({ message: 'Credenciales incorrectas.' })
-    }
+    if (!match) return res.status(401).json({ message: 'Credenciales incorrectas.' })
 
-    // Determinar rol
-    const arrendador = await Arrendador.findOne({ where: { usuario_idUsuario: usuario.idUsuario } })
+    const arrendador   = await Arrendador.findOne({ where: { usuario_idUsuario: usuario.idUsuario } })
     const arrendatario = await Arrendatario.findOne({ where: { usuario_idUsuario: usuario.idUsuario } })
     const rol = arrendador ? 'arrendador' : arrendatario ? 'arrendatario' : 'usuario'
 
-    // Generar JWT
     const token = jwt.sign(
       { idUsuario: usuario.idUsuario, usuarioCorreo: usuario.usuarioCorreo, rol },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     )
 
-    // Actualizar fecha último inicio de sesión
     await usuario.update({ usuarioFechaUIS: new Date() })
 
     res.json({
       message: 'Inicio de sesión exitoso.',
-      token,
-      rol,
+      token, rol,
       usuario: {
-        idUsuario: usuario.idUsuario,
-        usuarioNom: usuario.usuarioNom,
+        idUsuario:     usuario.idUsuario,
+        usuarioNom:    usuario.usuarioNom,
         usuarioCorreo: usuario.usuarioCorreo,
       },
     })
@@ -142,14 +114,9 @@ const login = async (req, res) => {
 const verifyEmail = async (req, res) => {
   try {
     const { codigo } = req.params
-
     const usuario = await Usuario.findOne({ where: { usuarioCC: codigo } })
-    if (!usuario) {
-      return res.status(400).json({ message: 'Código de verificación inválido.' })
-    }
-
+    if (!usuario) return res.status(400).json({ message: 'Código de verificación inválido.' })
     await usuario.update({ usuarioVCC: '1' })
-
     res.json({ message: 'Correo verificado correctamente. Ya puedes iniciar sesión.' })
   } catch (error) {
     console.error('Error en verifyEmail:', error)
@@ -157,21 +124,33 @@ const verifyEmail = async (req, res) => {
   }
 }
 
+// ── Reenviar código de verificación (8 chars) ─────────────────────
+const resendVerificationCode = async (req, res) => {
+  try {
+    const { usuarioCorreo } = req.body
+    const usuario = await Usuario.findOne({ where: { usuarioCorreo } })
+    if (!usuario) return res.json({ message: 'Si el correo existe, recibirás el código.' })
+
+    const codigo = Math.random().toString(36).substring(2, 10).toUpperCase() // 8 chars
+    await usuario.update({ usuarioCC: codigo, usuarioFCC: new Date() })
+    await enviarCodigoVerificacion(usuarioCorreo, codigo)
+
+    res.json({ message: 'Código reenviado correctamente.' })
+  } catch (error) {
+    console.error('Error en resendVerificationCode:', error)
+    res.status(500).json({ message: 'Error al reenviar el código.' })
+  }
+}
+
 // ── Olvidé mi contraseña ──────────────────────────────────────────
 const forgotPassword = async (req, res) => {
   try {
     const { usuarioCorreo } = req.body
-
     const usuario = await Usuario.findOne({ where: { usuarioCorreo } })
-    if (!usuario) {
-      // Por seguridad, siempre respondemos igual
-      return res.json({ message: 'Si el correo existe, recibirás instrucciones.' })
-    }
+    if (!usuario) return res.json({ message: 'Si el correo existe, recibirás instrucciones.' })
 
-    const codigo = Math.random().toString(36).substring(2, 8).toUpperCase()
+    const codigo = Math.random().toString(36).substring(2, 8).toUpperCase() // 6 chars
     await usuario.update({ usuarioCC: codigo, usuarioFCC: new Date() })
-
-    // TODO: Enviar correo con el código
     await enviarCodigoRestablecimiento(usuarioCorreo, codigo)
 
     res.json({ message: 'Si el correo existe, recibirás instrucciones.' })
@@ -181,19 +160,27 @@ const forgotPassword = async (req, res) => {
   }
 }
 
+// ── Verificar código de restablecimiento ─────────────────────────
+const verifyResetCode = async (req, res) => {
+  try {
+    const { codigo } = req.body
+    const usuario = await Usuario.findOne({ where: { usuarioCC: codigo } })
+    if (!usuario) return res.status(400).json({ message: 'Código inválido o expirado.' })
+    res.json({ message: 'Código válido.' })
+  } catch (error) {
+    console.error('Error en verifyResetCode:', error)
+    res.status(500).json({ message: 'Error al verificar el código.' })
+  }
+}
+
 // ── Restablecer contraseña ────────────────────────────────────────
 const resetPassword = async (req, res) => {
   try {
     const { codigo, nuevaContra } = req.body
-
     const usuario = await Usuario.findOne({ where: { usuarioCC: codigo } })
-    if (!usuario) {
-      return res.status(400).json({ message: 'Código inválido o expirado.' })
-    }
-
+    if (!usuario) return res.status(400).json({ message: 'Código inválido o expirado.' })
     const hash = await bcrypt.hash(nuevaContra, 10)
     await usuario.update({ usuarioContra: hash, usuarioCC: null })
-
     res.json({ message: 'Contraseña actualizada correctamente.' })
   } catch (error) {
     console.error('Error en resetPassword:', error)
@@ -245,18 +232,9 @@ const changePassword = async (req, res) => {
   }
 }
 
-const verifyResetCode = async (req, res) => {
-  try {
-    const { codigo } = req.body
-    const usuario = await Usuario.findOne({ where: { usuarioCC: codigo } })
-    if (!usuario) {
-      return res.status(400).json({ message: 'Código inválido o expirado.' })
-    }
-    res.json({ message: 'Código válido.' })
-  } catch (error) {
-    console.error('Error en verifyResetCode:', error)
-    res.status(500).json({ message: 'Error al verificar el código.' })
-  }
+module.exports = {
+  register, login, verifyEmail,
+  resendVerificationCode,
+  forgotPassword, resetPassword, verifyResetCode,
+  getProfile, updateProfile, changePassword,
 }
-
-module.exports = { register, login, verifyEmail, forgotPassword, resetPassword, verifyResetCode, getProfile, updateProfile, changePassword }

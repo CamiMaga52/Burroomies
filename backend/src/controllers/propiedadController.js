@@ -3,9 +3,8 @@ const { Op } = require('sequelize')
 
 // Códigos postales autorizados (colindantes a UPALM)
 const CP_AUTORIZADOS = [
-  '07300', '07310', '07320', '07330', '07340',
-  '07350', '07360', '07370', '07400', '07410',
-  '07420', '07430', '07440', '07450', '07460',
+  '07738', '07360', '07311', '07700', '07340',
+  '07350', '07300', '07370', '07040', '07320',
 ]
 
 // ── Obtener todas las propiedades (con filtros) ───────────────────
@@ -99,14 +98,41 @@ const createPropiedad = async (req, res) => {
       return res.status(400).json({ message: 'Has alcanzado el límite de 3 propiedades en fase de pruebas.' })
     }
 
-    // Validar código postal autorizado (RN_02)
-    const cp = String(req.body.propiedadColonia) // ajustar según tu campo CP
-    // TODO: validar CP contra CP_AUTORIZADOS
+    // ── Validar zona con COPOMEX (RN_02) ──────────────────────────
+    const cp = String(req.body.propiedadCp || '').trim()
+    if (!cp) {
+      return res.status(400).json({ message: 'El código postal es obligatorio.' })
+    }
+
+    // Primero verificar lista local (más eficiente y confiable)
+    if (!CP_AUTORIZADOS.includes(cp)) {
+      // CP no está en zona autorizada — consultar COPOMEX para obtener municipio
+      try {
+        const copomexRes = await fetch(
+          `https://api.copomex.com/query/info_cp/${cp}?type=simplified&token=${process.env.COPOMEX_TOKEN}`
+        )
+        const copomexData = await copomexRes.json()
+        const municipio = copomexData.response?.municipio || copomexData.municipio || ''
+        return res.status(400).json({
+          message: `La propiedad en ${municipio || 'esa zona'} (CP: ${cp}) no está dentro de la zona autorizada cercana al IPN/UPALM.`
+        })
+      } catch {
+        return res.status(400).json({
+          message: `El código postal ${cp} no está dentro de la zona autorizada cercana al IPN/UPALM.`
+        })
+      }
+    }
 
     const codigo = Math.random().toString(36).substring(2, 8).toUpperCase()
 
+    // Sanitizar campos que COPOMEX puede enviar como array
+    const body = { ...req.body }
+    if (Array.isArray(body.propiedadColonia)) body.propiedadColonia = body.propiedadColonia[0] || ''
+    if (Array.isArray(body.propiedadMunicipio)) body.propiedadMunicipio = body.propiedadMunicipio[0] || ''
+    if (Array.isArray(body.propiedadEstado)) body.propiedadEstado = body.propiedadEstado[0] || ''
+
     const propiedad = await Propiedad.create({
-      ...req.body,
+      ...body,
       arrendador_idArrendador: arrendador.idArrendador,
       propiedadCodigo: codigo,
       propiedadEstatus: 'Activa',

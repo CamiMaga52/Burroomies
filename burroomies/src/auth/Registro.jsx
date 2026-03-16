@@ -10,17 +10,15 @@ import AuthNavbar from '../shared/components/AuthNavbar';
 import s from './auth.module.css';
 import rs from './Registro.module.css';
 
-/* ── Opciones ── */
 const UNIDADES  = ['UPALM', 'Zacatenco', 'Santo Tomás', 'Tepepan', 'Milpa Alta'];
 const CARRERAS  = ['ISC', 'IIA', 'LCD', 'IA', 'MCIC'];
 const SEMESTRES = ['1°','2°','3°','4°','5°','6°','7°','8°','9°','10°'];
 
-/* ── Regex ── */
-const SOLO_LETRAS      = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
-const CORREO_VALIDO    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const SOLO_NUMEROS     = /^\d+$/;
+const SOLO_LETRAS       = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+const CORREO_VALIDO     = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SOLO_NUMEROS      = /^\d+$/;
 const CONTRASENA_VALIDA = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_\-#])[A-Za-z\d@$!%*?&_\-#]{8,}$/;
-const CP_VALIDO        = /^\d{5}$/;
+const CP_VALIDO         = /^\d{5}$/;
 
 const FORM_INICIAL = {
   nombres:'', apellidoP:'', apellidoM:'',
@@ -31,42 +29,67 @@ const FORM_INICIAL = {
   avisoPrivacidad: false, terminosCondiciones: false,
 };
 
-export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguiente }) {
-  const [tipo,    setTipo]    = useState('estudiante');
-  const [form,    setForm]    = useState(FORM_INICIAL);
+// Construye el form inicial usando datosIniciales si existen
+const buildForm = (d) => {
+  if (!d) return FORM_INICIAL;
+  return {
+    nombres:             d.nombres             || '',
+    apellidoP:           d.apellidoP           || '',
+    apellidoM:           d.apellidoM           || '',
+    correo:              d.correo              || '',
+    telefono:            d.telefono            || '',
+    curp:                d.curp                || '',
+    fechaNac:            d.fechaNac            || '',
+    unidad:              d.unidad              || '',
+    carrera:             d.carrera             || '',
+    boleta:              d.boleta              || '',
+    semestre:            d.semestre            || '',
+    cp:                  d.cp                  || '',
+    estado:              d.estado              || '',
+    municipio:           d.municipio           || '',
+    colonia:             d.colonia             || '',
+    calle:               d.calle               || '',
+    numExt:              d.numExt              || '',
+    numInt:              d.numInt              || '',
+    contrasena:          d.contrasena          || '',
+    repetirContrasena:   d.repetirContrasena   || '',
+    avisoPrivacidad:     d.avisoPrivacidad     || false,
+    terminosCondiciones: d.terminosCondiciones || false,
+  };
+};
+
+export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguiente, datosIniciales }) {
+  const [tipo,    setTipo]    = useState(datosIniciales?.tipo || 'estudiante');
+  const [form,    setForm]    = useState(() => buildForm(datosIniciales));
   const [errores, setErrores] = useState({});
   const [showP1,  setShowP1]  = useState(false);
   const [showP2,  setShowP2]  = useState(false);
 
   const set = (field) => (e) => {
     const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setForm((prev) => ({ ...prev, [field]: val }));
-    setErrores((prev) => ({ ...prev, [field]: '' }));
+    setForm(prev => ({ ...prev, [field]: val }));
+    setErrores(prev => ({ ...prev, [field]: '' }));
   };
 
-  const handleTipo = (t) => { setTipo(t); setForm(FORM_INICIAL); setErrores({}); };
+  const handleTipo = (t) => {
+    setTipo(t);
+    setForm(FORM_INICIAL);
+    setErrores({});
+  };
 
-  /* ── Validaciones ── */
   const validar = () => {
     const e = {};
-
     if (!form.nombres.trim())                    e.nombres    = 'El nombre es obligatorio.';
     else if (!SOLO_LETRAS.test(form.nombres))    e.nombres    = 'Solo se permiten letras.';
-
     if (!form.apellidoP.trim())                  e.apellidoP  = 'El apellido paterno es obligatorio.';
     else if (!SOLO_LETRAS.test(form.apellidoP))  e.apellidoP  = 'Solo se permiten letras.';
-
     if (form.apellidoM && !SOLO_LETRAS.test(form.apellidoM)) e.apellidoM = 'Solo se permiten letras.';
-
     if (!form.correo.trim())                     e.correo     = 'El correo es obligatorio.';
     else if (!CORREO_VALIDO.test(form.correo))   e.correo     = 'Ingresa un correo válido.';
-
-    if (form.telefono && !SOLO_NUMEROS.test(form.telefono))  e.telefono  = 'Solo se permiten números.';
-
+    if (form.telefono && !SOLO_NUMEROS.test(form.telefono)) e.telefono = 'Solo se permiten números.';
     if (!form.contrasena)                        e.contrasena = 'La contraseña es obligatoria.';
     else if (!CONTRASENA_VALIDA.test(form.contrasena))
-      e.contrasena = 'Mínimo 8 caracteres, una mayúscula, una minúscula y un carácter especial (@$!%*?&_-#).';
-
+      e.contrasena = 'Mínimo 8 caracteres, una mayúscula, una minúscula y un carácter especial.';
     if (!form.repetirContrasena)                 e.repetirContrasena = 'Repite tu contraseña.';
     else if (form.contrasena !== form.repetirContrasena)
       e.repetirContrasena = 'Las contraseñas no coinciden.';
@@ -80,12 +103,12 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
     }
 
     if (tipo === 'arrendador') {
-      if (!form.cp.trim())                       e.cp       = 'El código postal es obligatorio.';
-      else if (!CP_VALIDO.test(form.cp))         e.cp       = 'El código postal debe tener 5 dígitos.';
-      if (!form.estado.trim())                   e.estado   = 'El estado es obligatorio.';
-      if (!form.municipio.trim())                e.municipio= 'El municipio es obligatorio.';
-      if (!form.colonia.trim())                  e.colonia  = 'La colonia es obligatoria.';
-      if (!form.calle.trim())                    e.calle    = 'La calle es obligatoria.';
+      if (!form.cp.trim())                       e.cp        = 'El código postal es obligatorio.';
+      else if (!CP_VALIDO.test(form.cp))         e.cp        = 'El código postal debe tener 5 dígitos.';
+      if (!form.estado.trim())                   e.estado    = 'El estado es obligatorio.';
+      if (!form.municipio.trim())                e.municipio = 'El municipio es obligatorio.';
+      if (!form.colonia.trim())                  e.colonia   = 'La colonia es obligatoria.';
+      if (!form.calle.trim())                    e.calle     = 'La calle es obligatoria.';
     }
 
     if (!form.avisoPrivacidad)     e.avisoPrivacidad     = 'Debes aceptar el aviso de privacidad.';
@@ -95,46 +118,11 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
     return Object.keys(e).length === 0;
   };
 
-  const handleSiguiente = async (e) => {
+  // Solo valida y pasa datos al padre — NO llama al backend
+  const handleSiguiente = (e) => {
     e.preventDefault();
     if (!validar()) return;
-
-    try {
-      const body = {
-        usuarioNom:      form.nombres,
-        usuarioApePat:   form.apellidoP,
-        usuarioApeMat:   form.apellidoM,
-        usuarioCorreo:   form.correo,
-        usuarioContra:   form.contrasena,
-        usuarioTel:      form.telefono,
-        usuarioCurp:     form.curp,
-        usuarioFechaNac: form.fechaNac,
-        rol: tipo === 'estudiante' ? 'arrendatario' : 'arrendador',
-        arrendatarioBoleta:    form.boleta,
-        arrendatarioUnidadAca: form.unidad,
-        calle:     form.calle,
-        numExt:    form.numExt,
-        numInt:    form.numInt,
-        colonia:   form.colonia,
-        municipio: form.municipio,
-        estado:    form.estado,
-        cp:        form.cp,
-      };
-
-      const response = await fetch('http://localhost:3001/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      const data = await response.json();
-      if (!response.ok) { alert(data.message || 'Error al registrarse.'); return; }
-
-      onSiguiente?.({ tipo, ...form });
-
-    } catch {
-      alert('No se pudo conectar con el servidor.');
-    }
+    onSiguiente?.({ tipo, ...form });
   };
 
   const navbar = (
@@ -148,7 +136,6 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
     <AuthLayout navbar={navbar} center={false}>
       <form className={rs.formPage} onSubmit={handleSiguiente} noValidate>
 
-        {/* Título */}
         <div className={rs.tituloRow}>
           <User className={rs.tituloIcon} size={28} />
           <h1 className={rs.tituloH1}>Registro de usuario</h1>
@@ -158,7 +145,7 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
         <div className={rs.tipoRow}>
           <span className={rs.tipoLabel}><Briefcase size={16} /> Tipo de usuario</span>
           <div className={rs.tipoOpciones}>
-            {['estudiante','arrendador'].map((t) => (
+            {['estudiante','arrendador'].map(t => (
               <label key={t} className={rs.radioLabel}>
                 <input type="radio" name="tipo" value={t}
                   checked={tipo === t} onChange={() => handleTipo(t)} className={s.radioInput} />
@@ -172,7 +159,7 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
 
         <hr className={rs.divider} />
 
-        {/* ── Datos personales ── */}
+        {/* Datos personales */}
         <section className={rs.seccion}>
           <div className={rs.grid3}>
             <Campo label="Nombre(s)" error={errores.nombres}>
@@ -220,7 +207,6 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
 
         <hr className={rs.divider} />
 
-        {/* ── Sección según tipo ── */}
         {tipo === 'estudiante'
           ? <SeccionEstudiante form={form} set={set} s={s} rs={rs} errores={errores} />
           : <SeccionArrendador form={form} set={set} s={s} rs={rs} errores={errores} />
@@ -228,7 +214,7 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
 
         <hr className={rs.divider} />
 
-        {/* ── Contraseñas + checks ── */}
+        {/* Contraseñas */}
         <section className={rs.seccion}>
           <div className={rs.passRow}>
             <div className={rs.grid2}>
@@ -264,14 +250,13 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
               <span className={s.checkCustom} />
               <FileText size={16} /> Aviso de Privacidad
             </label>
-            {errores.avisoPrivacidad && <Error msg={errores.avisoPrivacidad} />}
-
+            {errores.avisoPrivacidad && <Err msg={errores.avisoPrivacidad} />}
             <label className={rs.checkLabel}>
               <input type="checkbox" checked={form.terminosCondiciones} onChange={set('terminosCondiciones')} className={s.checkInput} />
               <span className={s.checkCustom} />
               <CheckSquare size={16} /> Términos y Condiciones de Uso
             </label>
-            {errores.terminosCondiciones && <Error msg={errores.terminosCondiciones} />}
+            {errores.terminosCondiciones && <Err msg={errores.terminosCondiciones} />}
           </div>
 
           <div className={rs.siguienteRow}>
@@ -286,7 +271,7 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
   );
 }
 
-/* ── Sección Estudiante ── */
+/* ── Secciones específicas ── */
 function SeccionEstudiante({ form, set, s, rs, errores }) {
   return (
     <section className={rs.seccion}>
@@ -308,7 +293,7 @@ function SeccionEstudiante({ form, set, s, rs, errores }) {
             type="text" value={form.boleta} onChange={set('boleta')} maxLength={10} />
         </Campo>
       </div>
-      <div style={{ maxWidth: 200 }}>
+      <div style={{ maxWidth:200 }}>
         <Campo label="No. Semestre" error={errores.semestre}>
           <SelectInput value={form.semestre} onChange={set('semestre')} s={s}>
             <option value="" disabled>Selecciona</option>
@@ -320,7 +305,6 @@ function SeccionEstudiante({ form, set, s, rs, errores }) {
   );
 }
 
-/* ── Sección Arrendador ── */
 function SeccionArrendador({ form, set, s, rs, errores }) {
   return (
     <section className={rs.seccion}>
@@ -367,7 +351,7 @@ function SeccionArrendador({ form, set, s, rs, errores }) {
 }
 
 /* ── Auxiliares ── */
-function Error({ msg }) {
+function Err({ msg }) {
   return <span style={{ color:'#e53e3e', fontSize:'0.75rem', marginTop:2 }}>{msg}</span>;
 }
 
@@ -376,7 +360,7 @@ function Campo({ label, children, error }) {
     <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
       <label style={{ fontSize:'0.82rem', fontWeight:700, color:'#2d2550' }}>{label}</label>
       {children}
-      {error && <Error msg={error} />}
+      {error && <Err msg={error} />}
     </div>
   );
 }

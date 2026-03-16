@@ -51,6 +51,10 @@ const Propiedad = sequelize.define('Propiedad', {
     type: DataTypes.STRING(45),
     allowNull: true,
   },
+  propiedadCp: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+  },
   propiedadEstatus: {
     type: DataTypes.STRING(45),
     defaultValue: 'Activa',
