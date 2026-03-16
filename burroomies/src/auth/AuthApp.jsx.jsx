@@ -10,8 +10,8 @@ import BienvenidoArrendador  from './BienvenidoArrendador';
 import RestablecerContrasena from './RestablecerContrasena';
 import VerificarCodigo       from './VerificarCodigo';
 
-export default function AuthApp({ onLoginExitoso }) {
-  const [pantalla,       setPantalla]       = useState('login');
+export default function AuthApp({ onLoginExitoso, pantallaInicial = 'login', onPaginaPrincipal: onPagPrincipalProp }) {
+  const [pantalla,       setPantalla]       = useState(pantallaInicial);
   const [datosRegistro,  setDatosRegistro]  = useState(null);
   const [correoRegistro, setCorreoRegistro] = useState('');
 
@@ -134,7 +134,7 @@ export default function AuthApp({ onLoginExitoso }) {
   };
 
   const comun = {
-    onPaginaPrincipal: irA('login'),
+    onPaginaPrincipal: onPagPrincipalProp || irA('login'),
     onInicioSesion:    irA('login'),
   };
 
