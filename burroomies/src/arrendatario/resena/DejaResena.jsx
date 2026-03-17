@@ -51,21 +51,82 @@ function StarRating({ value, onChange, large = false }) {
 }
 
 // ── Componente principal ─────────────────────────────────
-export default function DejaResena({ onCancel }) {
-  const [cats, setCats]           = useState(Object.fromEntries(CATEGORIAS.map(c => [c.id, 0])));
-  const [general, setGeneral]     = useState(0);
-  const [texto, setTexto]         = useState('');
+export default function DejaResena({ onCancel, onPublicar, idPropiedad, onVerPerfil, onArrendamientoActual, tieneArrendamiento, onCerrarSesion }) {
+  const [cats, setCats]               = useState(Object.fromEntries(CATEGORIAS.map(c => [c.id, 0])));
+  const [general, setGeneral]         = useState(0);
+  const [texto, setTexto]             = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [enviando, setEnviando]       = useState(false);
 
   const handleAceptar = () => {
     setShowSuccess(false);
-    onCancel?.();
+    onPublicar?.();
+  };
+
+  const handlePublicar = async () => {
+    setEnviando(true);
+    try {
+      const token = localStorage.getItem('burroomies_token');
+
+      // Usar idPropiedad recibido como prop, o intentar obtenerlo del arrendamiento
+      let propiedadId = idPropiedad;
+      if (!propiedadId) {
+        try {
+          const resArr = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (resArr.ok) {
+            const arrData = await resArr.json();
+            propiedadId = arrData?.Propiedad?.idPropiedad || arrData?.propiedad_idPropiedad;
+          }
+        } catch {}
+      }
+
+      if (!propiedadId) {
+        setShowSuccess(true);
+        return;
+      }
+
+      const body = {
+        resenaDescrip:         texto || 'Sin comentario.',
+        resenaCalGen:          String(general || 0),
+        resenaCalSerBasic:     String(cats.limpieza    || 0),
+        resenaCalSerComEnt:    String(cats.comunicacion || 0),
+        resenaCalSerAdicio:    String(cats.servicio     || 0),
+        propiedad_idPropiedad: propiedadId,
+      };
+
+      const res = await fetch('http://localhost:3001/api/resenas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok && res.status !== 400) {
+        const data = await res.json();
+        alert(data.message || 'No se pudo publicar la reseña.');
+        return;
+      }
+
+      setShowSuccess(true);
+    } catch (err) {
+      console.error(err);
+      setShowSuccess(true);
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
     <div className={styles.page}>
 
-      <Navbar showBuscar onCerrarSesion={() => {}} />
+      <Navbar
+        showBuscar
+        onVerPerfil={onVerPerfil}
+        onArrendamientoActual={onArrendamientoActual}
+        tieneArrendamiento={tieneArrendamiento}
+        onCerrarSesion={onCerrarSesion}
+      />
 
       <main className={styles.container}>
         <h1 className={styles.pageTitle}>¡Deja tu Reseña y calificación!</h1>
@@ -112,8 +173,9 @@ export default function DejaResena({ onCancel }) {
           <button type="button" className={`${styles.btnAccion} ${styles.btnCancelar}`} onClick={onCancel}>
             Cancelar
           </button>
-          <button type="button" className={`${styles.btnAccion} ${styles.btnPublicar}`} onClick={() => setShowSuccess(true)}>
-            Publicar
+          <button type="button" className={`${styles.btnAccion} ${styles.btnPublicar}`}
+            onClick={handlePublicar} disabled={enviando}>
+            {enviando ? 'Publicando...' : 'Publicar'}
           </button>
         </div>
       </main>

@@ -1,20 +1,88 @@
 // src/auth/SubirConstancia.jsx
-// Paso 2 del registro de estudiante — sube constancia PDF (opcional con aviso).
-import { useState } from 'react';
-import AuthLayout  from '../shared/components/AuthLayout';
+import { useState, useRef } from 'react';
+import AuthLayout from '../shared/components/AuthLayout';
 import AuthNavbar  from '../shared/components/AuthNavbar';
-import AuthCard    from '../shared/components/AuthCard';
-import UploadZone  from '../shared/components/UploadZone';
-import s from './auth.module.css';
+import s  from './auth.module.css';
 import cs from './SubirConstancia.module.css';
 
-export default function SubirConstancia({ onPaginaPrincipal, onInicioSesion, onCancelar, onSiguiente }) {
-  const [archivo,   setArchivo]   = useState(null);
-  const [showModal, setShowModal] = useState(false);
+const IconUpload = () => (
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="17 8 12 3 7 8"/>
+    <line x1="12" y1="3" x2="12" y2="15"/>
+  </svg>
+);
+const IconCheck = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+    stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+const IconPDF = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+    stroke="#8B5CF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/>
+    <line x1="16" y1="17" x2="8" y2="17"/>
+  </svg>
+);
 
-  const handleSiguiente = () => {
-    if (!archivo) { setShowModal(true); return; }
-    onSiguiente?.(archivo);
+export default function SubirConstancia({
+  onSiguiente,
+  onCancelar,   // ← regresar al formulario de registro
+  onSaltar,     // ← dejar para después (registrar sin constancia)
+  datosRegistro,
+  onPaginaPrincipal,
+  onInicioSesion,
+}) {
+  const [archivo,   setArchivo]   = useState(null);
+  const [validando, setValidando] = useState(false);
+  const [validado,  setValidado]  = useState(false);
+  const [error,     setError]     = useState('');
+  const inputRef = useRef(null);
+
+  const handleArchivo = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') { setError('Solo se aceptan archivos PDF.'); return; }
+    if (file.size > 10 * 1024 * 1024)   { setError('El archivo no debe superar 10MB.'); return; }
+    setArchivo(file);
+    setError(''); setValidado(false);
+  };
+
+  const handleValidar = async () => {
+    if (!archivo) { setError('Selecciona tu constancia de estudios.'); return; }
+    setValidando(true); setError('');
+    try {
+      const base64 = await new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload  = () => res(reader.result.split(',')[1]);
+        reader.onerror = rej;
+        reader.readAsDataURL(archivo);
+      });
+      const res = await fetch('http://localhost:3001/api/documentos/validar-constancia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pdfBase64: base64,
+          nombres:   datosRegistro?.nombres   || '',
+          apellidoP: datosRegistro?.apellidoP || '',
+          apellidoM: datosRegistro?.apellidoM || '',
+          boleta:    datosRegistro?.boleta    || '',
+          curp:      datosRegistro?.curp      || '',
+        }),
+      });
+      const data = await res.json();
+      if (!data.valido) { setError(data.message || 'La constancia no pudo ser verificada.'); return; }
+      setValidado(true);
+    } catch (err) {
+      console.error(err);
+      setError('No se pudo conectar con el servidor de validación.');
+    } finally {
+      setValidando(false);
+    }
   };
 
   const navbar = (
@@ -26,51 +94,111 @@ export default function SubirConstancia({ onPaginaPrincipal, onInicioSesion, onC
 
   return (
     <AuthLayout navbar={navbar}>
-      <AuthCard maxWidth="560px">
+      <div style={{
+        background: 'white', borderRadius: 20, padding: '36px 32px',
+        width: '100%', maxWidth: 460,
+        boxShadow: '0 8px 40px rgba(45,37,80,0.12)',
+      }}>
 
-        <UploadZone
-          texto={'Arrastra aquí para\nsubir constancia de\nestudios PDF'}
-          onArchivo={setArchivo}
-        />
-
-        <div className={cs.btnRow}>
-          <button type="button" className={s.btnCancelar} onClick={onCancelar}>
-            « Cancelar
-          </button>
-          <button type="button" className={`${s.btnPrincipal} ${cs.btnSig}`} onClick={handleSiguiente}>
-            Siguiente »
-          </button>
+        <div style={{ display:'flex', flexDirection:'column', gap:6, marginBottom:16 }}>
+          <h2 className={s.titulo}>Sube tu constancia de estudios</h2>
+          <p className={s.descripcion}>
+            Necesitamos verificar tu estatus como estudiante del IPN.<br/>
+            La constancia debe estar en formato PDF.
+          </p>
         </div>
 
-        <p style={{ textAlign: 'center', margin: 0 }}>
-          <button type="button" className={s.btnLink} onClick={() => setShowModal(true)}>
-            No tengo mi constancia de estudios
-          </button>
-        </p>
-
-      </AuthCard>
-
-      {/* Modal sin constancia */}
-      {showModal && (
-        <div className={s.overlay} onClick={() => setShowModal(false)}>
-          <div className={s.modal} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-            <button className={s.modalClose} onClick={() => setShowModal(false)} aria-label="Cerrar">✕</button>
-            <div className={`${s.modalIcon} ${s.modalIconAzul}`}>
-              <span style={{ fontFamily: 'Poppins', fontSize: '2rem', fontWeight: 900, color: 'white' }}>!</span>
+        {/* Zona de carga */}
+        <div className={cs.uploadZone} onClick={() => inputRef.current?.click()}
+          style={{ cursor:'pointer', borderColor: validado ? '#22c55e' : archivo ? '#8B5CF6' : undefined }}>
+          <input ref={inputRef} type="file" accept=".pdf"
+            style={{ display:'none' }} onChange={handleArchivo} />
+          {archivo ? (
+            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+              <IconPDF />
+              <div style={{ flex:1, textAlign:'left' }}>
+                <p style={{ fontWeight:700, color:'#2d2550', margin:0, fontSize:'0.88rem' }}>
+                  {archivo.name}
+                </p>
+                <p style={{ color:'#888', margin:0, fontSize:'0.75rem' }}>
+                  {(archivo.size / 1024).toFixed(0)} KB
+                </p>
+              </div>
+              {validado && <IconCheck />}
             </div>
-            <p className={s.modalTexto}>
-              Si decides continuar, podrás registrarte y contarás con un periodo de 2 meses
-              a partir de la fecha de registro para cargar tu constancia de estudios y completar
-              la validación de tu cuenta. Una vez concluido ese plazo, si no se ha cargado la
-              constancia, la cuenta será eliminada. ¿Deseas continuar?
-            </p>
-            <button type="button" className={s.btnPrincipal}
-              onClick={() => { setShowModal(false); onSiguiente?.(null); }}>
-              Continuar »
+          ) : (
+            <div style={{ textAlign:'center', color:'#9ca3af' }}>
+              <IconUpload />
+              <p style={{ margin:'8px 0 0', fontSize:'0.85rem', fontWeight:600 }}>
+                Haz clic para seleccionar tu constancia
+              </p>
+              <p style={{ margin:'4px 0 0', fontSize:'0.75rem' }}>Solo PDF • Máx. 10MB</p>
+            </div>
+          )}
+        </div>
+
+        {error && (
+          <div style={{
+            background:'#fff5f5', border:'1px solid #fed7d7', borderRadius:10,
+            padding:'10px 14px', marginTop:10,
+            color:'#e53e3e', fontSize:'0.82rem', fontWeight:600,
+          }}>⚠️ {error}</div>
+        )}
+
+        {validado && (
+          <div style={{
+            background:'#f0fdf4', border:'1px solid #bbf7d0', borderRadius:10,
+            padding:'10px 14px', marginTop:10,
+            color:'#16a34a', fontSize:'0.82rem', fontWeight:600,
+            display:'flex', alignItems:'center', gap:8,
+          }}><IconCheck /> Constancia verificada correctamente</div>
+        )}
+
+        {/* Botones */}
+        <div style={{ marginTop:24, display:'flex', flexDirection:'column', gap:12 }}>
+
+          {/* Fila principal: Regresar + Verificar/Continuar */}
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12 }}>
+            <button type="button"
+              onClick={onCancelar}
+              style={{
+                background:'transparent', border:'1px solid #c8b8e8',
+                borderRadius:20, color:'#6d3fc0',
+                fontSize:'0.85rem', cursor:'pointer', padding:'8px 18px',
+                fontWeight:600,
+              }}>
+              ← Regresar
+            </button>
+
+            {!validado ? (
+              <button type="button" className={`${s.btnSiguiente} ${cs.btnSig}`}
+                onClick={handleValidar} disabled={!archivo || validando}>
+                {validando ? 'Verificando...' : 'Verificar »'}
+              </button>
+            ) : (
+              <button type="button" className={`${s.btnSiguiente} ${cs.btnSig}`}
+                onClick={onSiguiente}>
+                Continuar »
+              </button>
+            )}
+          </div>
+
+          {/* Dejar para después */}
+          <div style={{ textAlign:'center' }}>
+            <button type="button"
+              onClick={onSaltar}
+              style={{
+                background:'transparent', border:'none',
+                color:'#aaa', fontSize:'0.78rem',
+                cursor:'pointer', textDecoration:'underline',
+              }}>
+              Dejar para después y continuar sin verificar
             </button>
           </div>
+
         </div>
-      )}
+
+      </div>
     </AuthLayout>
   );
 }

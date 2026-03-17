@@ -5,15 +5,18 @@ import styles from './ArrendadorLayout.module.css';
 
 /**
  * Props:
- *   showMisViviendas  bool  — muestra botón "Mi vivienda" en navbar
- *   onMisViviendas    fn
- *   onCerrarSesion    fn
- *   center            bool  — centra el contenido (default true)
+ *   showMisViviendas   bool  — muestra botón "Mi vivienda" en navbar
+ *   onMisViviendas     fn
+ *   onMisArrendamientos fn   — navega a Mis arrendamientos
+ *   onCerrarSesion     fn
+ *   center             bool  — centra el contenido (default true)
  */
 export default function ArrendadorLayout({
   children,
-  showMisViviendas = true,
+  showMisViviendas    = true,
   onMisViviendas,
+  onMisArrendamientos,
+  onVerPerfil,
   onCerrarSesion,
   center = true,
 }) {
@@ -23,6 +26,9 @@ export default function ArrendadorLayout({
         showMiVivienda={showMisViviendas}
         onMiVivienda={onMisViviendas}
         onCerrarSesion={onCerrarSesion}
+        showMisArrendamientos={!!onMisArrendamientos}
+        onMisArrendamientos={onMisArrendamientos}
+        onVerPerfil={onVerPerfil}
       />
       <main className={`${styles.container} ${center ? styles.center : ''}`}>
         {children}

@@ -1,17 +1,5 @@
-// ─────────────────────────────────────────────────────────
-//  src/arrendatario/miVivienda/MiArrendamientoActual.jsx
-//
-//  CAMBIOS vs versión anterior:
-//  - Navbar  → importado de shared/components/Navbar
-//  - Footer  → importado de shared/components/Footer
-//  - Modal   → importado de shared/components/Modal
-//  - useModal→ importado de shared/hooks/useModal
-//  - Íconos  → importados de shared/icons
-//  - Se eliminó el componente Navbar() local
-//  - Se eliminó el componente Footer() local
-// ─────────────────────────────────────────────────────────
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+// src/arrendatario/miVivienda/MiArrendamientoActual.jsx
+import { useState, useEffect } from 'react';
 import styles from './MiArrendamientoActual.module.css';
 
 import Navbar   from '../../shared/components/Navbar';
@@ -20,64 +8,197 @@ import Modal    from '../../shared/components/Modal';
 import useModal from '../../shared/hooks/useModal';
 
 import {
-  IconHome,
-  IconPhone,
-  IconMail,
-  IconPlus,
-  IconWarning,
-  IconSearch,
+  IconHome, IconPhone, IconMail, IconPlus, IconWarning,
 } from '../../shared/icons';
 
 import burroDudoso from '../../img/burroDudoso.png';
+import burroTriste from '../../img/burroTriste1.png';
 
-// ── Datos de prueba (reemplazar por API en TT2) ──────────
-const ARRENDAMIENTO_DEFAULT = {
-  titulo: 'Departamento cerca de ESCOM',
-  descripcionCorta:
-    'El departamento se encuentra en una zona urbana con acceso directo a vías principales y rutas de transporte público...',
-  descripcionCompleta: `El departamento se encuentra en una zona urbana con acceso directo a vías principales
-y rutas de transporte público. Está ubicado a dos cuadras de un corredor comercial que concentra servicios
-básicos, supermercados y establecimientos de uso cotidiano. Cuenta con 2 habitaciones, sala-comedor, cocina
-integral, baño completo y balcón. Incluye servicios de agua y luz, así como acceso a internet por cable.
-El edificio tiene seguridad 24/7 y áreas comunes como jardín y lavandería.`,
-  arrendador: {
-    nombre:      'Jaqueline Montiel',
-    experiencia: 3,
-    telefono:    '55-2222-0123',
-    correo:      'jaqueIMont@ejemplo.com',
-  },
-};
-
-// ── Componente principal ─────────────────────────────────
-export default function MiArrendamientoActual({ initialData = ARRENDAMIENTO_DEFAULT }) {
-  const [confirmed, setConfirmed] = useState(false);
-  const [data]                    = useState(initialData);
+export default function MiArrendamientoActual({
+  onFinalizar,
+  onBuscar,
+  onVerPerfil,
+  onArrendamientoActual,
+  tieneArrendamiento,
+  onCerrarSesion,
+}) {
+  const [arrendamiento, setArrendamiento] = useState(null);
+  const [cargando,      setCargando]      = useState(true);
+  const [error,         setError]         = useState(null);
 
   const finalizarModal = useModal();
   const verMasModal    = useModal();
 
+  /* ── Cargar arrendamiento del backend ── */
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        const token = localStorage.getItem('burroomies_token');
+        const res = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.status === 404) { setArrendamiento(null); return; }
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        setArrendamiento(data);
+      } catch {
+        setError('No se pudo cargar tu arrendamiento.');
+      } finally {
+        setCargando(false);
+      }
+    };
+    cargar();
+  }, []);
+
+  const [esperandoArrendador, setEsperandoArrendador] = useState(false);
+
+  /* ── Finalizar ── */
+  const handleConfirmarFinalizar = async () => {
+    finalizarModal.close();
+    try {
+      const token = localStorage.getItem('burroomies_token');
+      const res = await fetch(
+        `http://localhost:3001/api/arrendamientos/${arrendamiento.idArrendamiento}/terminar`,
+        { method: 'PUT', headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const idPropiedad = propiedad?.idPropiedad || arrendamiento?.propiedad_idPropiedad;
+        // Guardar reseña pendiente en localStorage por si el usuario cierra sesión
+        localStorage.setItem('burroomies_resena_pendiente', JSON.stringify({ idPropiedad }));
+        // Si ambos confirmaron → ir a DejaReseña
+        if (data.message?.includes('terminado correctamente')) {
+          localStorage.removeItem('burroomies_resena_pendiente');
+          onFinalizar?.(idPropiedad);
+        } else {
+          // Solo el arrendatario confirmó → esperar al arrendador
+          setEsperandoArrendador(true);
+        }
+      }
+    } catch {
+      setEsperandoArrendador(true);
+    }
+  };
+
+  /* ── Datos mapeados ── */
+  const propiedad      = arrendamiento?.Propiedad;
+  const arrendador     = propiedad?.Arrendador?.Usuario;
+  const nombreArr      = arrendador ? `${arrendador.usuarioNom} ${arrendador.usuarioApePat}` : '—';
+  const telArr         = arrendador?.usuarioTel || '—';
+  const correoArr      = arrendador?.usuarioCorreo || '—';
+  const primeraFoto    = (() => {
+    try { const f = JSON.parse(propiedad?.propiedadFotos || '[]'); return f[0] || null; }
+    catch { return null; }
+  })();
+
   return (
     <div className={styles.page}>
-
-      <Navbar showBuscar onCerrarSesion={() => {}} />
+      <Navbar
+        showBuscar={!!onBuscar}
+        onBuscar={onBuscar}
+        onVerPerfil={onVerPerfil}
+        onArrendamientoActual={onArrendamientoActual}
+        tieneArrendamiento={tieneArrendamiento}
+        onCerrarSesion={onCerrarSesion}
+      />
 
       <main className={styles.container}>
-
-        {/* Encabezado de sección */}
         <header className={styles.viviendaHeader}>
           <div className={styles.viviendaHeaderIcon}><IconHome /></div>
           <h1 className={styles.viviendaHeaderTitle}>Mi arrendamiento actual</h1>
         </header>
 
-        {confirmed ? (
-          <EmptyState onSearch={() => alert('Ir a búsqueda')} />
-        ) : (
+        {cargando && (
+          <div style={{ textAlign:'center', padding:'60px 0', color:'#6d3fc0', fontWeight:600 }}>
+            Cargando tu arrendamiento...
+          </div>
+        )}
+
+        {!cargando && error && (
+          <div style={{ textAlign:'center', padding:'40px 0', color:'#e53e3e', fontWeight:600 }}>
+            {error}
+          </div>
+        )}
+
+        {!cargando && !error && !arrendamiento && (
+          <div className={styles.sinArrendamiento}>
+            <img src={burroTriste} alt="Sin arrendamiento" className={styles.burroTriste} />
+            <p className={styles.sinArrTitulo}>No tienes un arrendamiento activo</p>
+            <p className={styles.sinArrSub}>
+              Cuando un arrendador te asigne una propiedad, aparecerá aquí.
+            </p>
+            {onBuscar && (
+              <button type="button" className={styles.btnBuscar} onClick={onBuscar}>
+                Buscar vivienda
+              </button>
+            )}
+          </div>
+        )}
+
+        {!cargando && !error && arrendamiento && esperandoArrendador && (
+          <div className={styles.sinArrendamiento}>
+            <div style={{ fontSize: '3rem' }}>⏳</div>
+            <p className={styles.sinArrTitulo}>Confirmación registrada</p>
+            <p className={styles.sinArrSub}>
+              Tu solicitud de finalización fue enviada.<br/>
+              Cuando el arrendador confirme, podrás dejar tu reseña.
+            </p>
+          </div>
+        )}
+
+        {!cargando && !error && arrendamiento && !esperandoArrendador && (
           <>
-            <MainCard
-              propiedad={data}
-              arrendador={data.arrendador}
-              onVerMas={verMasModal.open}
-            />
+            <section className={styles.mainCard}>
+              <div className={styles.propiedadImgBanner}
+                style={primeraFoto ? { padding:0, overflow:'hidden' } : {}}>
+                {primeraFoto
+                  ? <img src={primeraFoto} alt={propiedad?.propiedadTitulo}
+                      style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  : <span className={styles.propiedadImgEmoji}>🏠</span>
+                }
+                <div className={styles.propiedadImgOverlay} />
+                <span className={styles.propiedadBadge}>Arrendamiento activo</span>
+              </div>
+
+              <div className={styles.propiedadBody}>
+                <h2 className={styles.propiedadTitulo}>{propiedad?.propiedadTitulo || 'Propiedad'}</h2>
+                <p className={styles.propiedadDesc}>
+                  {propiedad?.propiedadDescripcion || 'Sin descripción disponible.'}
+                </p>
+                <button type="button" className={styles.btnVerMas} onClick={verMasModal.open}>
+                  <IconPlus aria-hidden="true" /> Ver más
+                </button>
+              </div>
+
+              <hr className={styles.divider} />
+
+              <div className={styles.arrendadorRow}>
+                <div className={styles.arrendadorLeft}>
+                  <span className={styles.arrendadorLabel}>Arrendador</span>
+                  <div className={styles.arrendadorAvatar}>
+                    {arrendador?.usuarioFoto
+                      ? <img src={arrendador.usuarioFoto} alt={nombreArr}
+                          style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                      : nombreArr.charAt(0)
+                    }
+                  </div>
+                  <span className={styles.arrendadorNombre}>{nombreArr}</span>
+                  <span className={styles.arrendadorExp}>
+                    Renta: ${parseInt(arrendamiento.arrendamientoRenta || 0).toLocaleString()} MXN/mes
+                  </span>
+                </div>
+                <div className={styles.arrendadorRight}>
+                  <span className={styles.contactoLabel}>Información de contacto:</span>
+                  <a href={`tel:${telArr}`} className={styles.contactoItem}>
+                    <IconPhone aria-hidden="true" /><span>{telArr}</span>
+                  </a>
+                  <a href={`mailto:${correoArr}`} className={styles.contactoItem}>
+                    <IconMail aria-hidden="true" /><span>{correoArr}</span>
+                  </a>
+                </div>
+              </div>
+            </section>
+
             <div className={styles.finalizarWrapper}>
               <button type="button" className={styles.btnFinalizar} onClick={finalizarModal.open}>
                 <IconWarning aria-hidden="true" /> Finalizar arrendamiento
@@ -89,107 +210,34 @@ export default function MiArrendamientoActual({ initialData = ARRENDAMIENTO_DEFA
 
       <Footer />
 
-      {/* Modal: confirmar finalizar */}
       <Modal
         isOpen={finalizarModal.isOpen}
         onClose={finalizarModal.close}
         title="¿Finalizar arrendamiento?"
         confirmText="Sí, finalizar"
         cancelText="Cancelar"
-        onConfirm={() => { finalizarModal.close(); setConfirmed(true); }}
+        onConfirm={handleConfirmarFinalizar}
         onCancel={finalizarModal.close}
         confirmVariant="danger"
       >
         <img src={burroDudoso} alt="Burro dudoso" className={styles.modalBurro} />
         <p className={styles.modalDesc}>
-          Esta acción no se puede deshacer. ¿Estás seguro de que deseas finalizar
-          tu arrendamiento actual?
+          Al finalizar tu arrendamiento se te pedirá dejar una reseña.
+          ¿Estás seguro de que deseas continuar?
         </p>
       </Modal>
 
-      {/* Modal: ver descripción completa */}
       <Modal
         isOpen={verMasModal.isOpen}
         onClose={verMasModal.close}
-        title={data.titulo}
+        title={propiedad?.propiedadTitulo || 'Propiedad'}
         icon={<IconHome />}
         hideActions
       >
         <div className={styles.modalDescripcion}>
-          <p>{data.descripcionCompleta}</p>
+          <p>{propiedad?.propiedadDescripcion || 'Sin descripción disponible.'}</p>
         </div>
       </Modal>
-
     </div>
-  );
-}
-
-MiArrendamientoActual.propTypes = {
-  initialData: PropTypes.shape({
-    titulo:               PropTypes.string,
-    descripcionCorta:     PropTypes.string,
-    descripcionCompleta:  PropTypes.string,
-    arrendador: PropTypes.shape({
-      nombre:      PropTypes.string,
-      experiencia: PropTypes.number,
-      telefono:    PropTypes.string,
-      correo:      PropTypes.string,
-    }),
-  }),
-};
-
-// ── Subcomponentes ────────────────────────────────────────
-
-function MainCard({ propiedad, arrendador, onVerMas }) {
-  return (
-    <section className={styles.mainCard}>
-      <div className={styles.propiedadImgBanner}>
-        <span className={styles.propiedadImgEmoji}>🏠</span>
-        <div className={styles.propiedadImgOverlay} />
-        <span className={styles.propiedadBadge}>Arrendamiento activo</span>
-      </div>
-
-      <div className={styles.propiedadBody}>
-        <h2 className={styles.propiedadTitulo}>{propiedad.titulo}</h2>
-        <p className={styles.propiedadDesc}>{propiedad.descripcionCorta}</p>
-        <button type="button" className={styles.btnVerMas} onClick={onVerMas}>
-          <IconPlus aria-hidden="true" /> Ver más
-        </button>
-      </div>
-
-      <hr className={styles.divider} />
-
-      <div className={styles.arrendadorRow}>
-        <div className={styles.arrendadorLeft}>
-          <span className={styles.arrendadorLabel}>Arrendador</span>
-          <div className={styles.arrendadorAvatar}>{arrendador.nombre.charAt(0)}</div>
-          <span className={styles.arrendadorNombre}>{arrendador.nombre}</span>
-          <span className={styles.arrendadorExp}>{arrendador.experiencia} años de experiencia</span>
-        </div>
-
-        <div className={styles.arrendadorRight}>
-          <span className={styles.contactoLabel}>Información de contacto:</span>
-          <a href={`tel:${arrendador.telefono}`} className={styles.contactoItem}>
-            <IconPhone aria-hidden="true" /><span>{arrendador.telefono}</span>
-          </a>
-          <a href={`mailto:${arrendador.correo}`} className={styles.contactoItem}>
-            <IconMail aria-hidden="true" /><span>{arrendador.correo}</span>
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function EmptyState({ onSearch }) {
-  return (
-    <section className={styles.emptyCard}>
-      <div className={styles.emptyIcon}>🏠</div>
-      <h2 className={styles.emptyTitle}>No tienes un arrendamiento activo</h2>
-      <p className={styles.emptyDesc}>Tu arrendamiento fue finalizado exitosamente.</p>
-      <button type="button" className={styles.btnBuscar} onClick={onSearch}>
-        <IconSearch aria-hidden="true" /> Buscar vivienda
-      </button>
-    </section>
   );
 }

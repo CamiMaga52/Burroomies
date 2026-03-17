@@ -143,7 +143,7 @@ function ProfileCard({ emoji, role, tagline, desc, perks, accent, bg, cta }) {
 }
 
 // ── Main ───────────────────────────────────────────────────────
-export default function Home() {
+export default function Home({ onIniciarSesion, onRegistrarse }) {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
   const [heroReady, setHeroReady] = useState(false);
@@ -225,12 +225,12 @@ export default function Home() {
           </div>
 
           <div className="nav-auth" style={{ display: "flex", gap: 10 }}>
-            <button className="btn-ghost" style={{
+            <button className="btn-ghost" onClick={onIniciarSesion} style={{
               background: "none", border: "1.5px solid #e0c8db", color: "#7B2D6E",
               borderRadius: 24, padding: "8px 20px", fontSize: 13, fontWeight: 700,
               cursor: "pointer", fontFamily: "'Nunito',sans-serif", transition: "all 0.2s",
             }}>Iniciar Sesión</button>
-            <button className="btn-primary" style={{
+            <button className="btn-primary" onClick={onRegistrarse} style={{
               background: "linear-gradient(135deg,#7B2D6E,#6B3FA0)", color: "#fff",
               border: "none", borderRadius: 24, padding: "8px 22px", fontSize: 13,
               fontWeight: 700, cursor: "pointer", fontFamily: "'Nunito',sans-serif",
@@ -251,8 +251,8 @@ export default function Home() {
               <button key={l.id} onClick={() => scrollTo(l.id)} style={{ background: "none", border: "none", textAlign: "left", fontSize: 15, fontWeight: 700, color: "#7B2D6E", fontFamily: "'Nunito',sans-serif", padding: "8px 0", cursor: "pointer" }}>{l.label}</button>
             ))}
             <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              <button style={{ flex: 1, border: "1.5px solid #7B2D6E", background: "none", color: "#7B2D6E", borderRadius: 24, padding: "9px 0", fontWeight: 700, fontFamily: "'Nunito',sans-serif", cursor: "pointer" }}>Iniciar Sesión</button>
-              <button style={{ flex: 1, background: "linear-gradient(135deg,#7B2D6E,#6B3FA0)", color: "#fff", border: "none", borderRadius: 24, padding: "9px 0", fontWeight: 700, fontFamily: "'Nunito',sans-serif", cursor: "pointer" }}>Registrarse</button>
+              <button style={{ flex: 1, border: "1.5px solid #7B2D6E", background: "none", color: "#7B2D6E", borderRadius: 24, padding: "9px 0", fontWeight: 700, fontFamily: "'Nunito',sans-serif", cursor: "pointer" }} onClick={onIniciarSesion}>Iniciar Sesión</button>
+              <button style={{ flex: 1, background: "linear-gradient(135deg,#7B2D6E,#6B3FA0)", color: "#fff", border: "none", borderRadius: 24, padding: "9px 0", fontWeight: 700, fontFamily: "'Nunito',sans-serif", cursor: "pointer" }} onClick={onRegistrarse}>Registrarse</button>
             </div>
           </div>
         )}
