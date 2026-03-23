@@ -7,7 +7,7 @@ import DetallePropiedad    from './detalle/DetallePropiedad';
 import DejaResena          from './resena/DejaResena';
 import PerfilArrendatario  from './perfil/PerfilArrendatario';
 
-export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSesion }) {
+export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSesion, onPaginaPrincipal }) {
   const [pantalla,  setPantalla]  = useState(tieneArrendamiento ? 'miArrendamiento' : 'sinArrendamiento');
   const [propSelec, setPropSelec] = useState(null);
   const [hayArr,    setHayArr]    = useState(tieneArrendamiento);
@@ -83,10 +83,11 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
 
   /* ── Props comunes del dropdown Navbar ── */
   const navbarDropdown = {
-    onVerPerfil:           ir('perfil'),
-    onArrendamientoActual: handleArrendamientoActual,
-    tieneArrendamiento:    hayArr,
-    onCerrarSesion,
+  onVerPerfil:           ir('perfil'),
+  onArrendamientoActual: handleArrendamientoActual,
+  tieneArrendamiento:    hayArr,
+  onCerrarSesion,
+  onPaginaPrincipal,   // ← agrega esta línea
   };
 
   return (

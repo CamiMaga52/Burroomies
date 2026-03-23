@@ -9,7 +9,7 @@ import RegistroArrendamiento from './RegistroArrendamiento';
 import DetalleArrendamiento  from './Detallearrendamiento';
 import PerfilArrendador      from './PerfilArrendador';
 
-export default function ArrendadorApp({ onCerrarSesion }) {
+export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
   const [pantalla,            setPantalla]            = useState('inicio');
   const [arrendamientoActivo, setArrendamientoActivo] = useState(null);
   const [propiedadEditar,     setPropiedadEditar]     = useState(null); // idPropiedad
@@ -28,10 +28,11 @@ export default function ArrendadorApp({ onCerrarSesion }) {
 
   // Props comunes de navegación para todas las pantallas
   const navProps = {
-    onMisViviendas:      ir('misViviendas'),
-    onMisArrendamientos: ir('registroArrendamiento'),
-    onVerPerfil:         ir('perfil'),
-    onCerrarSesion,
+  onMisViviendas:      ir('misViviendas'),
+  onMisArrendamientos: ir('registroArrendamiento'),
+  onVerPerfil:         ir('perfil'),
+  onCerrarSesion,
+  onPaginaPrincipal,
   };
 
   return (

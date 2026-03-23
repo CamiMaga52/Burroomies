@@ -51,7 +51,7 @@ function StarRating({ value, onChange, large = false }) {
 }
 
 // ── Componente principal ─────────────────────────────────
-export default function DejaResena({ onCancel, onPublicar, idPropiedad, onVerPerfil, onArrendamientoActual, tieneArrendamiento, onCerrarSesion }) {
+export default function DejaResena({ onCancel, onPublicar, idPropiedad, onVerPerfil, onArrendamientoActual, tieneArrendamiento, onCerrarSesion, onPaginaPrincipal }) {
   const [cats, setCats]               = useState(Object.fromEntries(CATEGORIAS.map(c => [c.id, 0])));
   const [general, setGeneral]         = useState(0);
   const [texto, setTexto]             = useState('');
@@ -126,6 +126,7 @@ export default function DejaResena({ onCancel, onPublicar, idPropiedad, onVerPer
         onArrendamientoActual={onArrendamientoActual}
         tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
+        onPaginaPrincipal={onPaginaPrincipal} 
       />
 
       <main className={styles.container}>

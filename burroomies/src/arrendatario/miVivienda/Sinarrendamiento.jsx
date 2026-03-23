@@ -14,18 +14,20 @@ export default function SinArrendamiento({
   onArrendamientoActual,
   tieneArrendamiento,
   onCerrarSesion,
+  onPaginaPrincipal, 
 }) {
   return (
     <div className={styles.page}>
 
       <Navbar
-        showBuscar
-        onBuscar={onBuscar}
-        onVerPerfil={onVerPerfil}
-        onArrendamientoActual={onArrendamientoActual}
-        tieneArrendamiento={tieneArrendamiento}
-        onCerrarSesion={onCerrarSesion}
-      />
+      showBuscar
+      onBuscar={onBuscar}
+      onVerPerfil={onVerPerfil}
+      onArrendamientoActual={onArrendamientoActual}
+      tieneArrendamiento={tieneArrendamiento}
+      onCerrarSesion={onCerrarSesion}
+      onPaginaPrincipal={onPaginaPrincipal} 
+    />
 
       <main className={styles.container}>
         <div className={styles.card}>
@@ -54,7 +56,7 @@ export default function SinArrendamiento({
             className={styles.btnBuscar}
             onClick={onBuscar}
           >
-            🔍 Buscar vivienda
+            Buscar vivienda
           </button>
 
         </div>

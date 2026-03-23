@@ -13,6 +13,7 @@ export default function Propiedades({
   onArrendamientoActual,
   tieneArrendamiento,
   onCerrarSesion,
+  onPaginaPrincipal, 
 }) {
   const [propiedades,  setPropiedades]  = useState([]);
   const [cargando,     setCargando]     = useState(true);
@@ -102,6 +103,7 @@ export default function Propiedades({
         onArrendamientoActual={onArrendamientoActual}
         tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
+        onPaginaPrincipal={onPaginaPrincipal}  // ← agrega esta línea
       />
 
       <div className={styles.searchWrap}>

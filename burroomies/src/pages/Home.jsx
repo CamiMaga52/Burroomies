@@ -12,12 +12,12 @@ const NAV_LINKS = [
 ];
 
 const FEATURES = [
-  { icon: "🔍", title: "Búsqueda con Filtros",          desc: "Filtra por presupuesto, tipo de inmueble y servicios disponibles cerca de la UPALM." },
-  { icon: "✅", title: "Verificación de Usuarios",       desc: "Valida la identidad de arrendadores mediante CURP y de estudiantes con constancia IPN vía QR." },
-  { icon: "⭐", title: "Reseñas y Calificaciones",       desc: "Consulta experiencias de otros estudiantes sobre habitabilidad, trato y cumplimiento de acuerdos." },
+  { icon: "🔍", title: "Búsqueda con Filtros",           desc: "Herramienta de filtrado para ayudar con la busqueda." },
+  { icon: "✅", title: "Usuarios",                       desc: "Verificar la identidad de arrendadores mediante su CURP y de los estudiantes con su constancia del IPN." },
+  { icon: "⭐", title: "Reseñas y Calificaciones",       desc: "Los usuarios pueden dejar comentarios sobre su experiencia con el inmueble o el arrendador."},
   { icon: "📍", title: "Zonas por Código Postal",        desc: "Solo se muestran viviendas en códigos postales colindantes a la UPALM-IPN." },
   { icon: "📄", title: "Plantilla de Contrato",          desc: "Guía orientativa con los elementos comunes en contratos de arrendamiento habitacional." },
-  { icon: "🏫", title: "Exclusivo para la Comunidad IPN", desc: "Plataforma dirigida a estudiantes y arrendadores vinculados a la UPALM-IPN." },
+  { icon: "🏫", title: "Comunidad IPN",                  desc: "Plataforma orientada a estudiantes y arrendadores relacionados con la UPALM-IPN." },
 ];
 
 const MISION_ITEMS = [
@@ -30,7 +30,7 @@ const MISION_ITEMS = [
 const QUIENES_ITEMS = [
   { num: "01", text: <><strong style={{ color: "#7B2D6E" }}>Burroomies</strong> es un sistema web desarrollado para apoyar a los estudiantes de la <strong>UPALM-IPN</strong> en la búsqueda de vivienda en renta cercana al campus.</> },
   { num: "02", text: <>Conecta a <strong style={{ color: "#7B2D6E" }}>arrendadores</strong> con propiedades disponibles y a <strong style={{ color: "#6B3FA0" }}>estudiantes del IPN</strong>, con un módulo de verificación documental y reseñas entre usuarios.</> },
-  { num: "03", text: <>El sistema permite registrar propiedades, validar identidades mediante documentos oficiales y consultar experiencias de otros usuarios antes de tomar una decisión.</> },
+  { num: "03", text: <>El sistema permite registrar propiedades, verificar identidades mediante documentos oficiales y consultar experiencias de otros usuarios antes de tomar una decisión.</> },
 ];
 
 // ── Hook: animación al entrar al viewport ──────────────────────
@@ -301,7 +301,7 @@ export default function Home({ onIniciarSesion, onRegistrarse }) {
                 </div>
                 <div className={s.profileDivider} style={{ background: "linear-gradient(90deg,#7B2D6E33,transparent)" }} />
                 <p className={s.profileDesc}>
-                  Si tienes un inmueble cerca de la UPALM-IPN y deseas rentarlo a estudiantes, Burroomies es tu plataforma. Regístrate, valida tu identidad con CURP y comienza a recibir solicitudes de estudiantes verificados.
+                  Si tienes un inmueble cerca de la UPALM-IPN y deseas rentarlo a estudiantes, Burroomies es tu plataforma. Regístrate, verifica tu identidad con CURP y comienza a recibir solicitudes de estudiantes verificados.
                 </p>
                 <ul className={s.profilePerks}>
                   {["Perfil verificado con CURP oficial","Publica múltiples propiedades","Recibe y gestiona solicitudes","Construye reputación con reseñas"].map(pk => (
@@ -334,7 +334,7 @@ export default function Home({ onIniciarSesion, onRegistrarse }) {
                   Como estudiante del IPN en la UPALM, busca viviendas cercanas adaptadas a tu presupuesto. Valida tu estatus con tu constancia de estudios y accede a propiedades con reseñas de otros estudiantes.
                 </p>
                 <ul className={s.profilePerks}>
-                  {["Validación con constancia IPN","Filtros por presupuesto y servicios","Reseñas de otros estudiantes","Acceso a plantilla de contrato"].map(pk => (
+                  {["Verificación con constancia IPN","Filtros por presupuesto y servicios","Reseñas de otros estudiantes","Acceso a plantilla de contrato"].map(pk => (
                     <li key={pk} className={s.profilePerk}>
                       <span className={s.profilePerkIcon} style={{ background: "#6B3FA018" }}>✓</span>
                       {pk}

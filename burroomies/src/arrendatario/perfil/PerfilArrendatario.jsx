@@ -34,6 +34,7 @@ export default function PerfilArrendatario({
   onArrendamientoActual,
   tieneArrendamiento,
   onCerrarSesion,
+  onPaginaPrincipal,
 }) {
   const [perfil,      setPerfil]      = useState(null);
   const [cargando,    setCargando]    = useState(true);
@@ -177,6 +178,7 @@ export default function PerfilArrendatario({
         onArrendamientoActual={onArrendamientoActual}
         tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
+        onPaginaPrincipal={onPaginaPrincipal}
       />
 
       <main className={styles.container}>
