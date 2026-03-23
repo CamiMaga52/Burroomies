@@ -14,6 +14,7 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
   const [fotoActiva, setFotoActiva] = useState(0);
   const [lightbox,   setLightbox]   = useState(null); // índice o null = cerrado
   const [tabResena,  setTabResena]  = useState("todas");
+  const [filtroSentimiento, setFiltroSentimiento] = useState('todas');
 
   // ── Cargar detalle completo del backend ──────────────────────────
   useEffect(() => {
@@ -90,10 +91,14 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
   const arrendador = detalle?.Arrendador
   const usuario    = arrendador?.Usuario
 
-  const resenasFiltradas =
-    tabResena === "recientes" ? [...resenas].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
-    : tabResena === "antiguas" ? [...resenas].sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt))
-    : resenas
+  const resenasFiltradas = (() => {
+    let lista = filtroSentimiento !== 'todas'
+      ? resenas.filter(r => r.resenaSentimiento === filtroSentimiento)
+      : [...resenas];
+    if (tabResena === "recientes") lista.sort((a,b) => new Date(b.resenaFechaCreacion||b.createdAt) - new Date(a.resenaFechaCreacion||a.createdAt));
+    if (tabResena === "antiguas")  lista.sort((a,b) => new Date(a.resenaFechaCreacion||a.createdAt) - new Date(b.resenaFechaCreacion||b.createdAt));
+    return lista;
+  })()
 
   return (
     <div className={styles.page}>
@@ -281,7 +286,10 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
             </p>
           ) : (
             <>
-              <div className={styles.tabs}>
+
+
+              <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginBottom:16, alignItems:'center' }}>
+                {/* Filtro por orden */}
                 {[["todas","Todas"],["recientes","Más recientes"],["antiguas","Más antiguas"]].map(([val, label]) => (
                   <button key={val}
                     className={`${styles.tab} ${tabResena === val ? styles.tabActive : ""}`}
@@ -289,7 +297,27 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
                     {label}
                   </button>
                 ))}
+                {/* Separador */}
+                <span style={{ color:'#c8b8e8', fontWeight:300, fontSize:'1.2rem', margin:'0 2px' }}>|</span>
+                {/* Filtro por sentimiento */}
+                {[
+                  { val:'todas',    label:'Todas'},
+                  { val:'positivo', label:'Positivas' },
+                  { val:'negativo', label:'Negativas' },
+                  { val:'neutral',  label:'Neutrales' },
+                ].map(({ val, label, emoji }) => (
+                  <button key={`sent-${val}`}
+                    className={`${styles.tab} ${filtroSentimiento === val ? styles.tabActive : ''}`}
+                    onClick={() => setFiltroSentimiento(val)}>
+                    {emoji && <span style={{ marginRight:4 }}>{emoji}</span>}{label}
+                  </button>
+                ))}
               </div>
+              {resenasFiltradas.length === 0 && (
+                <p style={{ color:'#aaa', fontStyle:'italic', fontSize:'0.88rem', padding:'16px 0' }}>
+                  No hay reseñas {filtroSentimiento !== 'todas' ? `clasificadas como ${filtroSentimiento}s` : ''}.
+                </p>
+              )}
               <div className={styles.resenasGrid}>
                 {resenasFiltradas.map((r, i) => {
                   const usuarioR = r.Arrendatario?.Usuario;
@@ -316,16 +344,34 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
                             {fechaR ? new Date(fechaR).toLocaleDateString('es-MX') : ''}
                           </div>
                         </div>
-                        {/* Estrellas en lugar de corazones */}
-                        <div className={styles.resenaStars} style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:2 }}>
-                          {[1,2,3,4,5].map(j => (
-                            <span key={j} style={{ color: j <= Math.round(cal) ? '#f59e0b' : '#ddd', fontSize:'0.95rem' }}>★</span>
-                          ))}
-                        </div>
+
                       </div>
                       <p className={styles.resenaTexto}>
                         {r.resenaDescrip || r.resenaComentario || 'Sin comentario.'}
                       </p>
+                      {/* Badge de sentimiento */}
+                      {r.resenaSentimiento && (
+                        <div style={{
+                          display:'inline-flex', alignItems:'center', gap:5,
+                          marginTop:10, padding:'4px 12px', borderRadius:50,
+                          fontSize:'0.72rem', fontWeight:800, letterSpacing:'0.3px',
+                          background: r.resenaSentimiento === 'positivo'
+                            ? 'linear-gradient(135deg,#dcfce7,#bbf7d0)'
+                            : r.resenaSentimiento === 'negativo'
+                            ? 'linear-gradient(135deg,#fee2e2,#fecaca)'
+                            : 'linear-gradient(135deg,#fef9c3,#fef08a)',
+                          color: r.resenaSentimiento === 'positivo' ? '#15803d'
+                            : r.resenaSentimiento === 'negativo' ? '#b91c1c' : '#b45309',
+                          boxShadow: r.resenaSentimiento === 'positivo'
+                            ? '0 2px 8px rgba(34,197,94,0.2)'
+                            : r.resenaSentimiento === 'negativo'
+                            ? '0 2px 8px rgba(239,68,68,0.2)'
+                            : '0 2px 8px rgba(245,158,11,0.2)',
+                        }}>
+                          {r.resenaSentimiento === 'positivo' ? '✦ Positiva'
+                            : r.resenaSentimiento === 'negativo' ? '✦ Negativa' : '✦ Neutral'}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

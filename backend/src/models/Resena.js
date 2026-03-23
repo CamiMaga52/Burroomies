@@ -16,7 +16,7 @@ const Resena = sequelize.define('Resena', {
     allowNull: true,
   },
   resenaDescrip: {
-    type: DataTypes.STRING(200),
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   resenaCalSerBasic: {
@@ -34,6 +34,13 @@ const Resena = sequelize.define('Resena', {
   resenaCalGen: {
     type: DataTypes.STRING(45),
     allowNull: false,
+  },
+  // ── ML: sentimiento analizado automáticamente ──────────────────
+  resenaSentimiento: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: 'Valores: positivo | neutral | negativo — generado por Naive Bayes'
   },
   arrendatario_idArrendatario: {
     type: DataTypes.INTEGER,

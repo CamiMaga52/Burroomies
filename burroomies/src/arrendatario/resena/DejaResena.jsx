@@ -102,7 +102,7 @@ export default function DejaResena({ onCancel, onPublicar, idPropiedad, onVerPer
         body: JSON.stringify(body),
       });
 
-      if (!res.ok && res.status !== 400) {
+      if (!res.ok) {
         const data = await res.json();
         alert(data.message || 'No se pudo publicar la reseña.');
         return;
