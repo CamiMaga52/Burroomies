@@ -10,13 +10,16 @@ export default function InicioArrendador({
   onMisArrendamientos,
   onVerPerfil,
   onCerrarSesion,
+  onPaginaPrincipal,
 }) {
+
   return (
     <ArrendadorLayout
       onMisViviendas={onMisViviendas}
       onMisArrendamientos={onMisArrendamientos}
       onVerPerfil={onVerPerfil}
       onCerrarSesion={onCerrarSesion}
+      onPaginaPrincipal={onPaginaPrincipal}
       showMisViviendas={false}
     >
       <div className={styles.contenido}>

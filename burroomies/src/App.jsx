@@ -11,7 +11,7 @@ function HomeWrapper() {
   return (
     <Home
       onIniciarSesion={() => navigate('/auth/login')}
-      onRegistrarse={(tipo) => navigate(`/auth/registro?tipo=${tipo}`)}
+      onRegistrarse={() => navigate('/auth/registro')}
     />
   );
 }
@@ -48,6 +48,7 @@ function ArrendadorWrapper() {
         localStorage.removeItem('burroomies_rol');
         navigate('/');
       }}
+      onPaginaPrincipal={() => navigate('/')}
     />
   );
 }
@@ -67,6 +68,7 @@ function ArrendatarioWrapper() {
         localStorage.removeItem('burroomies_rol');
         navigate('/');
       }}
+      onPaginaPrincipal={() => navigate('/')}
     />
   );
 }

@@ -1,14 +1,4 @@
-// ─────────────────────────────────────────────────────────
-//  src/shared/components/Navbar.jsx
-//
-//  CAMBIOS:
-//  - Avatar abre un dropdown con:
-//      · Ver perfil
-//      · Arrendamiento actual (→ MiArrendamientoActual o SinArrendamiento)
-//      · Cerrar sesión
-//  - Botón "Cerrar sesión" movido al dropdown (ya no es botón rojo separado)
-//  - Props nuevas: onVerPerfil, onArrendamientoActual, tieneArrendamiento
-// ─────────────────────────────────────────────────────────
+// src/shared/components/Navbar.jsx
 import { useState, useRef, useEffect } from 'react';
 import styles from './Navbar.module.css';
 import burroLogo from '../../img/burroLogo.png';
@@ -25,14 +15,16 @@ export default function Navbar({
   tieneArrendamiento    = false,
   onMisArrendamientos,
   showMisArrendamientos = false,
+  onPaginaPrincipal,
 }) {
-  const [open,      setOpen]      = useState(false);
-  const [fotoPerfil, setFotoPerfil] = useState(null);
+  const [open,          setOpen]          = useState(false);
+  const [fotoPerfil,    setFotoPerfil]    = useState(null);
+  const [nombreUsuario, setNombreUsuario] = useState('');
+  const [rolUsuario,    setRolUsuario]    = useState('');
   const ref = useRef(null);
 
-  // Cargar foto de perfil del usuario autenticado
   useEffect(() => {
-    const cargarFoto = async () => {
+    const cargarPerfil = async () => {
       try {
         const token = localStorage.getItem('burroomies_token');
         if (!token) return;
@@ -41,17 +33,17 @@ export default function Navbar({
         });
         if (!res.ok) return;
         const data = await res.json();
-        if (data.usuarioFoto) setFotoPerfil(data.usuarioFoto);
-        else setFotoPerfil(null);
+        setFotoPerfil(data.usuarioFoto || null);
+        if (data.usuarioNom) setNombreUsuario(data.usuarioNom);
+        const rol = localStorage.getItem('burroomies_rol');
+        if (rol) setRolUsuario(rol === 'arrendador' ? 'Arrendador' : 'Arrendatario');
       } catch {}
     };
-    cargarFoto();
-    // Escuchar evento cuando el perfil se actualiza
-    window.addEventListener('perfilActualizado', cargarFoto);
-    return () => window.removeEventListener('perfilActualizado', cargarFoto);
+    cargarPerfil();
+    window.addEventListener('perfilActualizado', cargarPerfil);
+    return () => window.removeEventListener('perfilActualizado', cargarPerfil);
   }, []);
 
-  // Cierra el dropdown al hacer clic fuera
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
@@ -65,14 +57,29 @@ export default function Navbar({
   return (
     <header className={styles.navbar}>
 
-      {/* Logo */}
-      <div className={styles.navbarBrand}>
+      {/* Logo clickeable */}
+      <div
+        className={styles.navbarBrand}
+        onClick={() => onPaginaPrincipal?.()}
+        style={{ cursor: onPaginaPrincipal ? 'pointer' : 'default' }}
+      >
         <img src={burroLogo} alt="Burroomies logo" className={styles.navbarLogo} />
         <span className={styles.navbarTitle}>Burroomies</span>
       </div>
 
       {/* Derecha */}
       <div className={styles.navbarRight}>
+
+        {/* Botón Página principal visible en navbar */}
+        {onPaginaPrincipal && (
+          <button
+            type="button"
+            className={`${styles.btnNav} ${styles.btnGhost}`}
+            onClick={onPaginaPrincipal}
+          >
+             Página principal
+          </button>
+        )}
 
         {showMiVivienda && (
           <button type="button" className={`${styles.btnNav} ${styles.btnGhost}`} onClick={onMiVivienda}>
@@ -106,6 +113,26 @@ export default function Navbar({
             <div className={styles.dropdown} role="menu">
               <div className={styles.dropdownArrow} />
 
+              {/* Info del usuario */}
+              {nombreUsuario && (
+                <>
+                  <div className={styles.dropdownUser}>
+                    <div className={styles.dropdownUserAvatar}>
+                      {fotoPerfil
+                        ? <img src={fotoPerfil} alt="Perfil"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                        : <IconUser />
+                      }
+                    </div>
+                    <div>
+                      <div className={styles.dropdownUserName}>{nombreUsuario}</div>
+                      <div className={styles.dropdownUserRol}>{rolUsuario}</div>
+                    </div>
+                  </div>
+                  <div className={styles.dropdownDivider} />
+                </>
+              )}
+
               {/* Ver perfil */}
               <button
                 type="button"
@@ -119,20 +146,23 @@ export default function Navbar({
 
               <div className={styles.dropdownDivider} />
 
-              {/* Arrendamiento actual / Sin arrendamiento */}
-              <button
-                type="button"
-                className={styles.dropdownItem}
-                role="menuitem"
-                onClick={() => pick(onArrendamientoActual)}
-              >
-                <span className={styles.dropdownItemIcon}>🏠</span>
-                {tieneArrendamiento ? 'Arrendamiento actual' : 'Sin arrendamiento'}
-              </button>
+              {/* Arrendamiento actual */}
+              {onArrendamientoActual && (
+                <>
+                  <button
+                    type="button"
+                    className={styles.dropdownItem}
+                    role="menuitem"
+                    onClick={() => pick(onArrendamientoActual)}
+                  >
+                    <span className={styles.dropdownItemIcon}>🏠</span>
+                    {tieneArrendamiento ? 'Arrendamiento actual' : 'Sin arrendamiento'}
+                  </button>
+                  <div className={styles.dropdownDivider} />
+                </>
+              )}
 
-              <div className={styles.dropdownDivider} />
-
-              {/* Registrar arrendamiento (solo para arrendador) */}
+              {/* Registrar arrendamiento (solo arrendador) */}
               {showMisArrendamientos && (
                 <>
                   <button
@@ -166,3 +196,4 @@ export default function Navbar({
     </header>
   );
 }
+

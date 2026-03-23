@@ -148,3 +148,38 @@
   .btnNav      { padding: 7px 12px; font-size: 0.8rem; }
   .dropdown    { min-width: 190px; }
 }
+
+/* ── INFO USUARIO EN DROPDOWN ── */
+.dropdownUser {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.dropdownUserAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+.dropdownUserName {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #2a0e23;
+}
+
+.dropdownUserRol {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9b6b8e;
+}

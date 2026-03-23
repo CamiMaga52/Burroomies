@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import AuthLayout from '../shared/components/AuthLayout';
 import AuthNavbar from '../shared/components/AuthNavbar';
-import burroSaludo from '../../public/saludo-burro.png';
 import s from './auth.module.css';
 
 export default function IniciarSesion({ onEntrar, onPaginaPrincipal, onRegistrarse, onRestablecer }) {
@@ -62,18 +61,20 @@ export default function IniciarSesion({ onEntrar, onPaginaPrincipal, onRegistrar
               background: 'linear-gradient(145deg, #f0e6f5, #dce8f8)',
             }} />
             <img
-              src={burroSaludo}
-              alt="Burroomies"
-              style={{
-                position: 'relative',
-                zIndex: 1,
-                width: 240,
-                height: 240,
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 16px 28px rgba(123,45,110,0.18))',
-                animation: 'floatBurro 3.5s ease-in-out infinite',
-              }}
-            />
+                src="/saludo-burro.png"
+                alt="Burroomies"
+                onClick={onPaginaPrincipal}
+                style={{
+                  position: 'relative',
+                  zIndex: 1,
+                  width: 240,
+                  height: 240,
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 16px 28px rgba(123,45,110,0.18))',
+                  animation: 'floatBurro 3.5s ease-in-out infinite',
+                  cursor: 'pointer',
+                }}
+              />
           </div>
 
           {/* Texto debajo del burrito */}

@@ -18,6 +18,7 @@ export default function ArrendadorLayout({
   onMisArrendamientos,
   onVerPerfil,
   onCerrarSesion,
+  onPaginaPrincipal,   // ← agrega esta línea
   center = true,
 }) {
   return (
@@ -29,6 +30,7 @@ export default function ArrendadorLayout({
         showMisArrendamientos={!!onMisArrendamientos}
         onMisArrendamientos={onMisArrendamientos}
         onVerPerfil={onVerPerfil}
+        onPaginaPrincipal={onPaginaPrincipal}
       />
       <main className={`${styles.container} ${center ? styles.center : ''}`}>
         {children}

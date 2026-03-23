@@ -21,6 +21,7 @@ export default function MiArrendamientoActual({
   onArrendamientoActual,
   tieneArrendamiento,
   onCerrarSesion,
+  onPaginaPrincipal, 
 }) {
   const [arrendamiento, setArrendamiento] = useState(null);
   const [cargando,      setCargando]      = useState(true);
@@ -100,6 +101,7 @@ export default function MiArrendamientoActual({
         onArrendamientoActual={onArrendamientoActual}
         tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
+        onPaginaPrincipal={onPaginaPrincipal} 
       />
 
       <main className={styles.container}>

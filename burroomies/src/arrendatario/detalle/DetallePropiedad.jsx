@@ -8,7 +8,7 @@ import {
   IconMail, IconUser, IconCamera, IconHeart,
 } from "../../shared/icons";
 
-export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onCerrarSesion }) {
+export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onCerrarSesion, onPaginaPrincipal }) {
   const [detalle,    setDetalle]    = useState(null);
   const [cargando,   setCargando]   = useState(true);
   const [fotoActiva, setFotoActiva] = useState(0);
@@ -107,6 +107,7 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
         showMiVivienda={!!onMiVivienda}
         onMiVivienda={onMiVivienda}
         onCerrarSesion={onCerrarSesion}
+        onPaginaPrincipal={onPaginaPrincipal}
       />
 
       <div className={styles.container}>
