@@ -1,14 +1,9 @@
 /* ============================================================
-   src/auth/auth.module.css
-   CSS MAESTRO — importado por TODOS los archivos en auth/.
-   Contiene: forms, inputs, labels, botones, checkboxes,
-             selects, radios, modales, mensajes de error.
+   src/auth/auth.module.css  — paleta morado-azul (estilo landing)
    ============================================================ */
 @import '../shared/styles/variables.css';
-
-/* ══════════════════════════════════════════════
-   TIPOGRAFÍA / ENCABEZADOS
-══════════════════════════════════════════════ */
+ 
+/* ══ TIPOGRAFÍA ══ */
 .titulo {
   font-family: var(--font-heading);
   font-size: 1.4rem; font-weight: 700; color: var(--text-dark);
@@ -17,13 +12,13 @@
 .tituloGradient {
   font-family: var(--font-heading);
   font-size: 1.8rem; font-weight: 800;
-  background: linear-gradient(135deg, var(--text-dark), var(--purple-dark));
+  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
   text-align: center; margin: 0 0 4px; letter-spacing: -0.3px;
 }
 .subtitulo {
-  font-size: 0.8rem; font-weight: 600; color: var(--purple-mid);
+  font-size: 0.8rem; font-weight: 700; color: #9b6b8e;
   text-transform: uppercase; letter-spacing: 0.5px;
   text-align: center; margin: 0;
 }
@@ -32,130 +27,117 @@
   line-height: 1.55; text-align: center; margin: 0;
 }
 .descripcion strong { color: var(--purple-dark); font-weight: 700; }
-
-/* ══════════════════════════════════════════════
-   FORMULARIO
-══════════════════════════════════════════════ */
+ 
+/* ══ FORMULARIO ══ */
 .form  { display: flex; flex-direction: column; gap: 20px; width: 100%; }
 .campo { display: flex; flex-direction: column; gap: 7px; }
-
+ 
 .label {
   display: flex; align-items: center; gap: 7px;
   font-size: 0.88rem; font-weight: 700; color: var(--text-dark);
 }
-.labelIcon { color: var(--purple-main); flex-shrink: 0; }
-
-/* ══════════════════════════════════════════════
-   INPUTS
-══════════════════════════════════════════════ */
-
-/* Base */
+.labelIcon { color: #7B2D6E; flex-shrink: 0; }
+ 
+/* ══ INPUTS ══ */
 .input {
   width: 100%; box-sizing: border-box;
-  background: var(--input-bg);
-  border: 2px solid transparent; border-radius: var(--radius-input);
+  background: #fdf8fc;
+  border: 1.5px solid #f0e6f5;
+  border-radius: var(--radius-input);
   padding: 11px 14px;
   font-family: var(--font-body); font-size: 0.92rem; font-weight: 600;
   color: var(--text-dark); outline: none;
   transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
 }
-.input::placeholder { color: #b0a8c8; font-weight: 500; }
+.input::placeholder { color: #c9a8c0; font-weight: 500; }
 .input:focus {
-  border-color: var(--purple-main);
+  border-color: #7B2D6E;
   background: white;
-  box-shadow: 0 0 0 4px rgba(139,92,246,0.1);
+  box-shadow: 0 0 0 4px rgba(123,45,110,0.10);
 }
-.input:hover:not(:focus) { background: #e6e2f2; }
-
-/* Con ícono a la izquierda */
+.input:hover:not(:focus) { background: #f5eef2; border-color: #e0c8db; }
+.inputError { border-color: var(--error) !important; }
+ 
+/* Con ícono */
 .inputIconWrapper { position: relative; display: flex; align-items: center; }
-.inputIcon { position: absolute; left: 13px; color: var(--text-light); pointer-events: none; }
+.inputIcon { position: absolute; left: 13px; color: #c9a8c0; pointer-events: none; }
 .inputWithIcon {
   width: 100%; box-sizing: border-box;
-  background: var(--input-bg);
-  border: 2px solid transparent; border-radius: var(--radius-input);
+  background: #fdf8fc;
+  border: 1.5px solid #f0e6f5;
+  border-radius: var(--radius-input);
   padding: 11px 14px 11px 40px;
   font-family: var(--font-body); font-size: 0.92rem; font-weight: 600;
   color: var(--text-dark); outline: none;
   transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
 }
-.inputWithIcon::placeholder { color: #b0a8c8; font-weight: 500; }
+.inputWithIcon::placeholder { color: #c9a8c0; font-weight: 500; }
 .inputWithIcon:focus {
-  border-color: var(--purple-main);
+  border-color: #7B2D6E;
   background: white;
-  box-shadow: 0 0 0 4px rgba(139,92,246,0.1);
+  box-shadow: 0 0 0 4px rgba(123,45,110,0.10);
 }
-.inputWithIcon:hover:not(:focus) { background: #e6e2f2; }
-
-/* Con botón toggle (contraseña) */
+.inputWithIcon:hover:not(:focus) { background: #f5eef2; border-color: #e0c8db; }
+ 
+/* Toggle contraseña */
 .inputWrapper { position: relative; }
 .inputWrapper .input { padding-right: 46px; }
 .togglePass {
   position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
   background: none; border: none; cursor: pointer; padding: 4px;
-  color: var(--text-light); display: flex; align-items: center;
+  color: #c9a8c0; display: flex; align-items: center;
   transition: color 0.2s, transform 0.15s;
 }
-.togglePass:hover { color: var(--purple-dark); transform: translateY(-50%) scale(1.12); }
-
-/* ══════════════════════════════════════════════
-   SELECT
-══════════════════════════════════════════════ */
+.togglePass:hover { color: #7B2D6E; transform: translateY(-50%) scale(1.12); }
+ 
+/* ══ SELECT ══ */
 .selectWrapper { position: relative; }
 .select {
   width: 100%; box-sizing: border-box;
-  background: var(--input-bg);
-  border: 2px solid transparent; border-radius: var(--radius-input);
+  background: #fdf8fc;
+  border: 1.5px solid #f0e6f5;
+  border-radius: var(--radius-input);
   padding: 10px 36px 10px 14px;
   font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
   color: var(--text-dark); outline: none; appearance: none; cursor: pointer;
   transition: border-color 0.18s, background 0.18s;
 }
-.select:focus { border-color: var(--purple-main); background: white; box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
-.select:hover:not(:focus) { background: #e6e2f2; }
+.select:focus { border-color: #7B2D6E; background: white; box-shadow: 0 0 0 3px rgba(123,45,110,0.10); }
+.select:hover:not(:focus) { background: #f5eef2; border-color: #e0c8db; }
 .selectArrow {
   position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  color: var(--text-light); font-size: 1.1rem; pointer-events: none;
+  color: #c9a8c0; font-size: 1.1rem; pointer-events: none;
 }
-
-/* ══════════════════════════════════════════════
-   RADIOS
-══════════════════════════════════════════════ */
+ 
+/* ══ RADIOS ══ */
 .radioInput  { display: none; }
 .radioCustom {
   width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
-  border: 2px solid var(--purple-mid); display: inline-block;
-  transition: all 0.18s;
+  border: 2px solid #e0c8db; display: inline-block; transition: all 0.18s;
 }
 .radioInput:checked + .radioCustom {
-  border-color: var(--purple-main);
-  background: var(--purple-main);
+  border-color: #7B2D6E;
+  background: #7B2D6E;
   box-shadow: inset 0 0 0 3px white;
 }
-
-/* ══════════════════════════════════════════════
-   CHECKBOXES
-══════════════════════════════════════════════ */
+ 
+/* ══ CHECKBOXES ══ */
 .checkInput  { display: none; }
 .checkCustom {
   width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;
-  border: 2px solid var(--purple-mid); background: white;
+  border: 2px solid #e0c8db; background: white;
   transition: all 0.18s; position: relative;
 }
-.checkInput:checked + .checkCustom { background: var(--purple-main); border-color: var(--purple-main); }
+.checkInput:checked + .checkCustom { background: #7B2D6E; border-color: #7B2D6E; }
 .checkInput:checked + .checkCustom::after {
   content: '✓'; position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
   color: white; font-size: 0.72rem; font-weight: 900;
 }
-
-/* ══════════════════════════════════════════════
-   BOTONES
-══════════════════════════════════════════════ */
-
-/* Principal morado (ancho completo) */
+ 
+/* ══ BOTONES ══ */
 .btnPrincipal {
-  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
   color: white; border: none; border-radius: var(--radius-btn);
   padding: 13px 24px; width: 100%;
   font-family: var(--font-body); font-size: 0.97rem; font-weight: 800;
@@ -164,16 +146,14 @@
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btnPrincipal:hover { transform: translateY(-2px); box-shadow: var(--shadow-btn-h); }
-.btnPrincipal:active { transform: translateY(0); }
 .btnPrincipal:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-
-/* Principal glass (IniciarSesion "Entrar") */
+ 
 .btnEntrar {
-  background: linear-gradient(135deg, #a78fd0 0%, #8B5CF6 50%, #7c3aed 100%);
+  background: linear-gradient(135deg, #7B2D6E 0%, #6B3FA0 50%, #3b8bd4 100%);
   color: white; border: none; border-radius: var(--radius-btn);
   padding: 15px; width: 100%;
   font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700;
-  cursor: pointer; box-shadow: 0 4px 15px rgba(139,92,246,0.4);
+  cursor: pointer; box-shadow: 0 4px 20px rgba(107,63,160,0.38);
   transition: all 0.28s ease;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   position: relative; overflow: hidden; margin-top: 6px;
@@ -184,10 +164,8 @@
   background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
   border-radius: inherit; pointer-events: none;
 }
-.btnEntrar:hover  { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139,92,246,0.5); }
-.btnEntrar:active { transform: translateY(0); }
-
-/* Cancelar (rojo) */
+.btnEntrar:hover  { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(107,63,160,0.48); }
+ 
 .btnCancelar {
   background: linear-gradient(135deg, #fda4af, #fb7185);
   color: white; border: none; border-radius: var(--radius-btn);
@@ -196,9 +174,8 @@
   cursor: pointer; box-shadow: 0 4px 14px rgba(251,113,133,0.32);
   transition: all 0.22s;
 }
-.btnCancelar:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(251,113,133,0.42); }
-
-/* Éxito (verde) */
+.btnCancelar:hover { transform: translateY(-2px); }
+ 
 .btnExito {
   background: linear-gradient(135deg, #6ee7b7, #22c55e);
   color: white; border: none; border-radius: var(--radius-btn);
@@ -207,42 +184,37 @@
   cursor: pointer; box-shadow: 0 4px 16px rgba(34,197,94,0.35);
   transition: all 0.22s;
 }
-.btnExito:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(34,197,94,0.45); }
-
-/* Volver (transparente) */
+.btnExito:hover { transform: translateY(-2px); }
+ 
 .btnVolver {
   display: flex; align-items: center; gap: 6px;
   background: none; border: none;
   font-family: var(--font-body); font-size: 0.9rem; font-weight: 700;
-  color: var(--purple-dark); cursor: pointer;
+  color: #7B2D6E; cursor: pointer;
   padding: 8px 12px; border-radius: 30px;
   transition: background 0.2s;
 }
-.btnVolver:hover { background: rgba(167,143,208,0.15); }
-
-/* Link subrayado */
+.btnVolver:hover { background: rgba(123,45,110,0.08); }
+ 
 .btnLink {
   background: none; border: none; cursor: pointer; padding: 0;
   font-family: var(--font-body); font-size: 0.87rem; font-weight: 800;
-  color: var(--purple-main);
+  color: #7B2D6E;
   text-decoration: underline; text-underline-offset: 2px;
-  text-decoration-color: rgba(139,92,246,0.35);
+  text-decoration-color: rgba(123,45,110,0.35);
   transition: color 0.2s;
 }
-.btnLink:hover { color: var(--purple-dark); text-decoration-color: var(--purple-dark); }
-
-/* Restablecer (pequeño, alineado a derecha) */
+.btnLink:hover { color: #6B3FA0; }
+ 
 .btnRestablecer {
   background: none; border: none; cursor: pointer; padding: 0;
   font-family: var(--font-body); font-size: 0.82rem; font-weight: 700;
-  color: var(--purple-mid); align-self: flex-end;
-  transition: color 0.2s;
+  color: #9b6b8e; align-self: flex-end; transition: color 0.2s;
 }
-.btnRestablecer:hover { color: var(--purple-dark); text-decoration: underline; }
-
-/* Siguiente del Registro */
+.btnRestablecer:hover { color: #7B2D6E; text-decoration: underline; }
+ 
 .btnSiguiente {
-  background: linear-gradient(135deg, var(--purple-mid), var(--purple-main));
+  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
   color: white; border: none; border-radius: var(--radius-btn);
   padding: 12px 36px;
   font-family: var(--font-body); font-size: 0.97rem; font-weight: 800;
@@ -251,10 +223,8 @@
   display: inline-flex; align-items: center; gap: 6px;
 }
 .btnSiguiente:hover { transform: translateY(-2px); box-shadow: var(--shadow-btn-h); }
-
-/* ══════════════════════════════════════════════
-   MENSAJES DE ERROR / PIE
-══════════════════════════════════════════════ */
+ 
+/* ══ MENSAJES ══ */
 .errorMsg {
   color: var(--error); font-size: 0.8rem; font-weight: 700;
   text-align: center;
@@ -265,10 +235,8 @@
   text-align: center; font-size: 0.87rem; font-weight: 600;
   color: var(--text-mid); margin: 0;
 }
-
-/* ══════════════════════════════════════════════
-   ANIMACIONES DE ÉXITO (RegistroExitoso, Restablecer paso 4)
-══════════════════════════════════════════════ */
+ 
+/* ══ ANIMACIONES ══ */
 .checkWrap { animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
 @keyframes popIn {
   from { transform: scale(0); opacity: 0; }
@@ -283,27 +251,25 @@
   font-size: 0.9rem; font-weight: 600; color: var(--text-mid);
   line-height: 1.7; margin: 0;
 }
-
-/* ══════════════════════════════════════════════
-   MODALES (VerificarCodigo, SubirConstancia)
-══════════════════════════════════════════════ */
+ 
+/* ══ MODALES ══ */
 .overlay {
   position: fixed; inset: 0;
-  background: rgba(45,37,80,0.45); backdrop-filter: blur(6px);
+  background: rgba(42,14,35,0.45); backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center;
-  z-index: 500;
-  animation: fadeIn 0.2s ease;
+  z-index: 500; animation: fadeIn 0.2s ease;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+ 
 .modal {
   background: white; border-radius: var(--radius-card);
   padding: 36px 32px 30px;
   max-width: 420px; width: 92%;
   text-align: center;
-  box-shadow: 0 28px 70px rgba(45,37,80,0.25);
+  box-shadow: 0 28px 70px rgba(42,14,35,0.22);
   animation: scaleIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
   position: relative;
+  border: 1.5px solid #f0e6f5;
 }
 @keyframes scaleIn {
   from { transform: scale(0.82); opacity: 0; }
@@ -311,24 +277,24 @@
 }
 .modalClose {
   position: absolute; top: 14px; right: 14px;
-  background: rgba(200,184,232,0.2); border: none;
+  background: rgba(240,230,245,0.5); border: none;
   width: 30px; height: 30px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--text-mid); font-size: 0.9rem;
+  cursor: pointer; color: #9b6b8e; font-size: 0.9rem;
   transition: background 0.2s;
 }
-.modalClose:hover { background: rgba(200,184,232,0.4); }
-
+.modalClose:hover { background: rgba(240,230,245,0.9); }
+ 
 .modalIcon {
   width: 72px; height: 72px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 18px;
   animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
 }
-.modalIconAzul    { background: linear-gradient(135deg, #93c5fd, #60a5fa); box-shadow: 0 8px 24px rgba(96,165,250,0.38); }
-.modalIconRojo    { background: linear-gradient(135deg, #f87171, #ef4444); box-shadow: 0 8px 24px rgba(239,68,68,0.35);  }
-.modalIconAmarillo{ background: linear-gradient(135deg, #fcd34d, #f59e0b); box-shadow: 0 8px 24px rgba(245,158,11,0.35); }
-
+.modalIconAzul     { background: linear-gradient(135deg, #93c5fd, #3b8bd4); box-shadow: 0 8px 24px rgba(59,139,212,0.38); }
+.modalIconRojo     { background: linear-gradient(135deg, #f87171, #ef4444); box-shadow: 0 8px 24px rgba(239,68,68,0.35);  }
+.modalIconAmarillo { background: linear-gradient(135deg, #fcd34d, #f59e0b); box-shadow: 0 8px 24px rgba(245,158,11,0.35); }
+ 
 .modalTexto {
   font-size: 0.87rem; font-weight: 600; color: var(--text-mid);
   line-height: 1.65; margin: 0 0 22px;

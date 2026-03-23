@@ -9,6 +9,9 @@ import AuthLayout from '../shared/components/AuthLayout';
 import AuthNavbar from '../shared/components/AuthNavbar';
 import s from './auth.module.css';
 import rs from './Registro.module.css';
+import burroPensativo from '../img/burroPensativo1.png';
+import { useEffect } from 'react';
+
 
 const UNIDADES  = ['UPALM', 'Zacatenco', 'Santo Tomás', 'Tepepan', 'Milpa Alta'];
 const CARRERAS  = ['ISC', 'IIA', 'LCD', 'IA', 'MCIC'];
@@ -64,6 +67,14 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
   const [errores, setErrores] = useState({});
   const [showP1,  setShowP1]  = useState(false);
   const [showP2,  setShowP2]  = useState(false);
+  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tipoUrl = params.get('tipo');
+    if (tipoUrl === 'arrendador' || tipoUrl === 'estudiante') {
+      handleTipo(tipoUrl);
+    }
+  }, []);
 
   const set = (field) => (e) => {
     const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -133,9 +144,22 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
   );
 
   return (
-    <AuthLayout navbar={navbar} center={false}>
-      <form className={rs.formPage} onSubmit={handleSiguiente} noValidate>
+  <AuthLayout navbar={navbar} center={false}>
+    <div className={rs.pageWrapper}>
 
+      {/* Burrito lateral */}
+      <div className={rs.burroCol}>
+        <div className={rs.burroCirculo}>
+          <div className={rs.burroFondo} />
+          <img src={burroPensativo} alt="Burroomies" className={rs.burroImg} />
+        </div>
+        <div className={rs.burroTexto}>
+          <p className={rs.burroTitulo}>¡Casi listo!</p>
+          <p className={rs.burroSub}>Completa tu registro para encontrar tu hogar ideal 🏡</p>
+        </div>
+      </div>
+
+      <form className={rs.formPage} onSubmit={handleSiguiente} noValidate>
         <div className={rs.tituloRow}>
           <User className={rs.tituloIcon} size={28} />
           <h1 className={rs.tituloH1}>Registro de usuario</h1>
@@ -267,6 +291,7 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
         </section>
 
       </form>
+    </div>  
     </AuthLayout>
   );
 }

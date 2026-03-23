@@ -6,7 +6,7 @@
 import styles from './Sinarrendamiento.module.css';
 import Navbar  from '../../shared/components/Navbar';
 import Footer  from '../../shared/components/Footer';
-import burroSolo from '../../img/burroTriste1.png'; // imagen del burro triste con maleta
+import burroSolo from '../../img/burroTriste1.png';
 
 export default function SinArrendamiento({
   onBuscar,
@@ -31,19 +31,22 @@ export default function SinArrendamiento({
         <div className={styles.card}>
 
           <p className={styles.mensaje}>
-            ¡Bienvenido a tu sección <strong>"Mi Vivienda"</strong>!<br />
-            No tienes arrendamiento asignado
+            ¡Bienvenido a tu sección "Mi Vivienda"!<br />
+            Aún no tienes arrendamiento asignado
           </p>
 
-          <img
-            src={burroSolo}
-            alt="Burro sin arrendamiento"
-            className={styles.burroImg}
-          />
+          {/* Burrito con círculo decorativo */}
+          <div className={styles.burroWrapper}>
+            <div className={styles.burroCircle} />
+            <img
+              src={burroSolo}
+              alt="Burro sin arrendamiento"
+              className={styles.burroImg}
+            />
+          </div>
 
           <p className={styles.subtexto}>
-            Explora opciones y comienza tu búsqueda<br />
-            cerca de la UPALM IPN.
+            Explora opciones y comienza tu búsqueda cerca de la UPALM-IPN.
           </p>
 
           <button
@@ -51,7 +54,7 @@ export default function SinArrendamiento({
             className={styles.btnBuscar}
             onClick={onBuscar}
           >
-            Bucar vivienda
+            🔍 Buscar vivienda
           </button>
 
         </div>

@@ -20,16 +20,40 @@ export default function InicioArrendador({
       showMisViviendas={false}
     >
       <div className={styles.contenido}>
+
+        {/* Blob decorativo fondo */}
+        <div className={styles.blobTop} />
+        <div className={styles.blobBottom} />
+
+        {/* Texto de bienvenida */}
         <div className={styles.textos}>
-          <p className={styles.saludo}>BIENVENIDO</p>
-          <p className={styles.sub}>Mi burroomie</p>
+          <p className={styles.saludo}>¡Bienvenido de vuelta!</p>
+          <p className={styles.sub}>Mi burroomie arrendador</p>
+          <p className={styles.desc}>
+            Gestiona tus propiedades y encuentra inquilinos verificados cerca de la UPALM-IPN.
+          </p>
         </div>
 
-        <img src={burroLentes} alt="Burro bienvenida" className={styles.burroImg} />
+        {/* Burrito con círculo */}
+        <div className={styles.burroWrapper}>
+          <div className={styles.burroCircle} />
+          <img src={burroLentes} alt="Burro arrendador" className={styles.burroImg} />
+        </div>
 
-        <button type="button" className={s.btnAgregarVivienda} onClick={onAgregarVivienda}>
+        {/* Botón mejorado */}
+        <button
+          type="button"
+          className={styles.btnAgregar}
+          onClick={onAgregarVivienda}
+        >
+          <span className={styles.btnIcon}>＋</span>
           Agregar vivienda
         </button>
+
+        <p className={styles.hint}>
+          Publica tu propiedad y recibe solicitudes de estudiantes verificados del IPN
+        </p>
+
       </div>
     </ArrendadorLayout>
   );

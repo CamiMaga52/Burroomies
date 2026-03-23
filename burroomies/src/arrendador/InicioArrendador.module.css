@@ -1,30 +1,173 @@
 /* src/arrendador/InicioArrendador.module.css */
 @import '../shared/styles/variables.css';
-
+ 
 .contenido {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
   text-align: center;
+  position: relative;
+  padding: 20px 0;
+  overflow: hidden;
 }
-.textos  { display: flex; flex-direction: column; gap: 2px; }
-.saludo  {
-  font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700;
-  color: var(--text-dark); margin: 0; letter-spacing: 0.5px;
-}
-.sub {
-  font-family: var(--font-body); font-size: 1rem; font-weight: 600;
-  color: var(--text-mid); margin: 0;
-}
-.burroImg {
-  width: 220px; height: 220px; object-fit: contain;
-  filter: drop-shadow(0 8px 22px rgba(110,80,180,0.18));
-  animation: float 3s ease-in-out infinite;
-}
-@keyframes float {
-  0%,100% { transform: translateY(0);    }
-  50%     { transform: translateY(-8px); }
-}
+ 
 
+
+ 
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5eef2;
+  border: 1px solid #e0cce8;
+  borderRadius: 30px;
+  padding: 5px 14px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  color: #7B2D6E;
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
+  border-radius: 30px;
+}
+ 
+.badgeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7B2D6E;
+  display: block;
+  animation: pulse 2s infinite;
+}
+ 
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+ 
+/* Textos */
+.textos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+ 
+.saludo {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+ 
+.sub {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #4a2a40;
+  margin: 0;
+}
+ 
+.desc {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #9b6b8e;
+  margin: 4px 0 0;
+  max-width: 340px;
+  line-height: 1.6;
+}
+ 
+/* Burrito */
+.burroWrapper {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+ 
+.burroCircle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f0e6f5, #e4d0f0);
+}
+ 
+.burroImg {
+  position: relative;
+  z-index: 1;
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(123,45,110,0.18));
+  animation: float 3.5s ease-in-out infinite;
+}
+ 
+@keyframes float {
+  0%, 100% { transform: translateY(0);   }
+  50%       { transform: translateY(-10px); }
+}
+ 
+/* Botón agregar */
+.btnAgregar {
+  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 36px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(107,63,160,0.35);
+  transition: all 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+ 
+.btnAgregar:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(107,63,160,0.45);
+}
+ 
+.btnIcon {
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1;
+}
+ 
+/* Hint */
+.hint {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c9a8c0;
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+ 
+/* Layout del page */
 @media (max-width: 480px) {
-  .burroImg { width: 170px; height: 170px; }
+  .burroImg  { width: 180px; height: 180px; }
+  .burroWrapper { width: 210px; height: 210px; }
+  .saludo { font-size: 1.5rem; }
 }
