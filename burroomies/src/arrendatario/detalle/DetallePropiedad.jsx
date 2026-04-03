@@ -113,7 +113,7 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
       <div className={styles.container}>
 
         <button className={styles.btnBack} onClick={onAtras}>
-          <IconArrow /> Atrás
+          <IconArrow /> Regresar
         </button>
 
         {/* ── Galería ── */}

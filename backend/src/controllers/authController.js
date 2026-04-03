@@ -10,6 +10,7 @@ const register = async (req, res) => {
       usuarioNom, usuarioApePat, usuarioApeMat,
       usuarioCorreo, usuarioContra, usuarioTel,
       usuarioCurp, usuarioFechaNac, rol,
+      arrendatarioApodo,
     } = req.body
 
     const existeCorreo = await Usuario.findOne({ where: { usuarioCorreo } })
@@ -21,6 +22,16 @@ const register = async (req, res) => {
       const existeCurp = await Usuario.findOne({ where: { usuarioCurp } })
       if (existeCurp) {
         return res.status(400).json({ message: 'El CURP ya está registrado.' })
+      }
+    }
+
+    if (rol === 'arrendatario') {
+      if (!arrendatarioApodo) {
+        return res.status(400).json({ message: 'El apodo es obligatorio para estudiantes.' })
+      }
+      const existeApodo = await Arrendatario.findOne({ where: { arrendatarioApodo } })
+      if (existeApodo) {
+        return res.status(400).json({ message: 'Ese apodo ya está en uso, elige otro.' })
       }
     }
 
@@ -50,6 +61,7 @@ const register = async (req, res) => {
       await usuario.update({ usuarioCodigo: codigoEst })
       await Arrendatario.create({
         usuario_idUsuario:      usuario.idUsuario,
+        arrendatarioApodo:      arrendatarioApodo,
         arrendatarioBoleta:     req.body.arrendatarioBoleta,
         arrendatarioUnidadAca:  req.body.arrendatarioUnidadAca,
         arrendatarioFechaActua: new Date(),

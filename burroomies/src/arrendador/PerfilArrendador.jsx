@@ -32,6 +32,7 @@ export default function PerfilArrendador({
   onMisArrendamientos,
   onVerPerfil,
   onCerrarSesion,
+  onAtras,
 }) {
   const [perfil,    setPerfil]    = useState(null);
   const [cargando,  setCargando]  = useState(true);
@@ -165,6 +166,21 @@ export default function PerfilArrendador({
       center={false}
     >
       <div className={styles.wrapper}>
+
+        {onAtras && (
+          <button
+            type="button"
+            onClick={onAtras}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: '#7B2D6E', fontWeight: 700, fontSize: '0.9rem',
+              marginBottom: 16, padding: 0,
+            }}
+          >
+            ← Regresar
+          </button>
+        )}
 
         <h1 className={s.pageTitle}>Mi perfil</h1>
 

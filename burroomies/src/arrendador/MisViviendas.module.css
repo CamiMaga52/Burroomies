@@ -13,3 +13,11 @@
 .lista {
   display: flex; flex-direction: column; gap: 16px;
 }
+@media (max-width: 768px) {
+  .wrapper { padding: 0 4px; }
+  .header  { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 480px) {
+  .header { align-items: stretch; }
+  .header > * { width: 100%; text-align: center; }
+}

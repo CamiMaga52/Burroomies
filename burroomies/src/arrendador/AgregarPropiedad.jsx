@@ -27,7 +27,7 @@ const fileToBase64 = (file) => new Promise((resolve, reject) => {
   reader.readAsDataURL(file);
 });
 
-export default function AgregarPropiedad({ onMisViviendas, onCerrarSesion }) {
+export default function AgregarPropiedad({ onMisViviendas, onCerrarSesion, onAtras }) {
   const [paso,      setPaso]      = useState(1);
   const [form,      setForm]      = useState(FORM_INICIAL);
   const [errores,   setErrores]   = useState({});
@@ -169,6 +169,21 @@ export default function AgregarPropiedad({ onMisViviendas, onCerrarSesion }) {
   return (
     <ArrendadorLayout onMisViviendas={onMisViviendas} onCerrarSesion={onCerrarSesion}>
       <div style={{ width:'100%', maxWidth:720 }}>
+
+        {onAtras && (
+          <button
+            type="button"
+            onClick={onAtras}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: '#7B2D6E', fontWeight: 700, fontSize: '0.9rem',
+              marginBottom: 16, padding: 0,
+            }}
+          >
+            ← Regresar
+          </button>
+        )}
 
         <h1 className={s.pageTitle}>Agregar Propiedad</h1>
         <p className={s.pageSubtitle}>Completa la información de tu propiedad para publicar el anuncio</p>

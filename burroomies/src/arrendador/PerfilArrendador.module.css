@@ -112,3 +112,12 @@
   .avatarSection { flex-direction: column; text-align: center; }
   .guardarRow { justify-content: center; }
 }
+@media (max-width: 768px) {
+  .wrapper { padding: 0 4px; }
+  .tabs    { overflow-x: auto; }
+  .tab     { white-space: nowrap; }
+}
+@media (max-width: 500px) {
+  .avatarSection  { flex-direction: column; text-align: center; }
+  .guardarRow     { justify-content: center; }
+}

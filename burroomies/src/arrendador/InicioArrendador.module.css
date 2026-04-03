@@ -171,3 +171,8 @@
   .burroWrapper { width: 210px; height: 210px; }
   .saludo { font-size: 1.5rem; }
 }
+@media (max-width: 768px) {
+  .saludo   { font-size: 1.6rem; }
+  .sub      { font-size: 0.95rem; }
+  .btnAgregar { padding: 12px 28px; font-size: 0.92rem; }
+}

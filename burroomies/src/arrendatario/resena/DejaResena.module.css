@@ -306,3 +306,11 @@
   .btnAccion     { width: 100%; max-width: 280px; }
   .footerLinks   { flex-direction: column; gap: 8px; align-items: center; }
 }
+@media (max-width: 768px) {
+  .container      { padding: 16px 12px 40px; }
+  .card           { padding: 18px 16px; }
+  .categoriasGrid { grid-template-columns: 1fr; padding-right: 0; }
+  .burroDeco      { display: none; }
+  .btnRow         { flex-direction: column; align-items: stretch; }
+  .btnAccion      { width: 100%; max-width: 100%; }
+}

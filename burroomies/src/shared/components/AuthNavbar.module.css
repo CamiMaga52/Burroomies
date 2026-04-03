@@ -94,3 +94,8 @@
   .btn    { padding: 7px 14px; font-size: 0.82rem; }
   .titulo { font-size: 1rem; }
 }
+@media (max-width: 768px) {
+  .navbar { padding: 10px 16px; }
+  .titulo { font-size: 1rem; }
+  .btn    { padding: 7px 12px; font-size: 0.8rem; }
+}

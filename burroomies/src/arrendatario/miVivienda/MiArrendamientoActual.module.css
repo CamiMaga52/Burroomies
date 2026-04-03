@@ -431,3 +431,13 @@
   margin-top: 8px;
 }
 .btnBuscar:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(139,92,246,0.4); }
+@media (max-width: 768px) {
+  .container  { padding: 20px 12px 40px; }
+  .viviendaHeader { padding: 14px 16px; gap: 10px; }
+  .propiedadBody  { padding: 16px 16px 12px; }
+  .arrendadorRow  { flex-direction: column; padding: 16px; }
+  .arrendadorLeft { padding-right: 0; padding-bottom: 14px; border-bottom: 1px solid rgba(200,184,232,0.35); }
+  .arrendadorRight { border-left: none; padding-left: 0; padding-top: 14px; }
+  .btnFinalizar { width: 100%; justify-content: center; }
+  .finalizarWrapper { padding: 0 16px; }
+}

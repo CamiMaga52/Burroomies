@@ -292,3 +292,9 @@
   font-size: 0.8rem; color: var(--text-light);
   font-weight: 500; line-height: 1.4; flex: 1;
 }
+@media (max-width: 768px) {
+  .container { padding: 24px 14px 40px; }
+  .card      { padding: 18px 16px; }
+  .tabs      { overflow-x: auto; }
+  .tab       { white-space: nowrap; padding: 8px 14px; }
+}

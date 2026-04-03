@@ -352,3 +352,21 @@
   .featGrid { grid-template-columns: 1fr; }
   .hero, .quienes, .caracteristicas, .perfiles { padding: 60px 20px; }
 }
+
+/* ── RESPONSIVE MEJORADO ── */
+@media (max-width: 768px) {
+  .hero, .quienes, .caracteristicas, .perfiles { padding: 70px 24px; }
+  .sectionTitle { margin-bottom: 40px; }
+  .misionGrid   { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .hero, .quienes, .caracteristicas, .perfiles { padding: 50px 16px; }
+  .heroTitle    { font-size: 28px; }
+  .heroDesc     { font-size: 14px; }
+  .heroButtons  { flex-direction: column; gap: 10px; }
+  .btnHeroPrimary, .btnHeroGhost { width: 100%; text-align: center; justify-content: center; }
+  .mobileMenu   { padding: 16px 20px; }
+  .perfilesGrid { grid-template-columns: 1fr; }
+  .profileCta   { width: 100%; text-align: center; justify-content: center; }
+  .featGrid     { grid-template-columns: 1fr; }
+}

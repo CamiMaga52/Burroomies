@@ -4,11 +4,6 @@
 .navbar {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 40px;
-  background: rgba(255,255,255,0.97);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid #f0e6f5;
-  position: sticky; top: 0; z-index: 200;
-  animation: slideDown 0.4s ease both;
   transition: all 0.35s;
 }
 @keyframes slideDown {
@@ -182,4 +177,91 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: #9b6b8e;
+}
+/* ── RESPONSIVE MEJORADO ── */
+@media (max-width: 768px) {
+  .navbar      { padding: 10px 16px; }
+  .navbarTitle { font-size: 1rem; }
+  .btnNav      { padding: 6px 12px; font-size: 0.82rem; }
+  .dropdown    { min-width: 190px; right: -8px; }
+}
+@media (max-width: 480px) {
+  .navbarTitle { display: none; }
+  .btnNav      { padding: 6px 10px; font-size: 0.8rem; }
+}
+
+/* ── WRAPPER Y HAMBURGUESA ── */
+.navbarWrap {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid #f0e6f5;
+  animation: slideDown 0.4s ease both;
+}
+
+/* En desktop los botones de nav son visibles inline */
+.navBtns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Hamburguesa: oculto en desktop */
+.hamburger {
+  display: none;
+  background: none;
+  border: 1.5px solid #e0c8db;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  color: #7B2D6E;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.hamburger:hover { background: rgba(123,45,110,0.08); }
+
+/* Menú móvil desplegable */
+.mobileMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 16px 14px;
+  border-top: 1px solid #f0e6f5;
+  background: rgba(255,255,255,0.98);
+  animation: slideDown 0.2s ease;
+}
+
+.mobileMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1.5px solid #e0c8db;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #7B2D6E;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+.mobileMenuItem:hover { background: rgba(123,45,110,0.06); }
+
+/* ── RESPONSIVE: activar hamburguesa ── */
+@media (max-width: 640px) {
+  .navBtns    { display: none; }
+  .hamburger  { display: flex; }
+  .navbar     { padding: 10px 16px; }
+  .navbarTitle { font-size: 1rem; }
+}
+@media (max-width: 480px) {
+  .navbarTitle { display: none; }
 }

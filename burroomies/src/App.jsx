@@ -11,7 +11,7 @@ function HomeWrapper() {
   return (
     <Home
       onIniciarSesion={() => navigate('/auth/login')}
-      onRegistrarse={() => navigate('/auth/registro')}
+      onRegistrarse={(tipo) => navigate(tipo ? `/auth/registro?tipo=${tipo === 'arrendatario' ? 'estudiante' : tipo}` : '/auth/registro')}
     />
   );
 }

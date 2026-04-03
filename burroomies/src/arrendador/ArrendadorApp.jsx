@@ -46,13 +46,14 @@ export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
       )}
 
       {pantalla === 'agregar' && (
-        <AgregarPropiedad {...navProps} />
+        <AgregarPropiedad {...navProps} onAtras={ir('misViviendas')} />
       )}
 
       {pantalla === 'editarPropiedad' && (
         <EditarPropiedad
           {...navProps}
           idPropiedad={propiedadEditar}
+          onAtras={ir('misViviendas')}
         />
       )}
 
@@ -94,7 +95,7 @@ export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
       )}
 
       {pantalla === 'perfil' && (
-        <PerfilArrendador {...navProps} showMisViviendas />
+        <PerfilArrendador {...navProps} onAtras={ir('inicio')} showMisViviendas />
       )}
     </>
   );
