@@ -45,6 +45,7 @@ const buildForm = (d) => {
     fechaNac:            d.fechaNac            || '',
     unidad:              d.unidad              || '',
     carrera:             d.carrera             || '',
+    apodo:               d.apodo               || '',
     boleta:              d.boleta              || '',
     semestre:            d.semestre            || '',
     cp:                  d.cp                  || '',
@@ -63,6 +64,7 @@ const buildForm = (d) => {
 
 export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguiente, datosIniciales }) {
   const [tipo,    setTipo]    = useState(datosIniciales?.tipo || 'estudiante');
+  const [tipoFijado, setTipoFijado] = useState(!!datosIniciales?.tipo);
   const [form,    setForm]    = useState(() => buildForm(datosIniciales));
   const [errores, setErrores] = useState({});
   const [showP1,  setShowP1]  = useState(false);
@@ -73,6 +75,7 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
     const tipoUrl = params.get('tipo');
     if (tipoUrl === 'arrendador' || tipoUrl === 'estudiante') {
       handleTipo(tipoUrl);
+      setTipoFijado(true);
     }
   }, []);
 
@@ -106,6 +109,9 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
       e.repetirContrasena = 'Las contraseñas no coinciden.';
 
     if (tipo === 'estudiante') {
+      if (!form.apodo.trim())                    e.apodo    = 'El apodo es obligatorio.';
+      else if (form.apodo.trim().length < 3)     e.apodo    = 'Mínimo 3 caracteres.';
+      else if (!/^[a-zA-Z0-9_]+$/.test(form.apodo)) e.apodo = 'Solo letras, números y guión bajo.';
       if (!form.unidad)                          e.unidad   = 'Selecciona una unidad académica.';
       if (!form.carrera)                         e.carrera  = 'Selecciona una carrera.';
       if (!form.semestre)                        e.semestre = 'Selecciona un semestre.';
@@ -138,8 +144,7 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
 
   const navbar = (
     <AuthNavbar botones={[
-      { label: 'Página principal', onClick: onPaginaPrincipal, variant: 'ghost'   },
-      { label: 'Inicio de sesión', onClick: onInicioSesion,    variant: 'primary' },
+      { label: 'Inicio de sesión', onClick: onInicioSesion, variant: 'primary' },
     ]} />
   );
 
@@ -149,42 +154,144 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
 
       {/* Burrito lateral */}
       <div className={rs.burroCol}>
+        <button
+          type="button"
+          onClick={onPaginaPrincipal}
+          className={rs.btnRegresar}
+        >
+          ← Regresar
+        </button>
+
         <div className={rs.burroCirculo}>
           <div className={rs.burroFondo} />
           <img src={burroPensativo} alt="Burroomies" className={rs.burroImg} />
         </div>
         <div className={rs.burroTexto}>
-          <p className={rs.burroTitulo}>¡Casi listo!</p>
-          <p className={rs.burroSub}>Completa tu registro para encontrar tu hogar ideal 🏡</p>
+          <p className={rs.burroTitulo}>
+            {tipo === 'arrendador' ? '¡Bienvenido, arrendador!' : '¡Casi listo!'}
+          </p>
+          <p className={rs.burroSub}>
+            {tipo === 'arrendador'
+              ? 'Publica tus propiedades y conecta con estudiantes verificados del IPN 🏠'
+              : 'Completa tu registro para encontrar tu hogar🎓'}
+          </p>
         </div>
       </div>
 
       <form className={rs.formPage} onSubmit={handleSiguiente} noValidate>
-        <div className={rs.tituloRow}>
-          <User className={rs.tituloIcon} size={28} />
-          <h1 className={rs.tituloH1}>Registro de usuario</h1>
+        {/* Encabezado dinámico según tipo */}
+        <div className={rs.perfilHeader} style={{
+          background: tipo === 'arrendador'
+            ? 'linear-gradient(135deg, #f5eef2, #ede0f8)'
+            : 'linear-gradient(135deg, #eef2ff, #e0e8f8)',
+          borderColor: tipo === 'arrendador' ? '#ddc8e8' : '#c7d2fe',
+        }}>
+          <div className={rs.perfilHeaderIcon} style={{
+            background: tipo === 'arrendador'
+              ? 'linear-gradient(135deg, #7B2D6E, #6B3FA0)'
+              : 'linear-gradient(135deg, #4f46e5, #6B3FA0)',
+          }}>
+            {tipo === 'arrendador' ? <Briefcase size={26} color="white" /> : <GraduationCap size={26} color="white" />}
+          </div>
+          <div>
+            <p className={rs.perfilHeaderTag} style={{
+              color: tipo === 'arrendador' ? '#7B2D6E' : '#4f46e5',
+            }}>
+              {tipo === 'arrendador' ? 'ARRENDADOR' : 'ARRENDATARIO (ESTUDIANTE)'}
+            </p>
+            <h1 className={rs.perfilHeaderTitulo}>
+              {tipo === 'arrendador'
+                ? 'Publica y gestiona tus propiedades'
+                : 'Encuentra tu hogar estudiantil'}
+            </h1>
+            <p className={rs.perfilHeaderDesc}>
+              {tipo === 'arrendador'
+                ? 'Registra tu cuenta para publicar inmuebles.'
+                : 'Registra tu cuenta para buscar viviendas cercanas a tu unidad académica.'}
+            </p>
+          </div>
         </div>
 
-        {/* Tipo */}
-        <div className={rs.tipoRow}>
-          <span className={rs.tipoLabel}><Briefcase size={16} /> Tipo de usuario</span>
-          <div className={rs.tipoOpciones}>
-            {['estudiante','arrendador'].map(t => (
-              <label key={t} className={rs.radioLabel}>
-                <input type="radio" name="tipo" value={t}
-                  checked={tipo === t} onChange={() => handleTipo(t)} className={s.radioInput} />
-                <span className={s.radioCustom} />
-                {t === 'estudiante' ? <GraduationCap size={16} /> : <Briefcase size={16} />}
-                {t.charAt(0).toUpperCase() + t.slice(1)}
-              </label>
-            ))}
-          </div>
+        {/* Selector de tipo — solo cuando NO viene de página principal */}
+        {!tipoFijado && (
+          <>
+            <div className={rs.tipoRow}>
+              <span className={rs.tipoLabel}><Briefcase size={16} /> ¿Cómo quieres registrarte?</span>
+              <div className={rs.tipoOpciones}>
+                {['estudiante','arrendador'].map(t => (
+                  <label key={t} className={`${rs.radioLabel} ${tipo === t ? rs.radioLabelActive : ''}`}>
+                    <input type="radio" name="tipo" value={t}
+                      checked={tipo === t} onChange={() => handleTipo(t)} className={s.radioInput} />
+                    <span className={s.radioCustom} />
+                    {t === 'estudiante' ? <GraduationCap size={16} /> : <Briefcase size={16} />}
+                    {t === 'estudiante' ? 'Arrendatario (Estudiante)' : 'Arrendador'}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <hr className={rs.divider} />
+          </>
+        )}
+
+        {/* Beneficios por tipo */}
+        <div className={rs.beneficiosBox}>
+          {tipo === 'arrendador' ? (
+            <>
+              <p className={rs.beneficiosTitulo}>Con tu cuenta podrás:</p>
+              <ul className={rs.beneficiosList}>
+                <li className={rs.beneficioItem}><span>🏠</span> Publicar múltiples propiedades con fotos y descripción</li>
+                <li className={rs.beneficioItem}><span>✅</span> Verificar tu identidad con CURP oficial</li>
+                <li className={rs.beneficioItem}><span>⭐</span> Construir tu reputación con reseñas de estudiantes</li>
+              </ul>
+            </>
+          ) : (
+            <>
+              <p className={rs.beneficiosTitulo}>Con tu cuenta podrás:</p>
+              <ul className={rs.beneficiosList}>
+                <li className={rs.beneficioItem}><span>🔍</span> Buscar viviendas cercanas a tu unidad académica</li>
+                <li className={rs.beneficioItem}><span>💰</span> Filtrar por precio, servicios y tipo de propiedad</li>
+                <li className={rs.beneficioItem}><span>🎓</span> Validar tu estatus con tu constancia de estudios IPN</li>
+                <li className={rs.beneficioItem}><span>💬</span> Leer reseñas de otros estudiantes sobre cada propiedad</li>
+                <li className={rs.beneficioItem}><span>📄</span> Acceder a plantilla de contrato de arrendamiento</li>
+              </ul>
+            </>
+          )}
         </div>
 
         <hr className={rs.divider} />
 
         {/* Datos personales */}
         <section className={rs.seccion}>
+          <div className={rs.seccionHeader}>
+            <span className={rs.seccionHeaderIcon}>👤</span>
+            <div>
+              <p className={rs.seccionHeaderTitulo}>Datos personales</p>
+              <p className={rs.seccionHeaderDesc}>Información del titular de la cuenta</p>
+            </div>
+          </div>
+
+          
+          {tipo === 'estudiante' && (
+            <div className={rs.campoApodo}>
+              <Campo label="Apodo / Username" error={errores.apodo}>
+                <div className={s.inputIconWrapper}>
+                  <span className={s.inputIcon} style={{ fontSize:'1rem' }}>@</span>
+                  <input
+                    className={`${s.inputWithIcon} ${errores.apodo ? s.inputError : ''}`}
+                    type="text"
+                    placeholder="ej. burro_ipn, estudiante01"
+                    value={form.apodo}
+                    onChange={set('apodo')}
+                    maxLength={30}
+                  />
+                </div>
+                <span style={{ fontSize:'0.75rem', color:'#9b6b8e', fontWeight:600 }}>
+                  Solo letras, números y guión bajo. Será visible para otros usuarios.
+                </span>
+              </Campo>
+            </div>
+          )}
+
           <div className={rs.grid3}>
             <Campo label="Nombre(s)" error={errores.nombres}>
               <input className={`${s.input} ${errores.nombres ? s.inputError : ''}`}
@@ -300,6 +407,13 @@ export default function Registro({ onPaginaPrincipal, onInicioSesion, onSiguient
 function SeccionEstudiante({ form, set, s, rs, errores }) {
   return (
     <section className={rs.seccion}>
+      <div className={rs.seccionHeader}>
+        <span className={rs.seccionHeaderIcon}>🎓</span>
+        <div>
+          <p className={rs.seccionHeaderTitulo}>Datos académicos</p>
+          <p className={rs.seccionHeaderDesc}>Información de tu inscripción en el IPN — necesaria para verificar tu estatus como estudiante.</p>
+        </div>
+      </div>
       <div className={rs.grid3}>
         <Campo label="Unidad académica" error={errores.unidad}>
           <SelectInput value={form.unidad} onChange={set('unidad')} s={s}>
@@ -333,6 +447,16 @@ function SeccionEstudiante({ form, set, s, rs, errores }) {
 function SeccionArrendador({ form, set, s, rs, errores }) {
   return (
     <section className={rs.seccion}>
+      <div className={rs.seccionHeader}>
+        <span className={rs.seccionHeaderIcon}>🏠</span>
+        <div>
+          <p className={rs.seccionHeaderTitulo}>Domicilio personal del arrendador</p>
+          <p className={rs.seccionHeaderDesc}>
+            Tu dirección personal como propietario — <strong>no</strong> la dirección de la propiedad que vas a publicar.
+            Podrás agregar tus propiedades después de completar el registro.
+          </p>
+        </div>
+      </div>
       <div className={rs.grid3}>
         <Campo label="Código postal" error={errores.cp}>
           <div className={s.inputIconWrapper}>

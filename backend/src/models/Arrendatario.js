@@ -7,6 +7,11 @@ const Arrendatario = sequelize.define('Arrendatario', {
     primaryKey: true,
     autoIncrement: true,
   },
+  arrendatarioApodo: {
+    type: DataTypes.STRING(45),
+    allowNull: false,
+    unique: true,
+  },
   arrendatarioBoleta: {
     type: DataTypes.STRING(45),
     allowNull: true,

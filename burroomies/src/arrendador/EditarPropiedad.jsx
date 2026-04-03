@@ -28,6 +28,7 @@ export default function EditarPropiedad({
   onMisArrendamientos,
   onVerPerfil,
   onCerrarSesion,
+  onAtras,
 }) {
   const [paso,      setPaso]      = useState(1);
   const [form,      setForm]      = useState(null);   // null = cargando
@@ -177,6 +178,21 @@ export default function EditarPropiedad({
   return (
     <ArrendadorLayout onMisViviendas={onMisViviendas} onMisArrendamientos={onMisArrendamientos} onVerPerfil={onVerPerfil} onCerrarSesion={onCerrarSesion}>
       <div style={{ width: '100%', maxWidth: 720 }}>
+
+        {onAtras && (
+          <button
+            type="button"
+            onClick={onAtras}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: '#7B2D6E', fontWeight: 700, fontSize: '0.9rem',
+              marginBottom: 16, padding: 0,
+            }}
+          >
+            ← Regresar
+          </button>
+        )}
 
         <h1 className={s.pageTitle}>Editar Propiedad</h1>
         <p className={s.pageSubtitle}>Actualiza la información de tu propiedad</p>

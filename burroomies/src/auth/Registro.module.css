@@ -204,3 +204,180 @@
   .passRow   { flex-direction: column; }
   .passHint  { max-width: 100%; margin-top: 0; }
 }
+@media (max-width: 480px) {
+  .formPage    { padding: 24px 14px 28px; border-radius: 18px; }
+  .tipoOpciones { flex-direction: column; gap: 10px; }
+  .grid2mini   { grid-template-columns: 1fr; }
+  .siguienteRow { justify-content: center; }
+}
+ 
+/* ── HEADER DE PERFIL DINÁMICO ── */
+.perfilHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  border-radius: 20px;
+  border: 1.5px solid;
+  padding: 20px 24px;
+  margin-bottom: 4px;
+  animation: fadeIn 0.3s ease;
+}
+ 
+.perfilHeaderIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(107,63,160,0.25);
+}
+ 
+.perfilHeaderTag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+}
+ 
+.perfilHeaderTitulo {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #2a0e23;
+  margin: 0 0 6px;
+  line-height: 1.25;
+}
+ 
+.perfilHeaderDesc {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #7a5a70;
+  margin: 0;
+  line-height: 1.55;
+}
+ 
+@media (max-width: 600px) {
+  .perfilHeader       { flex-direction: column; gap: 12px; padding: 16px; }
+  .perfilHeaderTitulo { font-size: 1rem; }
+}
+ 
+/* ── SECCIÓN DE BENEFICIOS ── */
+.beneficiosBox {
+  background: rgba(255,255,255,0.7);
+  border: 1.5px solid #f0e6f5;
+  border-radius: 16px;
+  padding: 16px 20px;
+  animation: fadeIn 0.3s ease;
+}
+ 
+.beneficiosTitulo {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #9b6b8e;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0 0 10px;
+}
+ 
+.beneficiosList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+ 
+.beneficioItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4a2a40;
+  line-height: 1.4;
+}
+ 
+.beneficioItem span {
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+ 
+@media (max-width: 600px) {
+  .beneficiosList { grid-template-columns: 1fr; gap: 6px; }
+  .beneficiosBox  { padding: 14px 16px; }
+}
+ 
+/* ── SELECTOR DE TIPO MEJORADO (flujo desde login) ── */
+.radioLabelActive {
+  color: #7B2D6E;
+  font-weight: 800;
+}
+ 
+/* ── BOTÓN REGRESAR (en columna del burrito) ── */
+.btnRegresar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(167,143,208,0.18);
+  color: #7B2D6E;
+  border: none;
+  border-radius: 50px;
+  padding: 7px 18px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+.btnRegresar:hover { background: rgba(167,143,208,0.32); }
+ 
+/* ── ENCABEZADOS DE SECCIÓN ── */
+.seccionHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #fdf8fc;
+  border: 1.5px solid #f0e6f5;
+  border-radius: 14px;
+  margin-bottom: 4px;
+}
+ 
+.seccionHeaderIcon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+ 
+.seccionHeaderTitulo {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #2a0e23;
+  margin: 0 0 3px;
+}
+ 
+.seccionHeaderDesc {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #9b6b8e;
+  margin: 0;
+  line-height: 1.5;
+}
+ 
+.seccionHeaderDesc strong {
+  color: #7B2D6E;
+  font-weight: 800;
+}
+ 
+/* ── CAMPO APODO ── */
+.campoApodo {
+  max-width: 340px;
+}

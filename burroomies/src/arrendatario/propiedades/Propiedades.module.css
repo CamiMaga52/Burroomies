@@ -373,3 +373,17 @@
   .propImgPlaceholder { width: 120px; min-height: 120px; font-size: 2.5rem; }
   .searchWrap { padding: 16px 16px 0; }
 }
+@media (max-width: 900px) {
+  .layout      { padding: 16px 20px 40px; gap: 16px; }
+  .searchWrap  { padding: 16px 20px 0; }
+}
+@media (max-width: 600px) {
+  .propCard    { flex-direction: column; }
+  .propImgPlaceholder { width: 100%; min-height: 140px; }
+  .propBody    { padding: 14px 16px; }
+}
+@media (max-width: 480px) {
+  .layout      { padding: 12px 12px 40px; }
+  .searchWrap  { padding: 12px 12px 0; }
+  .searchBar   { padding: 8px 8px 8px 16px; }
+}

@@ -600,3 +600,21 @@
   from { transform: scale(0.92); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
 }
+/* ── RESPONSIVE MEJORADO ── */
+@media (max-width: 768px) {
+  .container   { padding: 16px 14px 40px; }
+  .titulo      { font-size: 1.5rem; }
+  .precioMonto { font-size: 1.3rem; }
+  .gallery     { height: 200px; }
+  .resenasGrid { grid-template-columns: 1fr; }
+  .serviciosGrid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+}
+@media (max-width: 480px) {
+  .gallery      { flex-direction: column; height: auto; }
+  .galleryMain  { height: 200px; flex: none; }
+  .galleryGrid  { display: none; }
+  .header       { flex-direction: column; gap: 14px; }
+  .precioCard   { min-width: unset; width: 100%; }
+  .tabs         { gap: 4px; }
+  .tab          { padding: 5px 10px; font-size: 0.78rem; }
+}

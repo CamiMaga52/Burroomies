@@ -114,3 +114,9 @@
   .grid { grid-template-columns: 1fr; }
   .botonesRow { flex-direction: column; }
 }
+@media (max-width: 768px) {
+  .wrapper     { padding: 0 4px; }
+  .grid        { grid-template-columns: 1fr; }
+  .botonesRow  { flex-direction: column; }
+  .botonesRow > * { width: 100%; justify-content: center; }
+}
