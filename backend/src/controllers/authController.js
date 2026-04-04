@@ -206,7 +206,14 @@ const getProfile = async (req, res) => {
     const usuario = await Usuario.findByPk(req.user.idUsuario, {
       attributes: { exclude: ['usuarioContra', 'usuarioCC'] }
     })
-    res.json(usuario)
+    const arrendatario = await Arrendatario.findOne({
+      where: { usuario_idUsuario: req.user.idUsuario },
+      attributes: ['arrendatarioApodo']
+    })
+    res.json({
+      ...usuario.toJSON(),
+      arrendatarioApodo: arrendatario?.arrendatarioApodo || null,
+    })
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener el perfil.' })
   }

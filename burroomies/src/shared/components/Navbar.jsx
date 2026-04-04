@@ -2,27 +2,26 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './Navbar.module.css';
 import burroLogo from '../../img/burroLogo.png';
-import { IconUser, IconLogout, IconSearch } from '../icons';
+import { IconUser, IconLogout } from '../icons';
 
 export default function Navbar({
+  onCerrarSesion,
+  onVerPerfil,
+  onPaginaPrincipal,
+  // Props legacy mantenidos para no romper otras pantallas
   showMiVivienda        = false,
   showBuscar            = false,
   onMiVivienda,
   onBuscar,
-  onCerrarSesion,
-  onVerPerfil,
   onArrendamientoActual,
   tieneArrendamiento    = false,
   onMisArrendamientos,
   showMisArrendamientos = false,
-  onPaginaPrincipal,
 }) {
-  const [open,          setOpen]      = useState(false);
-  const [menuMovil,     setMenuMovil] = useState(false);
   const [fotoPerfil,    setFotoPerfil]    = useState(null);
   const [nombreUsuario, setNombreUsuario] = useState('');
+  const [apodoUsuario,  setApodoUsuario]  = useState('');
   const [rolUsuario,    setRolUsuario]    = useState('');
-  const ref = useRef(null);
 
   useEffect(() => {
     const cargarPerfil = async () => {
@@ -36,8 +35,9 @@ export default function Navbar({
         const data = await res.json();
         setFotoPerfil(data.usuarioFoto || null);
         if (data.usuarioNom) setNombreUsuario(data.usuarioNom);
+        if (data.arrendatarioApodo) setApodoUsuario(data.arrendatarioApodo);
         const rol = localStorage.getItem('burroomies_rol');
-        if (rol) setRolUsuario(rol === 'arrendador' ? 'Arrendador' : 'Arrendatario');
+        if (rol) setRolUsuario(rol === 'arrendador' ? 'arrendador' : 'arrendatario');
       } catch {}
     };
     cargarPerfil();
@@ -45,23 +45,16 @@ export default function Navbar({
     return () => window.removeEventListener('perfilActualizado', cargarPerfil);
   }, []);
 
-  useEffect(() => {
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const pick = (fn) => { setOpen(false); setMenuMovil(false); fn?.(); };
-
-  const hayBotonesNav = showMiVivienda || showBuscar;
+  // Etiqueta visible: apodo para arrendatario, nombre para arrendador
+  const etiquetaUsuario = rolUsuario === 'arrendatario' && apodoUsuario
+    ? `@${apodoUsuario}`
+    : nombreUsuario;
 
   return (
     <header className={styles.navbarWrap}>
-
       <div className={styles.navbar}>
 
+        {/* Logo — lleva a página principal */}
         <div
           className={styles.navbarBrand}
           onClick={() => onPaginaPrincipal?.()}
@@ -71,144 +64,39 @@ export default function Navbar({
           <span className={styles.navbarTitle}>Burroomies</span>
         </div>
 
+        {/* Derecha */}
         <div className={styles.navbarRight}>
 
-          <div className={styles.navBtns}>
-            {showMiVivienda && (
-              <button type="button" className={`${styles.btnNav} ${styles.btnGhost}`} onClick={() => pick(onMiVivienda)}>
-                <IconUser aria-hidden="true" /> Mi vivienda
-              </button>
-            )}
-            {showBuscar && (
-              <button type="button" className={`${styles.btnNav} ${styles.btnSearch}`} onClick={() => pick(onBuscar)}>
-                <IconSearch aria-hidden="true" /> Buscar vivienda
-              </button>
-            )}
-          </div>
-
-          {hayBotonesNav && (
-            <button
-              type="button"
-              className={styles.hamburger}
-              onClick={() => setMenuMovil(v => !v)}
-              aria-label="Menu"
-              aria-expanded={menuMovil}
-            >
-              {menuMovil ? 'x' : '='}
-            </button>
-          )}
-
-          <div className={styles.avatarWrapper} ref={ref}>
-            <button
-              type="button"
-              className={`${styles.avatarCircle} ${open ? styles.avatarOpen : ''}`}
-              onClick={() => setOpen((v) => !v)}
-              aria-label="Menu de usuario"
-              aria-expanded={open}
-            >
+          {/* Botón perfil con apodo/nombre */}
+          <button
+            type="button"
+            className={styles.btnPerfil}
+            onClick={() => onVerPerfil?.()}
+          >
+            <div className={styles.btnPerfilAvatar}>
               {fotoPerfil
                 ? <img src={fotoPerfil} alt="Perfil"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                    style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
                 : <IconUser />
               }
-            </button>
-
-            {open && (
-              <div className={styles.dropdown} role="menu">
-                <div className={styles.dropdownArrow} />
-
-                {nombreUsuario && (
-                  <>
-                    <div className={styles.dropdownUser}>
-                      <div className={styles.dropdownUserAvatar}>
-                        {fotoPerfil
-                          ? <img src={fotoPerfil} alt="Perfil"
-                              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                          : <IconUser />
-                        }
-                      </div>
-                      <div>
-                        <div className={styles.dropdownUserName}>{nombreUsuario}</div>
-                        <div className={styles.dropdownUserRol}>{rolUsuario}</div>
-                      </div>
-                    </div>
-                    <div className={styles.dropdownDivider} />
-                  </>
-                )}
-
-                <button
-                  type="button"
-                  className={styles.dropdownItem}
-                  role="menuitem"
-                  onClick={() => pick(onVerPerfil)}
-                >
-                  <span className={styles.dropdownItemIcon}>👤</span>
-                  Ver perfil
-                </button>
-
-                <div className={styles.dropdownDivider} />
-
-                {onArrendamientoActual && (
-                  <>
-                    <button
-                      type="button"
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      onClick={() => pick(onArrendamientoActual)}
-                    >
-                      <span className={styles.dropdownItemIcon}>🏠</span>
-                      {tieneArrendamiento ? 'Arrendamiento actual' : 'Sin arrendamiento'}
-                    </button>
-                    <div className={styles.dropdownDivider} />
-                  </>
-                )}
-
-                {showMisArrendamientos && (
-                  <>
-                    <button
-                      type="button"
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      onClick={() => pick(onMisArrendamientos)}
-                    >
-                      <span className={styles.dropdownItemIcon}>📋</span>
-                      Registrar arrendamiento
-                    </button>
-                    <div className={styles.dropdownDivider} />
-                  </>
-                )}
-
-                <button
-                  type="button"
-                  className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
-                  role="menuitem"
-                  onClick={() => pick(onCerrarSesion)}
-                >
-                  <span className={styles.dropdownItemIcon}><IconLogout /></span>
-                  Cerrar sesion
-                </button>
-              </div>
+            </div>
+            {etiquetaUsuario && (
+              <span className={styles.btnPerfilNombre}>{etiquetaUsuario}</span>
             )}
-          </div>
+          </button>
+
+          {/* Botón cerrar sesión */}
+          <button
+            type="button"
+            className={styles.btnCerrarSesion}
+            onClick={() => onCerrarSesion?.()}
+          >
+            <IconLogout />
+            <span>Cerrar sesión</span>
+          </button>
 
         </div>
       </div>
-
-      {menuMovil && hayBotonesNav && (
-        <div className={styles.mobileMenu}>
-          {showMiVivienda && (
-            <button type="button" className={styles.mobileMenuItem} onClick={() => pick(onMiVivienda)}>
-              <IconUser aria-hidden="true" /> Mi vivienda
-            </button>
-          )}
-          {showBuscar && (
-            <button type="button" className={styles.mobileMenuItem} onClick={() => pick(onBuscar)}>
-              <IconSearch aria-hidden="true" /> Buscar vivienda
-            </button>
-          )}
-        </div>
-      )}
-
     </header>
   );
 }

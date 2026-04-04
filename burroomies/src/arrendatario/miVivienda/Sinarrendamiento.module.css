@@ -1,139 +1,380 @@
-/* src/arrendatario/miVivienda/SinArrendamiento.module.css */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
- 
+/* ─────────────────────────────────────────────────────────
+   Sinarrendamiento.module.css
+───────────────────────────────────────────────────────── */
+
 .page {
-  font-family: 'Nunito', sans-serif;
-  background: #fff;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: #2a0e23;
-  position: relative;
-  overflow: hidden;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #faf8ff 0%, #ede8ff 100%);
 }
- 
-/* Blob morado arriba-derecha */
-.page::before {
-  content: '';
-  position: fixed;
-  top: -100px; right: -100px;
-  width: 420px; height: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #f0e6f5 0%, #f8f0fb 55%, transparent 75%);
-  pointer-events: none;
-  z-index: 0;
-}
- 
- 
-/* ── Contenido centrado ── */
+
 .container {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
-  animation: fadeUp 0.45s ease 0.1s both;
-  position: relative;
-  z-index: 1;
+  padding: 2.5rem 1.5rem 5rem;
+  gap: 3.5rem;
 }
- 
-@keyframes fadeUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
- 
-/* ── Card central ── */
+
+/* ── Card principal ── */
 .card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  gap: 20px;
-  max-width: 480px;
+  gap: 1.25rem;
   width: 100%;
+  max-width: 520px;
 }
- 
-/* ── Texto bienvenida ── */
+
 .mensaje {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.4;
+  color: #4a1a7c;
+  text-align: center;
+  line-height: 1.45;
   margin: 0;
 }
- 
-/* ── Imagen del burro con círculo ── */
+
 .burroWrapper {
   position: relative;
-  width: 240px;
-  height: 240px;
+  width: 210px;
+  height: 210px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
- 
+
 .burroCircle {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: linear-gradient(145deg, #f0e6f5, #e4d0f0);
+  background: radial-gradient(circle at 40% 40%, #ddd0f8, #c9b8f0);
 }
- 
+
 .burroImg {
   position: relative;
+  width: 175px;
+  height: 175px;
+  object-fit: contain;
   z-index: 1;
+}
+
+.subtexto {
+  font-size: 0.92rem;
+  color: #8a6ea8;
+  text-align: center;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.btnBuscar {
+  background: #6b21a8;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.8rem 2.8rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 18px rgba(107, 33, 168, 0.3);
+}
+
+.btnBuscar:hover {
+  background: #7c3aed;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(107, 33, 168, 0.38);
+}
+
+.btnBuscar:active { transform: translateY(0); }
+
+/* ── Sección tutorial ── */
+.tutorialSection {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+
+  background: #fff;
+  border: 1.5px solid #e5d8f8;
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 8px 40px rgba(107, 33, 168, 0.08);
+}
+
+/* ── Header ── */
+.tutorialHeaderWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.tutorialBadge {
+  display: inline-block;
+  background: #f3e8ff;
+  color: #6b21a8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #ddb8ff;
+}
+
+.tutorialTitulo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #3b0764;
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+
+.tutorialSubtitulo {
+  font-size: 0.88rem;
+  color: #9a7ec0;
+  margin: 0;
+}
+
+/* ── Fila de pasos (1–4) ── */
+.pasosRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  position: relative;
+}
+
+.pasoItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  flex: 1;
+  max-width: 190px;
+  text-align: center;
+  position: relative;
+  padding: 0 0.5rem;
+}
+
+/* ── Icono ── */
+.iconoCirculo {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #f5f0ff;
+  border: 2px solid #d8bbf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b21a8;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 3px 12px rgba(107,33,168,0.10);
+}
+
+.iconoCirculo svg { width: 34px; height: 34px; }
+
+.pasoItem:hover .iconoCirculo {
+  background: #6b21a8;
+  color: #fff;
+  transform: translateY(-5px) scale(1.08);
+  box-shadow: 0 12px 28px rgba(107, 33, 168, 0.28);
+  border-color: #6b21a8;
+}
+
+/* Flecha entre pasos */
+.flechaConector {
+  position: absolute;
+  right: -14px;
+  top: 22px;
+  color: #c4a8e8;
+  z-index: 2;
+}
+
+/* ── Número ── */
+.pasoNum {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #c4a8e8;
+  letter-spacing: 0.06em;
+}
+
+.pasoTitulo {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: #4a1a7c;
+  margin: 0;
+}
+
+.pasoDesc {
+  font-size: 0.78rem;
+  color: #9a7ec0;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* ── Flecha hacia abajo ── */
+.flechaAbajo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+
+/* ── Paso 5 DESTACADO ── */
+.pasoDestacado {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 680px;
+
+  background: linear-gradient(135deg, #4a1a7c 0%, #7c3aed 100%);
+  border-radius: 20px;
+  padding: 2rem 2.25rem;
+  box-shadow: 0 8px 36px rgba(107, 33, 168, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Brillo decorativo de fondo */
+.pasoDestacado::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+.pasoDestacado::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  left: -30px;
   width: 200px;
   height: 200px;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 20px rgba(123,45,110,0.16));
-  animation: burroFloat 3.5s ease-in-out infinite;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  pointer-events: none;
 }
- 
-@keyframes burroFloat {
-  0%, 100% { transform: translateY(0);   }
-  50%       { transform: translateY(-8px); }
+
+/* Lado izquierdo: icono + estrellas */
+.destinadoIconoWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
- 
-/* ── Subtexto ── */
-.subtexto {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #9b6b8e;
-  line-height: 1.65;
-  margin: 0;
-  max-width: 320px;
+
+.destinadoIcono {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #facc15;
+  box-shadow: 0 0 24px rgba(250,204,21,0.3);
 }
- 
-/* ── Botón ── */
-.btnBuscar {
-  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 13px 40px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 1rem;
+
+.destinadoIcono svg { width: 44px; height: 44px; }
+
+.starsRow {
+  display: flex;
+  gap: 2px;
+  filter: drop-shadow(0 2px 6px rgba(250,204,21,0.5));
+}
+
+/* Lado derecho: texto */
+.destinadoTexto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.destinadoBadge {
+  font-size: 0.7rem;
   font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(107,63,160,0.35);
-  transition: all 0.25s;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f9d84a;
+  opacity: 0.9;
 }
-.btnBuscar:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(107,63,160,0.45);
+
+.destinadoTitulo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
-.btnBuscar:active { transform: translateY(0); }
- 
+
+.destinadoDesc {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.85);
+  margin: 0;
+  line-height: 1.65;
+}
+
+.destinadoTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(250,204,21,0.18);
+  border: 1px solid rgba(250,204,21,0.35);
+  color: #facc15;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  width: fit-content;
+}
+
 /* ── Responsive ── */
-@media (max-width: 480px) {
-  .mensaje    { font-size: 1.1rem; }
-  .burroImg   { width: 160px; height: 160px; }
-  .burroWrapper { width: 190px; height: 190px; }
-  .subtexto   { font-size: 0.88rem; }
-  .btnBuscar  { padding: 11px 32px; }
+@media (max-width: 700px) {
+  .tutorialSection {
+    padding: 2rem 1.25rem;
+  }
+
+  .pasosRow {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .flechaConector { display: none; }
+
+  .pasoItem { max-width: 280px; }
+
+  .pasoDestacado {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.75rem 1.5rem;
+  }
+
+  .destinadoTag { align-self: center; }
 }
- 
+

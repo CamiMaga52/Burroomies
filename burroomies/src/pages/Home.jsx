@@ -301,7 +301,7 @@ export default function Home({ onIniciarSesion, onRegistrarse }) {
                 </div>
                 <div className={s.profileDivider} style={{ background: "linear-gradient(90deg,#7B2D6E33,transparent)" }} />
                 <p className={s.profileDesc}>
-                  Si tienes un inmueble cerca de la UPALM-IPN y deseas rentarlo a estudiantes, Burroomies es tu plataforma. Regístrate, verifica tu identidad con CURP y comienza a recibir solicitudes de estudiantes verificados.
+                  Si tienes un inmueble cerca de la UPALM-IPN y deseas rentarlo a estudiantes, Burroomies es tu plataforma. Regístrate, verifica tu identidad con CURP y comparte tu anuncio para que estudiantes verificados puedan contactarte directamente.
                 </p>
                 <ul className={s.profilePerks}>
                   {["Perfil verificado con CURP oficial","Publica múltiples propiedades","Construye reputación con reseñas"].map(pk => (
