@@ -143,7 +143,7 @@
   .btnNav      { padding: 7px 12px; font-size: 0.8rem; }
   .dropdown    { min-width: 190px; }
 }
-
+ 
 /* ── INFO USUARIO EN DROPDOWN ── */
 .dropdownUser {
   display: flex;
@@ -151,7 +151,7 @@
   gap: 10px;
   padding: 10px 12px;
 }
-
+ 
 .dropdownUserAvatar {
   width: 36px;
   height: 36px;
@@ -164,14 +164,14 @@
   flex-shrink: 0;
   font-size: 0.9rem;
 }
-
+ 
 .dropdownUserName {
   font-family: 'Nunito', sans-serif;
   font-size: 0.88rem;
   font-weight: 800;
   color: #2a0e23;
 }
-
+ 
 .dropdownUserRol {
   font-family: 'Nunito', sans-serif;
   font-size: 0.75rem;
@@ -189,7 +189,7 @@
   .navbarTitle { display: none; }
   .btnNav      { padding: 6px 10px; font-size: 0.8rem; }
 }
-
+ 
 /* ── WRAPPER Y HAMBURGUESA ── */
 .navbarWrap {
   position: sticky;
@@ -200,14 +200,14 @@
   border-bottom: 1px solid #f0e6f5;
   animation: slideDown 0.4s ease both;
 }
-
+ 
 /* En desktop los botones de nav son visibles inline */
 .navBtns {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
+ 
 /* Hamburguesa: oculto en desktop */
 .hamburger {
   display: none;
@@ -225,7 +225,7 @@
   flex-shrink: 0;
 }
 .hamburger:hover { background: rgba(123,45,110,0.08); }
-
+ 
 /* Menú móvil desplegable */
 .mobileMenu {
   display: flex;
@@ -236,7 +236,7 @@
   background: rgba(255,255,255,0.98);
   animation: slideDown 0.2s ease;
 }
-
+ 
 .mobileMenuItem {
   display: flex;
   align-items: center;
@@ -254,7 +254,7 @@
   transition: background 0.2s;
 }
 .mobileMenuItem:hover { background: rgba(123,45,110,0.06); }
-
+ 
 /* ── RESPONSIVE: activar hamburguesa ── */
 @media (max-width: 640px) {
   .navBtns    { display: none; }
@@ -264,4 +264,72 @@
 }
 @media (max-width: 480px) {
   .navbarTitle { display: none; }
+}
+ 
+/* ── BOTÓN PERFIL CON APODO ── */
+.btnPerfil {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(123,45,110,0.06);
+  border: 1.5px solid #e0c8db;
+  border-radius: 50px;
+  padding: 5px 14px 5px 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Nunito', sans-serif;
+}
+.btnPerfil:hover {
+  background: rgba(123,45,110,0.12);
+  border-color: #7B2D6E;
+}
+ 
+.btnPerfilAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+ 
+.btnPerfilNombre {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #7B2D6E;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+ 
+/* ── BOTÓN CERRAR SESIÓN ── */
+.btnCerrarSesion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1.5px solid #fecdd3;
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnCerrarSesion:hover {
+  background: rgba(239,68,68,0.06);
+  border-color: #dc2626;
+}
+ 
+@media (max-width: 480px) {
+  .btnPerfilNombre   { display: none; }
+  .btnCerrarSesion span { display: none; }
+  .btnCerrarSesion   { padding: 6px 10px; }
 }
