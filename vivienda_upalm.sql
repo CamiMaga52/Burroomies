@@ -33,3 +33,5 @@ ALTER TABLE vivienda_upalm.arrendatario
 MODIFY COLUMN arrendatarioApodo VARCHAR(45) NOT NULL UNIQUE;
 
 SET SQL_SAFE_UPDATES = 1;
+
+DESCRIBE resena;
