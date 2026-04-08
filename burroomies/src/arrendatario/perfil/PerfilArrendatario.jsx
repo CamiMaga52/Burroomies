@@ -1,18 +1,16 @@
 // src/arrendatario/perfil/PerfilArrendatario.jsx
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './PerfilArrendatario.module.css';
 import Navbar  from '../../shared/components/Navbar';
 import Footer  from '../../shared/components/Footer';
 
-/* ── Íconos ── */
-const IconCamera = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-    <circle cx="12" cy="13" r="4"/>
+const IconArrow = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M19 12H5M12 19l-7-7 7-7"/>
   </svg>
 );
 
+/* ── Solo ícono de ojo para contraseña (eliminado IconCamera) ── */
 const IconEye = ({ open }) => open ? (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -42,10 +40,8 @@ export default function PerfilArrendatario({
   const [showExito,   setShowExito]   = useState(false);
   const [seccion,     setSeccion]     = useState('perfil'); // 'perfil' | 'contrasena'
 
-  /* Editables */
+  /* Solo teléfono editable (sin foto) */
   const [telefono,    setTelefono]    = useState('');
-  const [fotoPreview, setFotoPreview] = useState(null);
-  const [fotoFile,    setFotoFile]    = useState(null);
 
   /* Contraseña */
   const [passActual,  setPassActual]  = useState('');
@@ -53,8 +49,6 @@ export default function PerfilArrendatario({
   const [passConfirm, setPassConfirm] = useState('');
   const [showPass,    setShowPass]    = useState({ actual: false, nueva: false, confirm: false });
   const [errPass,     setErrPass]     = useState({});
-
-  const fotoRef = useRef(null);
 
   /* ── Cargar perfil ── */
   useEffect(() => {
@@ -68,7 +62,6 @@ export default function PerfilArrendatario({
         const data = await res.json();
         setPerfil(data);
         setTelefono(data.usuarioTel || data.telefono || '');
-        setFotoPreview(data.usuarioFoto || data.fotoPerfil || null);
       } catch {
         alert('No se pudo cargar el perfil.');
       } finally {
@@ -78,40 +71,19 @@ export default function PerfilArrendatario({
     cargar();
   }, []);
 
-  /* ── Cambio de foto ── */
-  const handleFoto = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setFotoFile(file);
-    setFotoPreview(URL.createObjectURL(file));
-  };
-
-  /* ── Guardar perfil ── */
+  /* ── Guardar perfil (solo teléfono, sin foto) ── */
   const handleGuardarPerfil = async () => {
     setEnviando(true);
     try {
       const token = localStorage.getItem('burroomies_token');
-      // Usar foto existente como fallback correcto
-      let fotoBase64 = perfil?.usuarioFoto || null;
-      if (fotoFile) {
-        fotoBase64 = await new Promise((res, rej) => {
-          const r = new FileReader();
-          r.onload  = () => res(r.result);
-          r.onerror = rej;
-          r.readAsDataURL(fotoFile);
-        });
-      }
       const res = await fetch('http://localhost:3001/api/auth/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ usuarioTel: telefono, usuarioFoto: fotoBase64 }),
+        body: JSON.stringify({ usuarioTel: telefono }), // Solo envía teléfono
       });
       if (!res.ok) throw new Error();
-      // Actualizar estado local para que persista sin recargar
-      setPerfil(prev => ({ ...prev, usuarioTel: telefono, usuarioFoto: fotoBase64 }));
-      setFotoFile(null);
-      // Notificar al Navbar para que actualice la foto
-      window.dispatchEvent(new Event("perfilActualizado"));
+      // Actualizar estado local
+      setPerfil(prev => ({ ...prev, usuarioTel: telefono }));
       setShowExito(true);
     } catch {
       alert('No se pudo guardar el perfil.');
@@ -158,6 +130,8 @@ export default function PerfilArrendatario({
     : '';
   const correo = perfil?.usuarioCorreo || perfil?.correo || '';
   const inicial = nombreCompleto.charAt(0) || '?';
+  // Foto ya no se usa, se muestra un avatar con iniciales
+  const fotoPerfil = perfil?.usuarioFoto || null;
 
   if (cargando) return (
     <div className={styles.page}>
@@ -183,19 +157,13 @@ export default function PerfilArrendatario({
 
       <main className={styles.container}>
 
+        {/* Botón Regresar — estilo consistente con DetallePropiedad */}
         {onAtras && (
-          <button
-            type="button"
-            onClick={onAtras}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: '#7B2D6E', fontWeight: 700, fontSize: '0.9rem',
-              marginBottom: 16, padding: 0,
-            }}
-          >
-            ← Regresar
-          </button>
+          <div className={styles.regresarWrap}>
+            <button className={styles.btnBack} onClick={onAtras}>
+              <IconArrow /> Regresar
+            </button>
+          </div>
         )}
 
         <h1 className={styles.pageTitle}>Mi perfil</h1>
@@ -218,19 +186,13 @@ export default function PerfilArrendatario({
         {seccion === 'perfil' && (
           <div className={styles.card}>
 
-            {/* Avatar */}
+            {/* Avatar - Solo muestra la foto, sin botón de edición */}
             <div className={styles.avatarSection}>
               <div className={styles.avatarWrapper}>
-                {fotoPreview
-                  ? <img src={fotoPreview} alt="Foto de perfil" className={styles.avatarImg} />
+                {fotoPerfil
+                  ? <img src={fotoPerfil} alt="Foto de perfil" className={styles.avatarImg} />
                   : <div className={styles.avatarPlaceholder}>{inicial}</div>
                 }
-                <button type="button" className={styles.avatarEditBtn}
-                  onClick={() => fotoRef.current?.click()} title="Cambiar foto">
-                  <IconCamera />
-                </button>
-                <input ref={fotoRef} type="file" accept="image/*"
-                  style={{ display: 'none' }} onChange={handleFoto} />
               </div>
               <div className={styles.avatarInfo}>
                 <p className={styles.avatarNombre}>{nombreCompleto || 'Sin nombre'}</p>
@@ -267,8 +229,8 @@ export default function PerfilArrendatario({
                 onChange={e => setTelefono(e.target.value)} />
             </div>
 
-            {/* Código de arrendatario — solo lectura, para compartir con arrendador */}
-            <div className={styles.codigoBox}>
+           {/* Código de arrendatario */}
+           {/* <div className={styles.codigoBox}>
               <span className={styles.codigoLabel}>Tu código de arrendatario</span>
               <div className={styles.codigoValor}>
                 {perfil?.usuarioCodigo ? (
@@ -284,7 +246,7 @@ export default function PerfilArrendatario({
                   </span>
                 )}
               </div>
-            </div>
+            </div> */}
 
             <div className={styles.guardarRow}>
               <button type="button" className={styles.btnGuardar}

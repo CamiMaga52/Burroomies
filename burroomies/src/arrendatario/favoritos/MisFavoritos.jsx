@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import styles from './MisFavoritos.module.css';
 import Navbar from '../../shared/components/Navbar';
 import Footer from '../../shared/components/Footer';
-import { IconCamera, IconDollar, IconMap, Stars } from '../../shared/icons';
+import { IconCamera, IconDollar, IconMap, Stars, IconArrow } from '../../shared/icons';
+import { getFavoritos, toggleFavorito, esFavorito } from "./favoritosUtils";
+
 
 const IconHeartFill = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -27,32 +29,6 @@ const IconEmpty = () => (
   </svg>
 );
 
-const FAVORITOS_KEY = 'burroomies_favoritos';
-
-export function getFavoritos() {
-  try {
-    return JSON.parse(localStorage.getItem(FAVORITOS_KEY) || '[]');
-  } catch {
-    return [];
-  }
-}
-
-export function toggleFavorito(propiedad) {
-  const favs = getFavoritos();
-  const idx  = favs.findIndex(f => f.idPropiedad === propiedad.idPropiedad);
-  if (idx >= 0) {
-    favs.splice(idx, 1);
-  } else {
-    favs.push(propiedad);
-  }
-  localStorage.setItem(FAVORITOS_KEY, JSON.stringify(favs));
-  return idx < 0; // true = se agregó, false = se eliminó
-}
-
-export function esFavorito(idPropiedad) {
-  return getFavoritos().some(f => f.idPropiedad === idPropiedad);
-}
-
 // ─────────────────────────────────────────────────────────
 export default function MisFavoritos({
   onVerDetalle,
@@ -67,9 +43,9 @@ export default function MisFavoritos({
   const [eliminando,    setEliminando]    = useState(null); // id en animación de salida
   const [confirmarId,   setConfirmarId]   = useState(null); // modal de confirmación
 
-  // Cargar del localStorage al montar
+  
   useEffect(() => {
-    setFavoritos(getFavoritos());
+  getFavoritos().then(setFavoritos);
   }, []);
 
   const parsearPrimeraFoto = (propiedadFotos) => {
@@ -86,16 +62,18 @@ export default function MisFavoritos({
     return (sum / resenas.length).toFixed(1);
   };
 
-  const handleEliminar = (id) => {
-    setConfirmarId(null);
-    setEliminando(id);
-    setTimeout(() => {
-      const actualizados = getFavoritos().filter(f => f.idPropiedad !== id);
-      localStorage.setItem(FAVORITOS_KEY, JSON.stringify(actualizados));
-      setFavoritos(actualizados);
-      setEliminando(null);
-    }, 320);
-  };
+  const handleEliminar = async (id) => {
+  setConfirmarId(null);
+  setEliminando(id);
+  await fetch(`http://localhost:3001/api/favoritos/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${localStorage.getItem('burroomies_token')}` },
+  });
+  setTimeout(() => {
+    setFavoritos(prev => prev.filter(f => f.idPropiedad !== id));
+    setEliminando(null);
+  }, 320);
+};
 
   const emojis  = { Habitación: '🛏️', Casa: '🏡', Departamento: '🏠' };
   const colores = { Habitación: '#e3f2fd', Casa: '#fff8e1', Departamento: '#e8f5e9' };
@@ -108,7 +86,14 @@ export default function MisFavoritos({
         tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
         onPaginaPrincipal={onPaginaPrincipal}
+        
       />
+      {/* Botón Regresar */}
+      <div className={styles.regresarWrap}>
+        <button className={styles.btnBack} onClick={onAtras}>
+          <IconArrow /> Regresar
+        </button>
+      </div>
 
       <main className={styles.container}>
 

@@ -9,6 +9,7 @@ const Propiedad    = require('./Propiedad')
 const Arrendamiento = require('./Arrendamiento')
 const Resena       = require('./Resena')
 const Administrador = require('./Administrador')
+const Favorito = require('./Favorito')
 
 // ── Usuario → Arrendador (1:1) ──
 Usuario.hasOne(Arrendador,    { foreignKey: 'usuario_idUsuario' })
@@ -38,6 +39,12 @@ Resena.belongsTo(Arrendatario,  { foreignKey: 'arrendatario_idArrendatario' })
 Propiedad.hasMany(Resena,   { foreignKey: 'propiedad_idPropiedad' })
 Resena.belongsTo(Propiedad, { foreignKey: 'propiedad_idPropiedad' })
 
+Favorito.belongsTo(Arrendatario, { foreignKey: 'arrendatario_idArrendatario' })
+Arrendatario.hasMany(Favorito,   { foreignKey: 'arrendatario_idArrendatario' })
+
+Favorito.belongsTo(Propiedad,    { foreignKey: 'propiedad_idPropiedad' })
+Propiedad.hasMany(Favorito,      { foreignKey: 'propiedad_idPropiedad' })
+
 module.exports = {
   Usuario,
   Arrendador,
@@ -46,4 +53,5 @@ module.exports = {
   Arrendamiento,
   Resena,
   Administrador,
+  Favorito,
 }

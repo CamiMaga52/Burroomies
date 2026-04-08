@@ -18,6 +18,7 @@ app.use('/api/propiedades', require('./routes/propiedades'))
 app.use('/api/arrendamientos', require('./routes/arrendamiento'))
 app.use('/api/resenas',     require('./routes/resenas'))
 app.use('/api/documentos',  require('./routes/documentos'))
+app.use('/api/favoritos', require('./routes/favoritos'))
 
 // ── Ruta de prueba ──
 app.get('/', (req, res) => {

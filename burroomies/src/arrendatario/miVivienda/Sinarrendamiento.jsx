@@ -94,6 +94,7 @@ export default function SinArrendamiento({
   return (
     <div className={styles.page}>
       <Navbar
+        showFavoritos={false}
         onVerPerfil={onVerPerfil}
         onCerrarSesion={onCerrarSesion}
         onPaginaPrincipal={onPaginaPrincipal}

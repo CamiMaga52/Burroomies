@@ -417,3 +417,28 @@
 
   .modal { padding: 1.75rem 1.5rem 1.5rem; }
 }
+
+.regresarWrap {
+  padding: 18px 24px 0;
+}
+
+.btnBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 2px solid #e9d8f5;
+  border-radius: 50px;
+  color: #7B2D6E;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 8px 15px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(123,45,110,0.08);
+}
+
+.btnBack:hover {
+  background: #f3e8ff;
+  border-color: #7B2D6E;
+}

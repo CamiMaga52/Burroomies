@@ -735,6 +735,26 @@
   .gallery      { height: 260px; }
 }
 
+.btnGuardar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: 1.5px solid #c084fc;
+  border-radius: 999px;
+  background: #fff;
+  color: #7c3aed;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btnGuardar:hover {
+  background: #f3e8ff;
+  border-color: #a855f7;
+}
+
 .btnGuardado {
   background: #f3e8ff !important;
   color: #a82177 !important;

@@ -1,6 +1,6 @@
 // src/arrendatario/detalle/DetallePropiedad.jsx
 import { useState, useEffect } from "react";
-import { toggleFavorito, esFavorito } from "../favoritos/MisFavoritos";
+import { toggleFavorito, esFavorito } from "../favoritos/favoritosUtils";
 import styles from "./DetallePropiedad.module.css";
 import Navbar from "../../shared/components/Navbar";
 import Footer from "../../shared/components/Footer";
@@ -12,16 +12,23 @@ import {
 export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onVerPerfil, onFavoritos, onCerrarSesion, onPaginaPrincipal }) {
   const [detalle,    setDetalle]    = useState(null);
   const [cargando,   setCargando]   = useState(true);
+  const [errorDetalle, setErrorDetalle] = useState(false);
   const [fotoActiva, setFotoActiva] = useState(0);
   const [lightbox,   setLightbox]   = useState(null); // índice o null = cerrado
   const [tabResena,  setTabResena]  = useState("todas");
   const [filtroSentimiento, setFiltroSentimiento] = useState('todas');
-  const [guardado, setGuardado] = useState(() => esFavorito(propiedad?.idPropiedad));
+  const [guardado, setGuardado] = useState(false);
 
-  const handleGuardar = () => {
-    const ahora = toggleFavorito(p);   // usa `p` que ya está definido abajo
-    setGuardado(ahora);
-  };
+  useEffect(() => {
+  esFavorito(propiedad?.idPropiedad).then(setGuardado)
+}, [propiedad?.idPropiedad])
+
+
+  const handleGuardar = async () => {
+  const target = detalle || propiedad;
+  const ahora = await toggleFavorito(target);
+  setGuardado(ahora);
+};
 
   // ── Cargar detalle completo del backend ──────────────────────────
   useEffect(() => {
@@ -29,10 +36,12 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onV
     const cargar = async () => {
       try {
         const res  = await fetch(`http://localhost:3001/api/propiedades/${propiedad.idPropiedad}`)
+        if (!res.ok) throw new Error('Error al cargar')
         const data = await res.json()
         setDetalle(data)
       } catch (err) {
         console.error(err)
+        setErrorDetalle(true)
       } finally {
         setCargando(false)
       }
@@ -79,8 +88,41 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onV
         onCerrarSesion={onCerrarSesion}
         onPaginaPrincipal={onPaginaPrincipal}
       />
+      <div className={styles.regresarWrap}>
+        <button className={styles.btnBack} onClick={onAtras}>
+          <IconArrow /> Regresar
+        </button>
+      </div>
       <div className={styles.container} style={{ textAlign:'center', paddingTop:80 }}>
         <p style={{ color:'#6d3fc0', fontSize:'1.1rem' }}>Cargando propiedad...</p>
+      </div>
+      <Footer />
+    </div>
+  )
+
+  if (errorDetalle) return (
+    <div className={styles.page}>
+      <Navbar
+        showMiVivienda={!!onMiVivienda}
+        onMiVivienda={onMiVivienda}
+        showFavoritos
+        onFavoritos={onFavoritos}
+        onVerPerfil={onVerPerfil}
+        onCerrarSesion={onCerrarSesion}
+        onPaginaPrincipal={onPaginaPrincipal}
+      />
+      <div className={styles.regresarWrap}>
+        <button className={styles.btnBack} onClick={onAtras}>
+          <IconArrow /> Regresar
+        </button>
+      </div>
+      <div className={styles.container} style={{ textAlign:'center', paddingTop:80 }}>
+        <p style={{ color:'#e53e3e', fontSize:'1.1rem' }}>
+          No se pudo cargar la propiedad. Verifica que el servidor esté corriendo.
+        </p>
+        <button className={styles.btnBack} style={{ margin:'16px auto 0' }} onClick={onAtras}>
+          <IconArrow /> Volver a la lista
+        </button>
       </div>
       <Footer />
     </div>
