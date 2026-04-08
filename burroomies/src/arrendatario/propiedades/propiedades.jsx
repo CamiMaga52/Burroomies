@@ -1,68 +1,75 @@
-// src/arrendatario/propiedades/Propiedades.jsx
+// src/arrendatario/propiedades/propiedades.jsx
 import { useState, useEffect } from "react";
 import styles from "./Propiedades.module.css";
 import { SERVICIOS_LIST } from "./propiedadesData";
 import Navbar  from "../../shared/components/Navbar";
 import Footer  from "../../shared/components/Footer";
+import Modal   from "../../shared/components/Modal";
 import { IconSearch, IconFilter, IconDollar, IconMap, IconUsers, Stars } from "../../shared/icons";
+
+const IconBack = () => (
+  <svg viewBox="0 0 24 24" fill="none" width="17" height="17">
+    <path d="M19 12H5M5 12l7 7M5 12l7-7"
+      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
 
 export default function Propiedades({
   onVerDetalle,
   onMiVivienda,
+  onFavoritos,
+  onRegresar,
+  tieneArrendamiento,
   onVerPerfil,
   onArrendamientoActual,
-  tieneArrendamiento,
   onCerrarSesion,
-  onPaginaPrincipal, 
+  onPaginaPrincipal,
 }) {
   const [propiedades,  setPropiedades]  = useState([]);
   const [cargando,     setCargando]     = useState(true);
   const [error,        setError]        = useState(null);
-
   const [query,        setQuery]        = useState("");
   const [sortBy,       setSortBy]       = useState("novedades");
   const [maxPrice,     setMaxPrice]     = useState(12000);
   const [tipoVivienda, setTipoVivienda] = useState([]);
+  const [modalFav,     setModalFav]     = useState(false);
 
   useEffect(() => {
     const cargar = async () => {
       try {
-        setCargando(true)
-        setError(null)
-        const res = await fetch('http://localhost:3001/api/propiedades')
-        if (!res.ok) throw new Error('Error al cargar propiedades')
-        const data = await res.json()
-        setPropiedades(data)
-      } catch (err) {
-        console.error(err)
-        setError('No se pudieron cargar las propiedades. Verifica que el servidor esté corriendo.')
+        setCargando(true);
+        setError(null);
+        const res = await fetch('http://localhost:3001/api/propiedades');
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        setPropiedades(data);
+      } catch {
+        setError('No se pudieron cargar las propiedades. Verifica que el servidor esté corriendo.');
       } finally {
-        setCargando(false)
+        setCargando(false);
       }
-    }
-    cargar()
-  }, [])
+    };
+    cargar();
+  }, []);
 
   const toggle = (arr, setArr, val) =>
-    setArr(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val])
+    setArr(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val]);
 
   const parsearPrimeraFoto = (propiedadFotos) => {
-    if (!propiedadFotos) return null
+    if (!propiedadFotos) return null;
     try {
-      const fotos = JSON.parse(propiedadFotos)
-      return Array.isArray(fotos) && fotos.length > 0 ? fotos[0] : null
-    } catch { return null }
-  }
+      const fotos = JSON.parse(propiedadFotos);
+      return Array.isArray(fotos) && fotos.length > 0 ? fotos[0] : null;
+    } catch { return null; }
+  };
 
   const adaptar = (p) => {
-    const calificaciones = p.Resenas?.map(r => parseFloat(r.resenaCalGen || 0)) || []
+    const calificaciones = p.Resenas?.map(r => parseFloat(r.resenaCalGen || 0)) || [];
     const calPromedio = calificaciones.length
       ? (calificaciones.reduce((a, b) => a + b, 0) / calificaciones.length).toFixed(1)
-      : '0.0'
-
-    const emojis  = { 'Habitación': '🛏️', 'Casa': '🏡', 'Departamento': '🏠' }
-    const colores = { 'Habitación': '#e3f2fd', 'Casa': '#fff8e1', 'Departamento': '#e8f5e9' }
-
+      : '0.0';
+    const emojis  = { 'Habitación': '🛏️', 'Casa': '🏡', 'Departamento': '🏠' };
+    const colores = { 'Habitación': '#e3f2fd', 'Casa': '#fff8e1', 'Departamento': '#e8f5e9' };
     return {
       id:           p.idPropiedad,
       titulo:       p.propiedadTitulo,
@@ -76,8 +83,8 @@ export default function Propiedades({
       emoji:        emojis[p.propiedadTipo] || '🏠',
       color:        colores[p.propiedadTipo] || '#f3f0ff',
       raw:          p,
-    }
-  }
+    };
+  };
 
   let filtered = propiedades
     .map(adaptar)
@@ -88,10 +95,13 @@ export default function Propiedades({
       ) &&
       p.precio <= maxPrice &&
       (tipoVivienda.length === 0 || tipoVivienda.includes(p.tipo))
-    )
+    );
 
-  if (sortBy === "precio_asc")  filtered = [...filtered].sort((a, b) => a.precio - b.precio)
-  if (sortBy === "precio_desc") filtered = [...filtered].sort((a, b) => b.precio - a.precio)
+  if (sortBy === "precio_asc")  filtered = [...filtered].sort((a, b) => a.precio - b.precio);
+  if (sortBy === "precio_desc") filtered = [...filtered].sort((a, b) => b.precio - a.precio);
+
+  // onFavoritos abre el modal si no hay handler externo
+  const handleFavoritos = onFavoritos ?? (() => setModalFav(true));
 
   return (
     <div className={styles.page}>
@@ -99,14 +109,31 @@ export default function Propiedades({
       <Navbar
         showMiVivienda={!!onMiVivienda}
         onMiVivienda={onMiVivienda}
+        showFavoritos
+        onFavoritos={handleFavoritos}
         onVerPerfil={onVerPerfil}
         onArrendamientoActual={onArrendamientoActual}
         tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
-        onPaginaPrincipal={onPaginaPrincipal}  // ← agrega esta línea
+        onPaginaPrincipal={onPaginaPrincipal}
       />
 
+      {/* ── Búsqueda + Regresar ── */}
       <div className={styles.searchWrap}>
+
+        {/* Botón Regresar — pegado a la izquierda */}
+        {onRegresar && (
+          <button
+            type="button"
+            className={styles.btnRegresar}
+            onClick={onRegresar}
+          >
+            <IconBack />
+            <span>Regresar</span>
+          </button>
+        )}
+
+        {/* Barra de búsqueda */}
         <div className={styles.searchBar}>
           <input
             className={styles.searchInput}
@@ -179,7 +206,7 @@ export default function Propiedades({
           </div>
 
           <button className={styles.btnApply}
-            onClick={() => { setTipoVivienda([]); setMaxPrice(12000); setSortBy('novedades') }}>
+            onClick={() => { setTipoVivienda([]); setMaxPrice(12000); setSortBy('novedades'); }}>
             Limpiar filtros
           </button>
         </aside>
@@ -227,7 +254,6 @@ export default function Propiedades({
                   style={{ animationDelay: `${0.1 + i * 0.08}s` }}
                   onClick={() => onVerDetalle?.(p.raw)}
                 >
-                  {/* ── Imagen o emoji ── */}
                   <div className={styles.propImgPlaceholder}
                     style={{
                       background: p.fotoUrl ? 'transparent' : p.color,
@@ -235,15 +261,11 @@ export default function Propiedades({
                       overflow: 'hidden',
                     }}
                   >
-                    {p.fotoUrl ? (
-                      <img
-                        src={p.fotoUrl}
-                        alt={p.titulo}
-                        style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
-                      />
-                    ) : (
-                      <span style={{ fontSize:'2.5rem' }}>{p.emoji}</span>
-                    )}
+                    {p.fotoUrl
+                      ? <img src={p.fotoUrl} alt={p.titulo}
+                          style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} />
+                      : <span style={{ fontSize:'2.5rem' }}>{p.emoji}</span>
+                    }
                   </div>
 
                   <div className={styles.propBody}>
@@ -279,7 +301,7 @@ export default function Propiedades({
                     <div className={styles.propFooter}>
                       <button
                         className={styles.btnVer}
-                        onClick={(e) => { e.stopPropagation(); onVerDetalle?.(p.raw) }}
+                        onClick={(e) => { e.stopPropagation(); onVerDetalle?.(p.raw); }}
                       >
                         Ver detalles
                       </button>
@@ -293,6 +315,31 @@ export default function Propiedades({
       </div>
 
       <Footer />
+
+      {/* ── Modal Mis Favoritos — En construcción ── */}
+      <Modal
+        isOpen={modalFav}
+        onClose={() => setModalFav(false)}
+        title="Mis favoritos"
+        hideActions
+      >
+        <div className={styles.modalFavBody}>
+          <div style={{ fontSize: '3.5rem', textAlign: 'center' }}>🔨🐴</div>
+          <p className={styles.modalFavTitulo}>¡Función en construcción!</p>
+          <p className={styles.modalFavDesc}>
+            Muy pronto podrás guardar tus propiedades favoritas y acceder a ellas fácilmente.
+            ¡Estamos trabajando en ello!
+          </p>
+          <button
+            type="button"
+            className={styles.modalFavBtn}
+            onClick={() => setModalFav(false)}
+          >
+            Entendido
+          </button>
+        </div>
+      </Modal>
+
     </div>
-  )
+  );
 }

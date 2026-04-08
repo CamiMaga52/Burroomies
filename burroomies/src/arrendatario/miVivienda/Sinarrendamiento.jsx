@@ -4,7 +4,7 @@
 import styles from './Sinarrendamiento.module.css';
 import Navbar  from '../../shared/components/Navbar';
 import Footer  from '../../shared/components/Footer';
-import burroSolo from '../../img/burroTriste1.png';
+import burroSolo from '../../img/burrofeliz (1).png';
 
 const IconBuscar = () => (
   <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -101,25 +101,16 @@ export default function SinArrendamiento({
 
       <main className={styles.container}>
 
-        {/* ── Card principal ── */}
-        <div className={styles.card}>
+        {/* ── Encabezado de bienvenida ── */}
+        <div className={styles.bienvenidaHeader}>
           <p className={styles.mensaje}>
-            ¡Bienvenido a tu sección "Mi Vivienda"!<br />
+            Bienvenido a tu sección "Mi Vivienda"<br />
+            ¡UPS!<br />
             Aún no tienes arrendamiento asignado
           </p>
-
-          <div className={styles.burroWrapper}>
-            <div className={styles.burroCircle} />
-            <img src={burroSolo} alt="Burro sin arrendamiento" className={styles.burroImg} />
-          </div>
-
           <p className={styles.subtexto}>
-            Explora opciones y comienza tu búsqueda cerca de la UPALM-IPN.
+            Sigue estos pasos para encontrar tu hogar cerca de la UPALM-IPN.
           </p>
-
-          <button type="button" className={styles.btnBuscar} onClick={onBuscar}>
-            Buscar vivienda
-          </button>
         </div>
 
         {/* ── Tutorial ── */}
@@ -128,9 +119,6 @@ export default function SinArrendamiento({
           <div className={styles.tutorialHeaderWrap}>
             <span className={styles.tutorialBadge}>¿Cómo funciona?</span>
             <h2 className={styles.tutorialTitulo}>Tu camino hacia una vivienda</h2>
-            <p className={styles.tutorialSubtitulo}>
-              Sigue estos pasos y encuentra tu hogar cerca del IPN
-            </p>
           </div>
 
           {/* Pasos 1–4 en fila */}
@@ -185,6 +173,23 @@ export default function SinArrendamiento({
           ))}
 
         </div>
+
+        {/* ── Card: burro + botón ── */}
+        <div className={styles.card}>
+          <div className={styles.burroWrapper}>
+            <div className={styles.burroCircle} />
+            <img src={burroSolo} alt="Burro sin arrendamiento" className={styles.burroImg} />
+          </div>
+
+          <p className={styles.subtexto}>
+            Explora opciones y comienza tu búsqueda cerca de la UPALM-IPN.
+          </p>
+
+          <button type="button" className={styles.btnBuscar} onClick={onBuscar}>
+            Buscar vivienda
+          </button>
+        </div>
+
       </main>
 
       <Footer />

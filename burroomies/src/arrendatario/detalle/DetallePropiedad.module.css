@@ -1,26 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
-  --purple-light: #c8b8e8;
+  --purple-light: #e0c8db;
   --purple-mid:   #a78fd0;
-  --purple-main:  #8B5CF6;
-  --purple-dark:  #6d3fc0;
-  --bg:           #dce8f8;
-  --bg2:          #e8daf5;
+  --purple-main:  #7B2D6E;
+  --purple-dark:  #6B3FA0;
+  --bg:           #ffffff;
+  --bg2:          #fdf8fc;
   --card-bg:      rgba(255,255,255,0.97);
-  --text-dark:    #2d2550;
-  --text-mid:     #5a4e7a;
-  --text-light:   #8a7eaa;
-  --input-border: #d9d0ed;
-  --footer-bg:    #c5d8f0;
-  --shadow:       0 4px 24px rgba(110,80,180,0.10);
-  --shadow-card:  0 6px 32px rgba(110,80,180,0.12);
+  --text-dark:    #2a0e23;
+  --text-mid:     #7a5a70;
+  --text-light:   #9b6b8e;
+  --input-border: #f0e6f5;
+  --footer-bg:    #2a0e23;
+  --shadow:       0 4px 24px rgba(123,45,110,0.08);
+  --shadow-card:  0 6px 32px rgba(123,45,110,0.10);
 }
 
 /* PAGE */
 .page {
   font-family: 'Nunito', sans-serif;
-  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  background: #fff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -84,20 +84,27 @@
 /* BTN BACK */
 .btnBack {
   display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(167,143,208,0.18); color: var(--purple-dark);
-  border: none; border-radius: 50px;
-  padding: 7px 18px; font-family: 'Nunito', sans-serif;
+  background: none;
+  border: 1.5px solid #e0c8db;
+  border-radius: 50px;
+  color: #7B2D6E;
+  padding: 7px 18px;
+  font-family: 'Nunito', sans-serif;
   font-size: 0.88rem; font-weight: 700;
   cursor: pointer; margin-bottom: 18px;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
 }
-.btnBack:hover { background: rgba(167,143,208,0.32); }
+.btnBack:hover {
+  background: rgba(123,45,110,0.06);
+  border-color: #7B2D6E;
+  transform: translateX(-2px);
+}
 
 /* GALLERY MEJORADA */
 .gallery {
-  display: flex; gap: 10px;
-  height: 260px; margin-bottom: 24px;
-  border-radius: 20px; overflow: hidden;
+  display: flex; gap: 6px;
+  height: 380px; margin-bottom: 28px;
+  border-radius: 16px; overflow: hidden;
 }
 .galleryMain { flex: 2; }
 .galleryGrid {
@@ -151,9 +158,10 @@
 .headerLeft { flex: 1; }
 .titulo {
   font-family: 'Poppins', sans-serif;
-  font-size: 2rem; /* Aumentado */
-  font-weight: 700;
-  color: var(--text-dark); margin-bottom: 8px;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--text-dark); margin: 0 0 6px;
+  line-height: 1.2;
 }
 .subtitulo { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .badge {
@@ -617,4 +625,118 @@
   .precioCard   { min-width: unset; width: 100%; }
   .tabs         { gap: 4px; }
   .tab          { padding: 5px 10px; font-size: 0.78rem; }
+}
+
+/* ── BOTÓN AÑADIR A FAVORITOS ── */
+.btnAnadirFav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 0;
+  background: none;
+  border: 1.5px solid #e0c8db;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #be185d;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnAnadirFav:hover {
+  background: rgba(190,24,93,0.06);
+  border-color: #be185d;
+  transform: scale(1.02);
+}
+
+/* ── WRAPPER REGRESAR — margen izquierdo real ── */
+.regresarWrap {
+  padding: 16px 0 0 40px;
+}
+
+@media (max-width: 700px) {
+  .regresarWrap { padding: 12px 0 0 16px; }
+}
+
+/* ── BOTÓN AÑADIR FAVORITOS — fuera de precioCard ── */
+/* Sobreescribir el estilo anterior */
+.btnAnadirFav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 0;
+  background: none;
+  border: 1.5px solid #fbcfe8;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #be185d;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+  min-width: 170px;
+}
+.btnAnadirFav:hover {
+  background: rgba(190,24,93,0.06);
+  border-color: #be185d;
+  transform: scale(1.02);
+}
+
+/* ── FILA TÍTULO + GUARDAR (estilo Airbnb) ── */
+.tituloRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tituloLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── BOTÓN GUARDAR/FAVORITOS (arriba, compacto) ── */
+.btnAnadirFav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1.5px solid #e0c8db;
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #7B2D6E;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: fit-content;
+  transition: all 0.2s;
+}
+.btnAnadirFav:hover {
+  background: rgba(190,24,93,0.06);
+  border-color: #be185d;
+  color: #be185d;
+}
+
+/* Responsive tituloRow */
+@media (max-width: 600px) {
+  .tituloRow    { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .gallery      { height: 260px; }
+}
+
+.btnGuardado {
+  background: #f3e8ff !important;
+  color: #a82177 !important;
+  border-color: #d8bbf5 !important;
 }

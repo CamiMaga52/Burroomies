@@ -325,7 +325,7 @@ export default function Home({ onIniciarSesion, onRegistrarse }) {
                 <div className={s.profileHeader}>
                   <div className={s.profileIconBox}>🎓</div>
                   <div>
-                    <div className={s.profileRole} style={{ color: "#6B3FA0" }}>Arrendatario</div>
+                    <div className={s.profileRole} style={{ color: "#6B3FA0" }}>Estudiante</div>
                     <div className={s.profileTagline}>Encuentra tu hogar estudiantil</div>
                   </div>
                 </div>
@@ -344,7 +344,7 @@ export default function Home({ onIniciarSesion, onRegistrarse }) {
                 <button className={s.profileCta}
                   style={{ background: "linear-gradient(135deg,#6B3FA0,#6B3FA0cc)", boxShadow: "0 6px 20px #6B3FA044" }}
                   onClick={() => onRegistrarse('arrendatario')}>
-                  Registrarme como Arrendatario
+                  Registrarme como Estudiante
                 </button>
               </div>
             </FadeSection>

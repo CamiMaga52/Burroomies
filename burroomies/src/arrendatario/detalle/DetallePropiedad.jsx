@@ -1,5 +1,6 @@
 // src/arrendatario/detalle/DetallePropiedad.jsx
 import { useState, useEffect } from "react";
+import { toggleFavorito, esFavorito } from "../favoritos/MisFavoritos";
 import styles from "./DetallePropiedad.module.css";
 import Navbar from "../../shared/components/Navbar";
 import Footer from "../../shared/components/Footer";
@@ -8,13 +9,19 @@ import {
   IconMail, IconUser, IconCamera, IconHeart,
 } from "../../shared/icons";
 
-export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onCerrarSesion, onPaginaPrincipal }) {
+export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onVerPerfil, onFavoritos, onCerrarSesion, onPaginaPrincipal }) {
   const [detalle,    setDetalle]    = useState(null);
   const [cargando,   setCargando]   = useState(true);
   const [fotoActiva, setFotoActiva] = useState(0);
   const [lightbox,   setLightbox]   = useState(null); // índice o null = cerrado
   const [tabResena,  setTabResena]  = useState("todas");
   const [filtroSentimiento, setFiltroSentimiento] = useState('todas');
+  const [guardado, setGuardado] = useState(() => esFavorito(propiedad?.idPropiedad));
+
+  const handleGuardar = () => {
+    const ahora = toggleFavorito(p);   // usa `p` que ya está definido abajo
+    setGuardado(ahora);
+  };
 
   // ── Cargar detalle completo del backend ──────────────────────────
   useEffect(() => {
@@ -63,7 +70,15 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
 
   if (cargando) return (
     <div className={styles.page}>
-      <Navbar showMiVivienda={!!onMiVivienda} onMiVivienda={onMiVivienda} onCerrarSesion={onCerrarSesion} />
+      <Navbar
+        showMiVivienda={!!onMiVivienda}
+        onMiVivienda={onMiVivienda}
+        showFavoritos
+        onFavoritos={onFavoritos}
+        onVerPerfil={onVerPerfil}
+        onCerrarSesion={onCerrarSesion}
+        onPaginaPrincipal={onPaginaPrincipal}
+      />
       <div className={styles.container} style={{ textAlign:'center', paddingTop:80 }}>
         <p style={{ color:'#6d3fc0', fontSize:'1.1rem' }}>Cargando propiedad...</p>
       </div>
@@ -106,15 +121,41 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
       <Navbar
         showMiVivienda={!!onMiVivienda}
         onMiVivienda={onMiVivienda}
+        showFavoritos
+        onFavoritos={onFavoritos}
+        onVerPerfil={onVerPerfil}
         onCerrarSesion={onCerrarSesion}
         onPaginaPrincipal={onPaginaPrincipal}
       />
 
-      <div className={styles.container}>
-
+      {/* Botón Regresar — pegado al margen izquierdo, fuera del container */}
+      <div className={styles.regresarWrap}>
         <button className={styles.btnBack} onClick={onAtras}>
           <IconArrow /> Regresar
         </button>
+      </div>
+
+      <div className={styles.container}>
+
+        {/* ── Fila superior: Título + botón Favoritos (estilo Airbnb) ── */}
+        <div className={styles.tituloRow}>
+          <div className={styles.tituloLeft}>
+            <h1 className={styles.titulo}>{p?.propiedadTitulo || 'Sin título'}</h1>
+            <div className={styles.subtitulo}>
+              <span className={`${styles.badge} ${styles.badgeComp}`}>{p?.propiedadTipo}</span>
+              {p?.propiedadLugares && (
+                <span className={styles.lugares}>{p.propiedadLugares} lugares disponibles</span>
+              )}
+            </div>
+          </div>
+          <button
+          type="button"
+          className={`${styles.btnGuardar} ${guardado ? styles.btnGuardado : ''}`}
+          onClick={handleGuardar}
+          >
+          {guardado ? '♥ Guardado' : '♡ Guardar'}
+          </button>
+        </div>
 
         {/* ── Galería ── */}
         <div className={styles.gallery}>
@@ -122,7 +163,7 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
             {fotos.length > 0 ? (
               <img src={fotos[fotoActiva]} alt={`Foto ${fotoActiva + 1}`}
                 onClick={() => setLightbox(fotoActiva)}
-                style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:12, cursor:'zoom-in' }} />
+                style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'16px 0 0 16px', cursor:'zoom-in' }} />
             ) : (
               <div className={styles.imgPlaceholderMain}><IconCamera /></div>
             )}
@@ -135,8 +176,8 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
                   <div key={i} className={styles.imgPlaceholderThumb}
                     style={{
                       cursor:'pointer', padding:0, overflow:'hidden',
-                      border: fotoActiva === i ? '3px solid #8B5CF6' : '3px solid transparent',
-                      borderRadius:8,
+                      border: fotoActiva === i ? '3px solid #7B2D6E' : '3px solid transparent',
+                      borderRadius: i === 1 ? '0 16px 0 0' : i === 2 ? '0 0 16px 0' : '0',
                     }}
                     onClick={() => { setFotoActiva(i); setLightbox(i); }}
                   >
@@ -166,17 +207,9 @@ export default function DetallePropiedad({ propiedad, onAtras, onMiVivienda, onC
           </div>
         </div>
 
-        {/* ── Encabezado ── */}
+        {/* ── Encabezado: info + precio ── */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
-            <h1 className={styles.titulo}>{p?.propiedadTitulo || 'Sin título'}</h1>
-            <div className={styles.subtitulo}>
-              <span className={`${styles.badge} ${styles.badgeComp}`}>{p?.propiedadTipo}</span>
-              {p?.propiedadLugares && (
-                <span className={styles.lugares}>{p.propiedadLugares} lugares disponibles</span>
-              )}
-            </div>
-
             <div className={styles.calGeneral}>
               <div className={styles.stars}>
                 {[1,2,3,4,5].map(i => (
