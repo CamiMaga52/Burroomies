@@ -22,7 +22,24 @@ const FORM_INICIAL = {
 /* ── Convierte un File a string Base64 ── */
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
-  reader.onload  = () => resolve(reader.result); // incluye "data:image/...;base64,..."
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800; // máximo 800px de ancho o alto
+      let { width, height } = img;
+      if (width > MAX || height > MAX) {
+        if (width > height) { height = (height * MAX) / width; width = MAX; }
+        else { width = (width * MAX) / height; height = MAX; }
+      }
+      canvas.width  = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.7)); // calidad 70%
+    };
+    img.onerror = reject;
+    img.src = e.target.result;
+  };
   reader.onerror = reject;
   reader.readAsDataURL(file);
 });

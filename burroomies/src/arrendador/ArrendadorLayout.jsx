@@ -31,6 +31,7 @@ export default function ArrendadorLayout({
         onMisArrendamientos={onMisArrendamientos}
         onVerPerfil={onVerPerfil}
         onPaginaPrincipal={onPaginaPrincipal}
+        showFavoritos={false} 
       />
       <main className={`${styles.container} ${center ? styles.center : ''}`}>
         {children}

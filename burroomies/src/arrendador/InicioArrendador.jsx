@@ -53,6 +53,15 @@ export default function InicioArrendador({
           Agregar vivienda
         </button>
 
+        <button
+        type="button"
+        className={styles.btnAgregar}
+        style={{ background: 'white', color: '#7B2D6E', border: '2px solid #7B2D6E', marginTop: 12 }}
+        onClick={onMisViviendas}
+      >
+        🏠 Mis viviendas
+      </button>
+
         <p className={styles.hint}>
           Publica tu propiedad y recibe solicitudes de estudiantes verificados del IPN
         </p>

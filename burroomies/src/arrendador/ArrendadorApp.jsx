@@ -1,18 +1,35 @@
 // src/arrendador/ArrendadorApp.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';  // ← agrega useEffect
 import InicioArrendador      from './InicioArrendador';
 import AgregarPropiedad      from './AgregarPropiedad';
 import EditarPropiedad       from './EditarPropiedad';
 import MisViviendas          from './MisViviendas';
 import MisArrendamientos     from './Misarrendamientos';
-import RegistroArrendamiento from './RegistroArrendamiento';
+import RegistroArrendamiento from './Registroarrendamiento';
 import DetalleArrendamiento  from './Detallearrendamiento';
 import PerfilArrendador      from './PerfilArrendador';
 
 export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
   const [pantalla,            setPantalla]            = useState('inicio');
   const [arrendamientoActivo, setArrendamientoActivo] = useState(null);
-  const [propiedadEditar,     setPropiedadEditar]     = useState(null); // idPropiedad
+  const [propiedadEditar,     setPropiedadEditar]     = useState(null);
+
+  // ── Al entrar, si ya tiene propiedades va directo a MisViviendas ──
+  useEffect(() => {
+    const verificar = async () => {
+      try {
+        const token = localStorage.getItem('burroomies_token');
+        const res = await fetch('http://localhost:3001/api/propiedades/arrendador/mis-propiedades', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (res.ok && Array.isArray(data) && data.length > 0) {
+          setPantalla('misViviendas');
+        }
+      } catch {}
+    };
+    verificar();
+  }, []);
 
   const ir = (p) => () => setPantalla(p);
 
@@ -26,13 +43,12 @@ export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
     setPantalla('editarPropiedad');
   };
 
-  // Props comunes de navegación para todas las pantallas
   const navProps = {
-  onMisViviendas:      ir('misViviendas'),
-  onMisArrendamientos: ir('registroArrendamiento'),
-  onVerPerfil:         ir('perfil'),
-  onCerrarSesion,
-  onPaginaPrincipal,
+    onMisViviendas:      ir('misViviendas'),
+    onMisArrendamientos: ir('misArrendamientos'),  // ← corregido, antes iba a registroArrendamiento
+    onVerPerfil:         ir('perfil'),
+    onCerrarSesion,
+    onPaginaPrincipal,
   };
 
   return (
@@ -62,6 +78,7 @@ export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
           {...navProps}
           onAgregarProp={ir('agregar')}
           onEditar={editarPropiedad}
+          onRegistrarArrendamiento={ir('registroArrendamiento')}  
           showMisViviendas
         />
       )}
@@ -78,7 +95,7 @@ export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
       {pantalla === 'registroArrendamiento' && (
         <RegistroArrendamiento
           {...navProps}
-          onAtras={ir('misArrendamientos')}
+          onAtras={ir('misViviendas')}   // ← regresa a MisViviendas
           onExito={ir('misArrendamientos')}
           showMisViviendas
         />
@@ -95,7 +112,7 @@ export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
       )}
 
       {pantalla === 'perfil' && (
-        <PerfilArrendador {...navProps} onAtras={ir('inicio')} showMisViviendas />
+        <PerfilArrendador {...navProps} onAtras={ir('misViviendas')} showMisViviendas />
       )}
     </>
   );

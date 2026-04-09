@@ -216,7 +216,7 @@ export default function MiArrendamientoActual({
         isOpen={finalizarModal.isOpen}
         onClose={finalizarModal.close}
         title="¿Finalizar arrendamiento?"
-        confirmText="Sí, finalizar"
+        confirmText="Finalizar"
         cancelText="Cancelar"
         onConfirm={handleConfirmarFinalizar}
         onCancel={finalizarModal.close}

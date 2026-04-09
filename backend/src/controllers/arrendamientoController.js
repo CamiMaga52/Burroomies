@@ -1,20 +1,15 @@
 const { Arrendamiento, Arrendatario, Propiedad, Arrendador, Usuario } = require('../models')
 
 // ── Registrar arrendamiento (arrendador) ─────────────────────────
-const createArrendamiento = async (req, res) => {
-  try {
-    const { codigoEstudiante, codigoPropiedad, arrendamientoRenta, arrendamientoDescrip } = req.body
+    const createArrendamiento = async (req, res) => {
+      try {
+        const { apodoEstudiante, idPropiedad, arrendamientoRenta, arrendamientoDescrip } = req.body
 
-    // Buscar propiedad por código
-    const propiedad = await Propiedad.findOne({ where: { propiedadCodigo: codigoPropiedad } })
-    if (!propiedad) return res.status(404).json({ message: 'Propiedad no encontrada con ese código.' })
+    const propiedad = await Propiedad.findByPk(idPropiedad)
+    if (!propiedad) return res.status(404).json({ message: 'Propiedad no encontrada.' })
 
-    // Buscar estudiante por código
-    const usuarioEst = await Usuario.findOne({ where: { usuarioCodigo: codigoEstudiante } })
-    if (!usuarioEst) return res.status(404).json({ message: 'Estudiante no encontrado con ese código.' })
-
-    const arrendatario = await Arrendatario.findOne({ where: { usuario_idUsuario: usuarioEst.idUsuario } })
-    if (!arrendatario) return res.status(404).json({ message: 'El usuario no es arrendatario.' })
+    const arrendatario = await Arrendatario.findOne({ where: { arrendatarioApodo: apodoEstudiante } })
+    if (!arrendatario) return res.status(404).json({ message: 'No existe un estudiante con ese apodo.' })
 
     // Verificar que el arrendatario no tenga ya un arrendamiento activo (RN_17)
     if (arrendatario.arrendamiento_idArrendamiento) {
@@ -34,6 +29,7 @@ const createArrendamiento = async (req, res) => {
     // Vincular arrendatario al arrendamiento
     await arrendatario.update({ arrendamiento_idArrendamiento: arrendamiento.idArrendamiento })
 
+    await propiedad.update({ propiedadEstatus: 'Ocupada' })
     res.status(201).json({ message: 'Arrendamiento registrado correctamente.', arrendamiento })
   } catch (error) {
     console.error('Error en createArrendamiento:', error)

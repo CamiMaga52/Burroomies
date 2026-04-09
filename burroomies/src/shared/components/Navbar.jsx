@@ -87,7 +87,7 @@ export default function Navbar({
         </div>
 
         {/* Centro — botones condicionales de navegación */}
-        {(showMiVivienda || showFavoritos || showBuscar) && (
+        {(showMiVivienda || showFavoritos || showBuscar || showMisArrendamientos) && (
           <div className={styles.navbarCenter}>
 
             {showMiVivienda && (
@@ -98,6 +98,16 @@ export default function Navbar({
               >
                 <IconHome />
                 <span>Mi Vivienda</span>
+              </button>
+            )}
+
+            {showMisArrendamientos && (
+              <button
+                type="button"
+                className={`${styles.btnNavCenter} ${styles.btnNavArr}`}
+                onClick={() => onMisArrendamientos?.()}
+              >
+                <span>Mis arrendamientos</span>
               </button>
             )}
 

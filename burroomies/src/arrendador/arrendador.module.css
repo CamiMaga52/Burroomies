@@ -131,3 +131,9 @@
   .photoZone { padding: 28px 16px; }
   .modal { padding: 28px 16px 22px; }
 }
+
+.badgeOcupada {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+}

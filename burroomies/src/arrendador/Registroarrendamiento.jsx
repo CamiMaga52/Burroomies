@@ -1,10 +1,9 @@
 // src/arrendador/RegistroArrendamiento.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ArrendadorLayout from './ArrendadorLayout';
 import s from './arrendador.module.css';
 import styles from './RegistroArrendamiento.module.css';
 
-/* ── Ícono usuario/registro ── */
 const IconRegistro = () => (
   <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -24,10 +23,10 @@ const IconArrowLeft = () => (
 );
 
 const FORM_INICIAL = {
-  codigoArrendatario: '',
-  codigoPropiedad: '',
-  fechaInicio: '',
-  precioAcordado: '',
+  apodoEstudiante: '',
+  idPropiedad:     '',
+  fechaInicio:     '',
+  precioAcordado:  '',
 };
 
 export default function RegistroArrendamiento({
@@ -38,10 +37,21 @@ export default function RegistroArrendamiento({
   onCerrarSesion,
   onExito,
 }) {
-  const [form, setForm] = useState(FORM_INICIAL);
-  const [errores, setErrores] = useState({});
-  const [enviando, setEnviando] = useState(false);
-  const [showExito, setShowExito] = useState(false);
+  const [form,        setForm]        = useState(FORM_INICIAL);
+  const [errores,     setErrores]     = useState({});
+  const [enviando,    setEnviando]    = useState(false);
+  const [showExito,   setShowExito]   = useState(false);
+  const [propiedades, setPropiedades] = useState([]);  // ← aquí dentro
+
+  useEffect(() => {
+    const token = localStorage.getItem('burroomies_token');
+    fetch('http://localhost:3001/api/propiedades/arrendador/mis-propiedades', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(setPropiedades)
+      .catch(console.error);
+  }, []);
 
   const setField = (key) => (e) => {
     setForm(f => ({ ...f, [key]: e.target.value }));
@@ -50,9 +60,9 @@ export default function RegistroArrendamiento({
 
   const validar = () => {
     const errs = {};
-    if (!form.codigoArrendatario.trim()) errs.codigoArrendatario = 'Campo requerido';
-    if (!form.codigoPropiedad.trim()) errs.codigoPropiedad = 'Campo requerido';
-    if (!form.fechaInicio) errs.fechaInicio = 'Campo requerido';
+    if (!form.apodoEstudiante.trim()) errs.apodoEstudiante = 'Campo requerido';
+    if (!form.idPropiedad)            errs.idPropiedad     = 'Selecciona una propiedad';
+    if (!form.fechaInicio)            errs.fechaInicio     = 'Campo requerido';
     if (!form.precioAcordado || isNaN(Number(form.precioAcordado)) || Number(form.precioAcordado) <= 0)
       errs.precioAcordado = 'Ingresa un precio válido';
     setErrores(errs);
@@ -71,8 +81,8 @@ export default function RegistroArrendamiento({
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          codigoEstudiante: form.codigoArrendatario,
-          codigoPropiedad: form.codigoPropiedad,
+          apodoEstudiante:    form.apodoEstudiante,
+          idPropiedad:        form.idPropiedad,
           arrendamientoRenta: Number(form.precioAcordado),
           arrendamientoDescrip: '',
         }),
@@ -111,38 +121,58 @@ export default function RegistroArrendamiento({
           </div>
         </div>
 
+        {/* Tutorial */}
+        <div style={{
+          background: 'linear-gradient(135deg, #f3e8ff, #ede9fe)',
+          border: '1px solid #d8b4fe',
+          borderRadius: 16,
+          padding: '18px 22px',
+          marginBottom: 24,
+        }}>
+          <p style={{ fontWeight: 700, color: '#6d28d9', marginBottom: 10, fontSize: '0.95rem' }}>
+            📋 ¿Cómo dar de alta a tu estudiante?
+          </p>
+          <ol style={{ paddingLeft: 18, color: '#5b21b6', fontSize: '0.88rem', lineHeight: 1.8, margin: 0 }}>
+            <li>El estudiante debe estar registrado en Burroomies como <strong>arrendatario</strong>.</li>
+            <li>Pídele su <strong>apodo de usuario</strong> (lo ve en su perfil, ej: <code>usuario_22</code>).</li>
+            <li>Selecciona la <strong>propiedad</strong> que le vas a asignar.</li>
+            <li>Una vez registrado, el estudiante verá el arrendamiento en su sección <strong>"Mi vivienda"</strong>.</li>
+          </ol>
+        </div>
+
         {/* Formulario */}
         <div className={s.formCard}>
           <div className={styles.grid}>
 
-            {/* Código del arrendatario */}
+            {/* Apodo del estudiante */}
             <div className={s.campo}>
-              <label className={s.label}>Código del arrendatario</label>
+              <label className={s.label}>Apodo del estudiante</label>
               <input
-                className={`${s.input} ${errores.codigoArrendatario ? styles.inputError : ''}`}
+                className={`${s.input} ${errores.apodoEstudiante ? styles.inputError : ''}`}
                 type="text"
-                placeholder="Ej. ARR-00123"
-                value={form.codigoArrendatario}
-                onChange={setField('codigoArrendatario')}
+                placeholder="Ej. usuario_22"
+                value={form.apodoEstudiante}
+                onChange={setField('apodoEstudiante')}
               />
-              {errores.codigoArrendatario && (
-                <span className={styles.error}>{errores.codigoArrendatario}</span>
-              )}
+              {errores.apodoEstudiante && <span className={styles.error}>{errores.apodoEstudiante}</span>}
             </div>
 
-            {/* Código de la propiedad */}
+            {/* Seleccionar propiedad */}
             <div className={s.campo}>
-              <label className={s.label}>Código de la propiedad</label>
-              <input
-                className={`${s.input} ${errores.codigoPropiedad ? styles.inputError : ''}`}
-                type="text"
-                placeholder="Ej. PROP-00456"
-                value={form.codigoPropiedad}
-                onChange={setField('codigoPropiedad')}
-              />
-              {errores.codigoPropiedad && (
-                <span className={styles.error}>{errores.codigoPropiedad}</span>
-              )}
+              <label className={s.label}>Propiedad a asignar</label>
+              <select
+                className={`${s.input} ${errores.idPropiedad ? styles.inputError : ''}`}
+                value={form.idPropiedad}
+                onChange={setField('idPropiedad')}
+              >
+                <option value="">-- Selecciona una propiedad --</option>
+                {propiedades.map(p => (
+                  <option key={p.idPropiedad} value={p.idPropiedad}>
+                    {p.propiedadTitulo}
+                  </option>
+                ))}
+              </select>
+              {errores.idPropiedad && <span className={styles.error}>{errores.idPropiedad}</span>}
             </div>
 
             {/* Fecha de inicio */}
@@ -154,9 +184,7 @@ export default function RegistroArrendamiento({
                 value={form.fechaInicio}
                 onChange={setField('fechaInicio')}
               />
-              {errores.fechaInicio && (
-                <span className={styles.error}>{errores.fechaInicio}</span>
-              )}
+              {errores.fechaInicio && <span className={styles.error}>{errores.fechaInicio}</span>}
             </div>
 
             {/* Precio acordado */}
@@ -170,9 +198,7 @@ export default function RegistroArrendamiento({
                 value={form.precioAcordado}
                 onChange={setField('precioAcordado')}
               />
-              {errores.precioAcordado && (
-                <span className={styles.error}>{errores.precioAcordado}</span>
-              )}
+              {errores.precioAcordado && <span className={styles.error}>{errores.precioAcordado}</span>}
             </div>
 
           </div>

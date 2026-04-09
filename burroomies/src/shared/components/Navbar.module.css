@@ -344,6 +344,7 @@
   transform: translateX(-50%);
 }
 
+
 .btnNavCenter {
   display: flex;
   align-items: center;
@@ -387,4 +388,14 @@
 
 @media (max-width: 480px) {
   .navbarCenter { gap: 4px; }
+}
+
+/* Mis arrendamientos */
+.btnNavArr {
+  color: #068fd9;
+  border-color: #8aeefd;
+}
+.btnNavArr:hover {
+  background: rgba(217, 119, 6, 0.07);
+  border-color: #0622d9;
 }
