@@ -21,7 +21,7 @@ export default function MiArrendamientoActual({
   onArrendamientoActual,
   tieneArrendamiento,
   onCerrarSesion,
-  onPaginaPrincipal, 
+  onPaginaPrincipal,
 }) {
   const [arrendamiento, setArrendamiento] = useState(null);
   const [cargando,      setCargando]      = useState(true);
@@ -64,12 +64,15 @@ export default function MiArrendamientoActual({
       );
       if (res.ok) {
         const data = await res.json();
-        const idPropiedad = propiedad?.idPropiedad || arrendamiento?.propiedad_idPropiedad;
-        // Guardar reseña pendiente en localStorage por si el usuario cierra sesión
-        localStorage.setItem('burroomies_resena_pendiente', JSON.stringify({ idPropiedad }));
-        // Si ambos confirmaron → ir a DejaReseña
+
+        // Usar el idPropiedad que devuelve el backend (más confiable)
+        const idPropiedad = data.idPropiedad
+          || propiedad?.idPropiedad
+          || arrendamiento?.propiedad_idPropiedad;
+
         if (data.message?.includes('terminado correctamente')) {
-          localStorage.removeItem('burroomies_resena_pendiente');
+          // Guardamos en localStorage por si hay un race condition con el polling
+          localStorage.setItem('burroomies_resena_pendiente', JSON.stringify({ idPropiedad }));
           onFinalizar?.(idPropiedad);
         } else {
           // Solo el arrendatario confirmó → esperar al arrendador
@@ -101,7 +104,7 @@ export default function MiArrendamientoActual({
         onArrendamientoActual={onArrendamientoActual}
         tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
-        onPaginaPrincipal={onPaginaPrincipal} 
+        onPaginaPrincipal={onPaginaPrincipal}
       />
 
       <main className={styles.container}>

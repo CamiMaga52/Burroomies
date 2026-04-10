@@ -165,12 +165,12 @@ export default function DetalleArrendamiento({
             </div>
           </div>
 
-          <div className={s.campo} style={{ gridColumn: '1 / -1' }}>
+        {/*  <div className={s.campo} style={{ gridColumn: '1 / -1' }}>
             <label className={s.label}>Contacto del arrendatario</label>
             <div className={styles.inputDisplay}>
               <span>{a.arrendatarioTelefono || a.arrendatarioContacto || '—'}</span>
             </div>
-          </div>
+          </div>*/}
 
         </div>
 

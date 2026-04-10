@@ -1,12 +1,12 @@
 // src/arrendador/ArrendadorApp.jsx
-import { useState, useEffect } from 'react';  // ← agrega useEffect
+import { useState } from 'react';
 import InicioArrendador      from './InicioArrendador';
 import AgregarPropiedad      from './AgregarPropiedad';
 import EditarPropiedad       from './EditarPropiedad';
 import MisViviendas          from './MisViviendas';
 import MisArrendamientos     from './Misarrendamientos';
 import RegistroArrendamiento from './Registroarrendamiento';
-import DetalleArrendamiento  from './Detallearrendamiento';
+import DetalleArrendamiento  from './DetalleArrendamiento';
 import PerfilArrendador      from './PerfilArrendador';
 
 export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
@@ -14,23 +14,7 @@ export default function ArrendadorApp({ onCerrarSesion, onPaginaPrincipal }) {
   const [arrendamientoActivo, setArrendamientoActivo] = useState(null);
   const [propiedadEditar,     setPropiedadEditar]     = useState(null);
 
-  // ── Al entrar, si ya tiene propiedades va directo a MisViviendas ──
-  useEffect(() => {
-    const verificar = async () => {
-      try {
-        const token = localStorage.getItem('burroomies_token');
-        const res = await fetch('http://localhost:3001/api/propiedades/arrendador/mis-propiedades', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (res.ok && Array.isArray(data) && data.length > 0) {
-          setPantalla('misViviendas');
-        }
-      } catch {}
-    };
-    verificar();
-  }, []);
-
+  
   const ir = (p) => () => setPantalla(p);
 
   const verDetalle = (arrendamiento) => {

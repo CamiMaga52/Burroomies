@@ -1,6 +1,6 @@
 /* src/arrendador/InicioArrendador.module.css */
 @import '../shared/styles/variables.css';
- 
+
 .contenido {
   display: flex;
   flex-direction: column;
@@ -11,10 +11,7 @@
   padding: 20px 0;
   overflow: hidden;
 }
- 
 
-
- 
 /* Badge */
 .badge {
   display: inline-flex;
@@ -22,7 +19,6 @@
   gap: 8px;
   background: #f5eef2;
   border: 1px solid #e0cce8;
-  borderRadius: 30px;
   padding: 5px 14px;
   font-family: var(--font-body);
   font-size: 12px;
@@ -33,7 +29,7 @@
   z-index: 1;
   border-radius: 30px;
 }
- 
+
 .badgeDot {
   width: 6px;
   height: 6px;
@@ -42,12 +38,12 @@
   display: block;
   animation: pulse 2s infinite;
 }
- 
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.4; }
 }
- 
+
 /* Textos */
 .textos {
   display: flex;
@@ -57,7 +53,7 @@
   position: relative;
   z-index: 1;
 }
- 
+
 .saludo {
   font-family: var(--font-heading);
   font-size: 2rem;
@@ -69,7 +65,7 @@
   margin: 0;
   letter-spacing: -0.5px;
 }
- 
+
 .sub {
   font-family: var(--font-body);
   font-size: 1.1rem;
@@ -77,7 +73,7 @@
   color: #4a2a40;
   margin: 0;
 }
- 
+
 .desc {
   font-family: var(--font-body);
   font-size: 0.9rem;
@@ -87,7 +83,7 @@
   max-width: 340px;
   line-height: 1.6;
 }
- 
+
 /* Burrito */
 .burroWrapper {
   position: relative;
@@ -98,14 +94,14 @@
   justify-content: center;
   z-index: 1;
 }
- 
+
 .burroCircle {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   background: linear-gradient(145deg, #f0e6f5, #e4d0f0);
 }
- 
+
 .burroImg {
   position: relative;
   z-index: 1;
@@ -115,13 +111,59 @@
   filter: drop-shadow(0 12px 24px rgba(123,45,110,0.18));
   animation: float 3.5s ease-in-out infinite;
 }
- 
+
 @keyframes float {
   0%, 100% { transform: translateY(0);   }
   50%       { transform: translateY(-10px); }
 }
- 
-/* Botón agregar */
+
+/* Tarjetas de estadísticas */
+.statsRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 340px;
+  position: relative;
+  z-index: 1;
+}
+
+.statCard {
+  flex: 1;
+  background: #f5eef2;
+  border: 1.5px solid #e0cce8;
+  border-radius: 16px;
+  padding: 14px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.statCard:hover {
+  background: #ede0f0;
+  border-color: #c8a8d8;
+  transform: translateY(-2px);
+}
+
+.statNum {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #7B2D6E;
+  line-height: 1;
+}
+
+.statLabel {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #9b6b8e;
+  line-height: 1.3;
+}
+
+/* Botón principal */
 .btnAgregar {
   background: linear-gradient(135deg, #7B2D6E, #6B3FA0);
   color: white;
@@ -140,18 +182,42 @@
   position: relative;
   z-index: 1;
 }
- 
+
 .btnAgregar:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 28px rgba(107,63,160,0.45);
 }
- 
+
 .btnIcon {
   font-size: 1.2rem;
   font-weight: 400;
   line-height: 1;
 }
- 
+
+/* Botón secundario */
+.btnSecundario {
+  background: white;
+  color: #7B2D6E;
+  border: 2px solid #7B2D6E;
+  border-radius: 50px;
+  padding: 12px 36px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.btnSecundario:hover {
+  background: #f5eef2;
+  transform: translateY(-2px);
+}
+
 /* Hint */
 .hint {
   font-family: var(--font-body);
@@ -164,15 +230,18 @@
   position: relative;
   z-index: 1;
 }
- 
-/* Layout del page */
+
+/* Responsive */
 @media (max-width: 480px) {
-  .burroImg  { width: 180px; height: 180px; }
+  .burroImg    { width: 180px; height: 180px; }
   .burroWrapper { width: 210px; height: 210px; }
-  .saludo { font-size: 1.5rem; }
+  .saludo      { font-size: 1.5rem; }
+  .statsRow    { max-width: 280px; }
 }
+
 @media (max-width: 768px) {
-  .saludo   { font-size: 1.6rem; }
-  .sub      { font-size: 0.95rem; }
+  .saludo     { font-size: 1.6rem; }
+  .sub        { font-size: 0.95rem; }
   .btnAgregar { padding: 12px 28px; font-size: 0.92rem; }
+  .btnSecundario { padding: 10px 28px; font-size: 0.92rem; }
 }

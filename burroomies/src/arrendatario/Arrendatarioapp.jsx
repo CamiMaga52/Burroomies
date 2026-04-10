@@ -25,21 +25,32 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
         });
         const tiene = res.ok;
         setHayArr(tiene);
-        if (tiene && pantalla === 'sinArrendamiento') setPantalla('miArrendamiento');
+
+        // Si ya no tiene arrendamiento activo y hay una reseña pendiente → ir a DejaReseña
         if (!tiene && resenaPendiente) {
           try {
             const { idPropiedad } = JSON.parse(resenaPendiente);
-            setIdPropResena(idPropiedad);
-            localStorage.removeItem('burroomies_resena_pendiente');
-            setPantalla('dejaResena');
+            if (idPropiedad) {
+              setIdPropResena(idPropiedad);
+              localStorage.removeItem('burroomies_resena_pendiente');
+              setPantalla('dejaResena');
+              return;
+            }
           } catch {}
         }
+
+        // Sincronizar pantalla solo si está en sinArrendamiento/miArrendamiento
+        setPantalla(prev => {
+          if (prev === 'sinArrendamiento' && tiene) return 'miArrendamiento';
+          if (prev === 'miArrendamiento' && !tiene) return 'sinArrendamiento';
+          return prev;
+        });
       } catch {}
     };
     verificar();
     const interval = setInterval(verificar, 15000);
     return () => clearInterval(interval);
-  }, [pantalla]);
+  }, []); // ← Sin dependencias: el intervalo corre toda la sesión sin reiniciarse
 
   const ir = (p) => () => setPantalla(p);
 

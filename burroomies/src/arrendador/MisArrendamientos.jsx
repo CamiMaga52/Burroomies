@@ -77,7 +77,23 @@ export default function MisArrendamientos({
       center={false}
     >
       <div className={styles.wrapper}>
-
+      {/* Botón Regresar */}
+        <div style={{ marginBottom: 16 }}>
+          <button
+            type="button"
+            onClick={onMisViviendas}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: 'white', border: '2px solid #e9d8f5',
+              borderRadius: 50, color: '#7B2D6E', fontWeight: 600,
+              fontSize: '0.95rem', cursor: 'pointer', padding: '8px 20px',
+              boxShadow: '0 2px 8px rgba(123,45,110,0.08)',
+            }}
+          >
+            ← Regresar
+          </button>
+        </div>
+        
         {/* Encabezado */}
         <div className={styles.header}>
           <h1 className={styles.titulo}>Mis arrendamientos</h1>
@@ -102,22 +118,7 @@ export default function MisArrendamientos({
           </div>
         )}
 
-        {/* Botón Regresar */}
-        <div style={{ marginBottom: 16 }}>
-          <button
-            type="button"
-            onClick={onMisViviendas}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'white', border: '2px solid #e9d8f5',
-              borderRadius: 50, color: '#7B2D6E', fontWeight: 600,
-              fontSize: '0.95rem', cursor: 'pointer', padding: '8px 20px',
-              boxShadow: '0 2px 8px rgba(123,45,110,0.08)',
-            }}
-          >
-            ← Regresar
-          </button>
-        </div>
+        
 
         {/* Lista de arrendamientos — tarjetas rosas */}
         {!cargando && !error && arrendamientos.length > 0 && (

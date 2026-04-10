@@ -1,4 +1,5 @@
 // src/arrendador/InicioArrendador.jsx
+import { useState, useEffect } from 'react';
 import ArrendadorLayout from './ArrendadorLayout';
 import burroLentes from '../img/burroLentes1.png';
 import s from './arrendador.module.css';
@@ -12,11 +13,32 @@ export default function InicioArrendador({
   onCerrarSesion,
   onPaginaPrincipal,
 }) {
+  const [numPropiedades,    setNumPropiedades]    = useState('—');
+  const [numArrendamientos, setNumArrendamientos] = useState('—');
+
+  useEffect(() => {
+    const token = localStorage.getItem('burroomies_token');
+
+    // Cargar propiedades
+    fetch('http://localhost:3001/api/propiedades/arrendador/mis-propiedades', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(data => setNumPropiedades(Array.isArray(data) ? data.length : 0))
+      .catch(() => setNumPropiedades(0));
+
+    // Cargar arrendamientos activos
+    fetch('http://localhost:3001/api/arrendamientos/mis-arrendamientos', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(data => setNumArrendamientos(Array.isArray(data) ? data.length : 0))
+      .catch(() => setNumArrendamientos(0));
+  }, []);
 
   return (
     <ArrendadorLayout
       onMisViviendas={onMisViviendas}
-      onMisArrendamientos={onMisArrendamientos}
       onVerPerfil={onVerPerfil}
       onCerrarSesion={onCerrarSesion}
       onPaginaPrincipal={onPaginaPrincipal}
@@ -43,7 +65,19 @@ export default function InicioArrendador({
           <img src={burroLentes} alt="Burro arrendador" className={styles.burroImg} />
         </div>
 
-        {/* Botón mejorado */}
+        {/* Tarjetas de estadísticas */}
+        <div className={styles.statsRow}>
+          <button type="button" className={styles.statCard} onClick={onMisViviendas}>
+            <span className={styles.statNum}>{numPropiedades}</span>
+            <span className={styles.statLabel}>Propiedades</span>
+          </button>
+          <button type="button" className={styles.statCard} onClick={onMisArrendamientos}>
+            <span className={styles.statNum}>{numArrendamientos}</span>
+            <span className={styles.statLabel}>Arrendamientos activos</span>
+          </button>
+        </div>
+
+        {/* Botones */}
         <button
           type="button"
           className={styles.btnAgregar}
@@ -54,13 +88,12 @@ export default function InicioArrendador({
         </button>
 
         <button
-        type="button"
-        className={styles.btnAgregar}
-        style={{ background: 'white', color: '#7B2D6E', border: '2px solid #7B2D6E', marginTop: 12 }}
-        onClick={onMisViviendas}
-      >
-        🏠 Mis viviendas
-      </button>
+          type="button"
+          className={styles.btnSecundario}
+          onClick={onMisViviendas}
+        >
+          🏠 Mis viviendas
+        </button>
 
         <p className={styles.hint}>
           Publica tu propiedad y recibe solicitudes de estudiantes verificados del IPN
