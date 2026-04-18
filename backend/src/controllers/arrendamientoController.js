@@ -1,22 +1,25 @@
 const { Arrendamiento, Arrendatario, Propiedad, Arrendador, Usuario } = require('../models')
 
 // ── Registrar arrendamiento (arrendador) ─────────────────────────
-    const createArrendamiento = async (req, res) => {
-      try {
-        const { apodoEstudiante, idPropiedad, arrendamientoRenta, arrendamientoDescrip } = req.body
+const createArrendamiento = async (req, res) => {
+  try {
+    const { apodoEstudiante, idPropiedad, arrendamientoRenta, arrendamientoDescrip } = req.body
 
     const propiedad = await Propiedad.findByPk(idPropiedad)
     if (!propiedad) return res.status(404).json({ message: 'Propiedad no encontrada.' })
 
+    // Evitar asignar una propiedad ya ocupada
+    if (propiedad.propiedadEstatus === 'Ocupada') {
+      return res.status(400).json({ message: 'Esta propiedad ya tiene un inquilino activo.' })
+    }
+
     const arrendatario = await Arrendatario.findOne({ where: { arrendatarioApodo: apodoEstudiante } })
     if (!arrendatario) return res.status(404).json({ message: 'No existe un estudiante con ese apodo.' })
 
-    // Verificar que el arrendatario no tenga ya un arrendamiento activo (RN_17)
     if (arrendatario.arrendamiento_idArrendamiento) {
       return res.status(400).json({ message: 'El estudiante ya tiene un arrendamiento activo.' })
     }
 
-    // Crear arrendamiento
     const arrendamiento = await Arrendamiento.create({
       arrendamientoFechaInicio: new Date(),
       arrendamientoRenta,
@@ -26,10 +29,9 @@ const { Arrendamiento, Arrendatario, Propiedad, Arrendador, Usuario } = require(
       propiedad_idPropiedad: propiedad.idPropiedad,
     })
 
-    // Vincular arrendatario al arrendamiento
     await arrendatario.update({ arrendamiento_idArrendamiento: arrendamiento.idArrendamiento })
-
     await propiedad.update({ propiedadEstatus: 'Ocupada' })
+
     res.status(201).json({ message: 'Arrendamiento registrado correctamente.', arrendamiento })
   } catch (error) {
     console.error('Error en createArrendamiento:', error)
@@ -70,7 +72,6 @@ const getMisArrendamientos = async (req, res) => {
     const arrendador = await Arrendador.findOne({ where: { usuario_idUsuario: req.user.idUsuario } })
     if (!arrendador) return res.status(404).json({ message: 'Arrendador no encontrado.' })
 
-    // Buscar propiedades del arrendador que tengan arrendamiento activo
     const propiedades = await Propiedad.findAll({
       where: { arrendador_idArrendador: arrendador.idArrendador },
       include: [{
@@ -82,24 +83,32 @@ const getMisArrendamientos = async (req, res) => {
       }]
     })
 
-    // Aplanar: devolver solo los arrendamientos activos con info del arrendatario
     const lista = []
     propiedades.forEach(prop => {
-      const arr = prop.Arrendamiento // hasOne → singular
+      const arr = prop.Arrendamiento
       if (arr) {
-        const arrendatario = arr.Arrendatario
-        const usuario = arrendatario?.Usuario
-        lista.push({
-          idArrendamiento: arr.idArrendamiento,
-          propiedadTitulo: prop.propiedadTitulo,
-          idPropiedad: prop.idPropiedad,
-          arrendatarioNombre: usuario
-            ? `${usuario.usuarioNom} ${usuario.usuarioApePat}`
-            : `Arrendatario ${arrendatario?.idArrendatario || ''}`,
-          fechaInicio: arr.arrendamientoFechaInicio,
-          precioAcordado: arr.arrendamientoRenta || 0,
-          idArrendatario: arrendatario?.idArrendatario,
-        })
+        // Solo mostrar arrendamientos que NO hayan terminado completamente
+        const ambosConfirmaron =
+          arr.arrendamientoValEstudiante === '1' &&
+          arr.arrendamientoValArrendador === '1'
+
+        if (!ambosConfirmaron) {
+          const arrendatario = arr.Arrendatario
+          const usuario = arrendatario?.Usuario
+          lista.push({
+            idArrendamiento:    arr.idArrendamiento,
+            propiedadTitulo:    prop.propiedadTitulo,
+            idPropiedad:        prop.idPropiedad,
+            arrendatarioNombre: usuario
+              ? `${usuario.usuarioNom} ${usuario.usuarioApePat}`
+              : `Arrendatario ${arrendatario?.idArrendatario || ''}`,
+            fechaInicio:        arr.arrendamientoFechaInicio,
+            precioAcordado:     arr.arrendamientoRenta || 0,
+            idArrendatario:     arrendatario?.idArrendatario,
+            arrendadorConfirmo: arr.arrendamientoValArrendador === '1',
+            estudianteConfirmo: arr.arrendamientoValEstudiante === '1',
+          })
+        }
       }
     })
 
@@ -124,19 +133,34 @@ const terminarArrendamiento = async (req, res) => {
       await arrendamiento.update({ arrendamientoValArrendador: '1' })
     }
 
-    // Si ambos confirmaron, terminar el arrendamiento
     const actualizado = await Arrendamiento.findByPk(req.params.id)
+
     if (actualizado.arrendamientoValEstudiante === '1' && actualizado.arrendamientoValArrendador === '1') {
+      const idPropiedad = arrendamiento.propiedad_idPropiedad
+
       // Desvincular arrendatario
       const arrendatario = await Arrendatario.findOne({
         where: { arrendamiento_idArrendamiento: arrendamiento.idArrendamiento }
       })
       if (arrendatario) await arrendatario.update({ arrendamiento_idArrendamiento: null })
 
-      return res.json({ message: 'Arrendamiento terminado correctamente. Ya puedes dejar una reseña.' })
+      // Marcar propiedad como Activa nuevamente
+      await Propiedad.update(
+        { propiedadEstatus: 'Activa' },
+        { where: { idPropiedad } }
+      )
+
+      return res.json({
+        message:    'Arrendamiento terminado correctamente. Ya puedes dejar una reseña.',
+        idPropiedad,
+      })
     }
 
-    res.json({ message: 'Confirmación registrada. Esperando confirmación de la otra parte.' })
+    res.json({
+      message:            'Confirmación registrada. Esperando confirmación de la otra parte.',
+      arrendadorConfirmo: actualizado.arrendamientoValArrendador === '1',
+      estudianteConfirmo: actualizado.arrendamientoValEstudiante === '1',
+    })
   } catch (error) {
     console.error('Error en terminarArrendamiento:', error)
     res.status(500).json({ message: 'Error al terminar el arrendamiento.' })

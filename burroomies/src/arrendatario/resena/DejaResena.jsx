@@ -24,28 +24,74 @@ const CATEGORIAS = [
   { id: 'servicio',     label: 'Servicios',    icon: '⭐' },
 ];
 
+// Etiquetas descriptivas para cada nivel de estrella
+const STAR_LABELS = {
+  0: { text: '',              color: '#d9d0ed', emoji: '' },
+  1: { text: 'Muy malo',      color: '#ef4444', emoji: '😞' },
+  2: { text: 'Malo',          color: '#f97316', emoji: '😕' },
+  3: { text: 'Regular',       color: '#eab308', emoji: '😐' },
+  4: { text: 'Bueno',         color: '#84cc16', emoji: '😊' },
+  5: { text: 'Excelente',     color: '#22c55e', emoji: '🤩' },
+};
+
 // ── Estrellas interactivas ───────────────────────────────
 function StarRating({ value, onChange, large = false }) {
   const [hovered, setHovered] = useState(0);
-  const starClass  = large ? styles.starLarge  : styles.star;
-  const filledClass= large ? styles.starLargeFilled : styles.starFilled;
-  const rowClass   = large ? styles.starRowLarge : styles.starRow;
-  const valClass   = large ? styles.starValLarge : styles.starVal;
+  const active = hovered || value;
+  const starClass   = large ? styles.starLarge  : styles.star;
+  const filledClass = large ? styles.starLargeFilled : styles.starFilled;
+  const rowClass    = large ? styles.starRowLarge : styles.starRow;
+
+  const labelInfo = STAR_LABELS[active] || STAR_LABELS[0];
 
   return (
-    <div className={rowClass}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button
-          key={n}
-          type="button"
-          className={`${starClass} ${n <= (hovered || value) ? filledClass : ''}`}
-          onMouseEnter={() => setHovered(n)}
-          onMouseLeave={() => setHovered(0)}
-          onClick={() => onChange(n)}
-          aria-label={`${n} estrella${n > 1 ? 's' : ''}`}
-        >★</button>
-      ))}
-      <span className={valClass}>{value.toFixed(1)}</span>
+    <div className={styles.starWrapper}>
+      <div className={rowClass}>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            type="button"
+            title={STAR_LABELS[n].text}
+            className={`${starClass} ${n <= active ? filledClass : ''}`}
+            style={n <= active ? { color: labelInfo.color } : {}}
+            onMouseEnter={() => setHovered(n)}
+            onMouseLeave={() => setHovered(0)}
+            onClick={() => onChange(n)}
+            aria-label={`${n} ${STAR_LABELS[n].text}`}
+          >★</button>
+        ))}
+        {/* Valor numérico reactivo al hover */}
+        <span className={large ? styles.starValLarge : styles.starVal}>
+          {active > 0 ? active.toFixed(1) : value.toFixed(1)}
+        </span>
+        {large && active > 0 && (
+          <span className={styles.starEmoji}>{labelInfo.emoji}</span>
+        )}
+      </div>
+
+      {/* Etiqueta de nivel + barra de progreso */}
+      <div className={styles.starMeta}>
+        {active > 0 ? (
+          <>
+            <span className={styles.starLabelText} style={{ color: labelInfo.color }}>
+              {labelInfo.text}
+            </span>
+            <div className={styles.starBar}>
+              <div
+                className={styles.starBarFill}
+                style={{
+                  width: `${(active / 5) * 100}%`,
+                  background: labelInfo.color,
+                }}
+              />
+            </div>
+          </>
+        ) : (
+          <span className={styles.starHint}>
+            {large ? 'Toca para calificar' : 'Sin calificación'}
+          </span>
+        )}
+      </div>
     </div>
   );
 }
@@ -121,16 +167,28 @@ export default function DejaResena({ onCancel, onPublicar, idPropiedad, onVerPer
     <div className={styles.page}>
 
       <Navbar
-        showBuscar
+        showBuscar={false}
+        hideActions
         onVerPerfil={onVerPerfil}
         onArrendamientoActual={onArrendamientoActual}
         tieneArrendamiento={tieneArrendamiento}
         onCerrarSesion={onCerrarSesion}
-        onPaginaPrincipal={onPaginaPrincipal} 
+        onPaginaPrincipal={onPaginaPrincipal}
       />
 
       <main className={styles.container}>
         <h1 className={styles.pageTitle}>¡Deja tu Reseña y calificación!</h1>
+
+        {/* Banner de agradecimiento */}
+        <div className={styles.thanksBanner}>
+          <span className={styles.thanksIcon}>🏡</span>
+          <p className={styles.thanksText}>
+            Gracias por tomarte un momento para compartir tu experiencia en la vivienda donde estuviste.
+            Tu opinión sincera ayuda a otros estudiantes a tomar una mejor decisión al momento de buscar
+            un lugar donde vivir, y contribuye a hacer de <strong>Burroomies</strong> una comunidad más
+            confiable para todos.
+          </p>
+        </div>
 
         {/* Califica por categoría */}
         <section className={styles.card}>
@@ -156,6 +214,11 @@ export default function DejaResena({ onCancel, onPublicar, idPropiedad, onVerPer
         <section className={styles.card}>
           <h2 className={styles.cardTitle}>Calificación General</h2>
           <StarRating value={general} onChange={setGeneral} large />
+          <div className={styles.scaleHint}>
+            <span>😞 Muy malo</span>
+            <span>😐 Regular</span>
+            <span>🤩 Excelente</span>
+          </div>
         </section>
 
         {/* Escribe tu reseña */}
@@ -171,9 +234,6 @@ export default function DejaResena({ onCancel, onPublicar, idPropiedad, onVerPer
         </section>
 
         <div className={styles.btnRow}>
-          <button type="button" className={`${styles.btnAccion} ${styles.btnCancelar}`} onClick={onCancel}>
-            Cancelar
-          </button>
           <button type="button" className={`${styles.btnAccion} ${styles.btnPublicar}`}
             onClick={handlePublicar} disabled={enviando}>
             {enviando ? 'Publicando...' : 'Publicar'}

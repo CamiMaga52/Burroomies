@@ -112,7 +112,7 @@ export default function RegistroArrendamiento({
 
         {/* Encabezado */}
         <div className={styles.header}>
-          <button type="button" className={s.btnAnterior} onClick={onAtras}>
+          <button type="button" className={styles.btnRegresar} onClick={onAtras}>
             <IconArrowLeft /> Atrás
           </button>
           <div className={styles.tituloRow}>

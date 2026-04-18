@@ -19,27 +19,30 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
     const verificar = async () => {
       try {
         const token = localStorage.getItem('burroomies_token');
-        const resenaPendiente = localStorage.getItem('burroomies_resena_pendiente');
-        const res = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
+
+        // 1. Verificar si tiene arrendamiento activo
+        const resArr = await fetch('http://localhost:3001/api/arrendamientos/mi-arrendamiento', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const tiene = res.ok;
+        const tiene = resArr.ok;
         setHayArr(tiene);
 
-        // Si ya no tiene arrendamiento activo y hay una reseña pendiente → ir a DejaReseña
-        if (!tiene && resenaPendiente) {
-          try {
-            const { idPropiedad } = JSON.parse(resenaPendiente);
-            if (idPropiedad) {
-              setIdPropResena(idPropiedad);
-              localStorage.removeItem('burroomies_resena_pendiente');
-              setPantalla('dejaResena');
-              return;
-            }
-          } catch {}
+        // 2. Siempre consultar el backend por reseña pendiente (no depende de localStorage)
+        const resPend = await fetch('http://localhost:3001/api/arrendamientos/resena-pendiente', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (resPend.ok) {
+          const pend = await resPend.json();
+          if (pend.pendiente && pend.idPropiedad) {
+            // Hay reseña pendiente → redirigir sin importar si recargó o no
+            setIdPropResena(pend.idPropiedad);
+            localStorage.removeItem('burroomies_resena_pendiente');
+            setPantalla('dejaResena');
+            return;
+          }
         }
 
-        // Sincronizar pantalla solo si está en sinArrendamiento/miArrendamiento
+        // 3. Sincronizar pantalla solo si está en sinArrendamiento/miArrendamiento
         setPantalla(prev => {
           if (prev === 'sinArrendamiento' && tiene) return 'miArrendamiento';
           if (prev === 'miArrendamiento' && !tiene) return 'sinArrendamiento';
@@ -50,7 +53,7 @@ export default function ArrendatarioApp({ tieneArrendamiento = false, onCerrarSe
     verificar();
     const interval = setInterval(verificar, 15000);
     return () => clearInterval(interval);
-  }, []); // ← Sin dependencias: el intervalo corre toda la sesión sin reiniciarse
+  }, []);
 
   const ir = (p) => () => setPantalla(p);
 

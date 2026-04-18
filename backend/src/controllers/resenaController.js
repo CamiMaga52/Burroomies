@@ -22,7 +22,7 @@ const getResenasByPropiedad = async (req, res) => {
   }
 }
 
-// ── Crear reseña con análisis de sentimientos ────────────────────
+// ── Crear o actualizar reseña con análisis de sentimientos ───────
 const createResena = async (req, res) => {
   try {
     const {
@@ -43,38 +43,50 @@ const createResena = async (req, res) => {
       return res.status(400).json({ message: 'Solo puedes dejar una reseña después de terminar tu arrendamiento.' })
     }
 
-    // Verificar que no haya dejado ya una reseña para esta propiedad
-    const resenaExistente = await Resena.findOne({
-      where: {
-        arrendatario_idArrendatario: arrendatario.idArrendatario,
-        propiedad_idPropiedad,
-      }
-    })
-    if (resenaExistente) {
-      return res.status(400).json({ message: 'Ya dejaste una reseña para esta propiedad.' })
-    }
-
     // ── Análisis de sentimientos con Naive Bayes ─────────────────
     const sentimiento = analizarSentimiento(resenaDescrip)
     console.log(`Sentimiento detectado: "${sentimiento}" para reseña: "${resenaDescrip.substring(0, 50)}..."`)
 
-    const resena = await Resena.create({
+    const datosResena = {
       resenaDescrip,
       resenaCalGen,
       resenaCalSerBasic,
       resenaCalSerComEnt,
       resenaCalSerAdicio,
       resenaDuracionRenta,
-      resenaFechaCreacion:        new Date(),
-      resenaSentimiento:          sentimiento,   // ← guardado automáticamente
+      resenaFechaCreacion:         new Date(),
+      resenaSentimiento:           sentimiento,
       arrendatario_idArrendatario: arrendatario.idArrendatario,
       propiedad_idPropiedad,
+    }
+
+    // Si ya existe una reseña de este arrendatario para esta propiedad
+    // (rearrendamiento) → actualizarla en lugar de bloquear
+    const resenaExistente = await Resena.findOne({
+      where: {
+        arrendatario_idArrendatario: arrendatario.idArrendatario,
+        propiedad_idPropiedad,
+      }
     })
 
+    let resena
+    if (resenaExistente) {
+      await resenaExistente.update(datosResena)
+      resena = resenaExistente
+    } else {
+      resena = await Resena.create(datosResena)
+    }
+
+    // ── Liberar la propiedad (último paso del flujo de finalización) ──
+    await Propiedad.update(
+      { propiedadEstatus: 'Activa' },
+      { where: { idPropiedad: propiedad_idPropiedad } }
+    )
+
     res.status(201).json({
-      message:     'Reseña creada correctamente.',
+      message:     resenaExistente ? 'Reseña actualizada correctamente.' : 'Reseña creada correctamente.',
       resena,
-      sentimiento, // ← devuelto al frontend
+      sentimiento,
     })
   } catch (error) {
     console.error('Error en createResena:', error)
@@ -95,7 +107,6 @@ const getSentimientosPropiedad = async (req, res) => {
     const negativo = resenas.filter(r => r.resenaSentimiento === 'negativo').length
     const neutral  = resenas.filter(r => r.resenaSentimiento === 'neutral').length
 
-    // Sentimiento general de la propiedad
     const general = positivo > negativo && positivo > neutral ? 'positivo'
       : negativo > positivo && negativo > neutral ? 'negativo'
       : 'neutral'

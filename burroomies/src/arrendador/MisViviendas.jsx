@@ -222,11 +222,11 @@ export default function MisViviendas({
                     <p className={s.propPrecioLabel}>Por mes</p>
                   </div>
                   <span className={`${s.badge} ${
-                    p.propiedadEstatus === 'Activa'   ? s.badgeActivo   :
+                    (p.propiedadEstatus === 'Activa' || p.propiedadEstatus === 'Disponible') ? s.badgeActivo  :
                     p.propiedadEstatus === 'Ocupada'  ? s.badgeOcupada  :
                     s.badgeInactivo
                   }`}>
-                    {p.propiedadEstatus}
+                    {p.propiedadEstatus === 'Disponible' ? 'Activa' : p.propiedadEstatus}
                   </span>
                 </div>
 

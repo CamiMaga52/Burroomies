@@ -17,7 +17,8 @@ const IconContrato = () => (
 
 const IconChevrons = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    stroke="#7B2D6E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+    style={{ flexShrink: 0, marginLeft: 8 }}>
     <polyline points="13 17 18 12 13 7"/>
     <polyline points="6 17 11 12 6 7"/>
   </svg>
@@ -120,7 +121,7 @@ export default function MisArrendamientos({
 
         
 
-        {/* Lista de arrendamientos — tarjetas rosas */}
+        {/* Lista de arrendamientos */}
         {!cargando && !error && arrendamientos.length > 0 && (
           <div className={styles.lista}>
             {arrendamientos.map((a) => (
@@ -130,8 +131,15 @@ export default function MisArrendamientos({
                 className={styles.cardBtn}
                 onClick={() => onVerDetalle?.(a)}
               >
-                <span className={styles.cardNombre}>
-                  {a.arrendatarioNombre || `Arrendatario ${a.idArrendamiento}`}
+                <span className={styles.cardInfo}>
+                  <span className={styles.cardNombre}>
+                    {a.arrendatarioNombre || `Arrendatario ${a.idArrendamiento}`}
+                  </span>
+                  {a.propiedadTitulo && (
+                    <span className={styles.cardPropiedad}>
+                      🏠 {a.propiedadTitulo}
+                    </span>
+                  )}
                 </span>
                 <IconChevrons />
               </button>

@@ -98,6 +98,14 @@ export default function DetalleArrendamiento({
 
   const a = arrendamiento;
 
+  const primeraFoto = (() => {
+    try { const f = JSON.parse(a.propiedadFotos || '[]'); return f[0] || null; }
+    catch { return null; }
+  })();
+
+  const direccion = [a.propiedadCalle, a.propiedadNumExt, a.propiedadColonia, a.propiedadMunicipio]
+    .filter(Boolean).join(', ');
+
   const handleFinalizar = async () => {
     setFinalizando(true);
     try {
@@ -142,10 +150,34 @@ export default function DetalleArrendamiento({
     >
       <div className={styles.wrapper}>
 
+        {/* Botón Regresar — arriba izquierda */}
+        <div className={styles.regresarWrap}>
+          <button type="button" className={styles.btnRegresar} onClick={onRegresar}>
+            <IcoChevronsLeft /> Regresar
+          </button>
+        </div>
+
         {/* Nombre del arrendatario */}
         <h1 className={styles.titulo}>
           {a.arrendatarioNombre || `Arrendatario ${a.idArrendamiento}`}
         </h1>
+
+        {/* Tarjeta de propiedad */}
+        <div className={styles.propCard}>
+          {primeraFoto && (
+            <img src={primeraFoto} alt={a.propiedadTitulo} className={styles.propFoto} />
+          )}
+          <div className={styles.propInfo}>
+            <span className={styles.propTipo}>{a.propiedadTipo || 'Propiedad'}</span>
+            <h2 className={styles.propTitulo}>{a.propiedadTitulo || '—'}</h2>
+            {direccion && (
+              <p className={styles.propDireccion}>📍 {direccion}</p>
+            )}
+            {a.propiedadDescripcion && (
+              <p className={styles.propDesc}>{a.propiedadDescripcion}</p>
+            )}
+          </div>
+        </div>
 
         {/* Campos de información */}
         <div className={styles.grid}>
@@ -174,11 +206,8 @@ export default function DetalleArrendamiento({
 
         </div>
 
-        {/* Botones */}
-        <div className={styles.botonesRow}>
-          <button type="button" className={s.btnAnterior} onClick={onRegresar}>
-            <IcoChevronsLeft /> Regresar
-          </button>
+        {/* Botón Finalizar */}
+        <div className={styles.finalizarWrap}>
           <button
             type="button"
             className={styles.btnFinalizarArr}

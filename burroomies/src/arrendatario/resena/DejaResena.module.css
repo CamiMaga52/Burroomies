@@ -127,34 +127,131 @@
   font-size: 0.78rem; font-weight: 700; color: var(--text-mid);
 }
 
+/* ── WRAPPER COMPARTIDO ─────────────────────────── */
+.starWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 /* ESTRELLAS PEQUEÑAS */
 .starRow { display: flex; align-items: center; gap: 2px; }
 .star {
   background: none; border: none; cursor: pointer;
   font-size: 1.15rem; color: #d9d0ed;
-  line-height: 1; padding: 0; transition: color 0.15s, transform 0.12s;
+  line-height: 1; padding: 0;
+  transition: color 0.15s, transform 0.12s;
 }
-.star:hover      { transform: scale(1.2); }
+.star:hover      { transform: scale(1.25); }
 .starFilled      { color: #f59e0b; }
-.starVal {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.82rem; font-weight: 700;
-  color: var(--text-mid); margin-left: 4px; min-width: 22px;
-}
 
 /* ESTRELLAS GRANDES */
 .starRowLarge { display: flex; align-items: center; gap: 4px; }
 .starLarge {
   background: none; border: none; cursor: pointer;
   font-size: 2.4rem; color: #d9d0ed;
-  line-height: 1; padding: 0; transition: color 0.15s, transform 0.12s;
+  line-height: 1; padding: 0;
+  transition: color 0.15s, transform 0.12s;
 }
-.starLarge:hover   { transform: scale(1.15); }
+.starLarge:hover   { transform: scale(1.18); }
 .starLargeFilled   { color: #f59e0b; }
+
+/* Emoji que aparece junto a estrellas grandes */
+.starEmoji {
+  font-size: 1.8rem;
+  margin-left: 8px;
+  animation: popEmoji 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popEmoji {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* META: etiqueta + barra de progreso */
+.starMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 16px;
+}
+.starLabelText {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: color 0.2s;
+  min-width: 60px;
+}
+.starHint {
+  font-size: 0.68rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+.starBar {
+  flex: 1;
+  height: 4px;
+  background: rgba(200,184,232,0.25);
+  border-radius: 99px;
+  overflow: hidden;
+  max-width: 80px;
+}
+.starBarFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+/* Leyenda de escala (solo en Calificación General) */
+.scaleHint {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-light);
+  font-weight: 600;
+  padding: 0 2px;
+  margin-top: 2px;
+}
+
+/* VALOR NUMÉRICO DE ESTRELLAS */
+.starVal {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--text-mid); margin-left: 4px; min-width: 22px;
+}
 .starValLarge {
   font-family: 'Poppins', sans-serif;
   font-size: 1.4rem; font-weight: 700;
   color: var(--text-mid); margin-left: 10px;
+}
+
+/* BANNER DE AGRADECIMIENTO */
+.thanksBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.09) 0%, rgba(167,143,208,0.15) 100%);
+  border: 1.5px solid rgba(139,92,246,0.2);
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  animation: fadeUp 0.5s ease 0.15s both;
+}
+.thanksIcon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.thanksText {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-mid);
+  line-height: 1.65;
+  margin: 0;
+}
+.thanksText strong {
+  color: var(--purple-dark);
+  font-weight: 800;
 }
 
 /* BURRO DECORATIVO */
