@@ -1,0 +1,241 @@
+CREATE DATABASE vivienda_upalm 
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+USE vivienda_upalm;
+
+DROP DATABASE vivienda_upalm;
+
+CREATE TABLE IF NOT EXISTS usuario (
+  idUsuario INT AUTO_INCREMENT PRIMARY KEY,
+  usuarioNom VARCHAR(45) NOT NULL,
+  usuarioApePat VARCHAR(45) NOT NULL,
+  usuarioApeMat VARCHAR(45),
+  usuarioCorreo VARCHAR(45) NOT NULL UNIQUE,
+  usuarioTel VARCHAR(45),
+  usuarioCurp VARCHAR(45) UNIQUE,
+  usuarioUser VARCHAR(45),
+  usuarioContra VARCHAR(200) NOT NULL,
+  usuarioFechaNac DATE,
+  usuarioFechaRegis DATETIME DEFAULT NOW(),
+  usuarioCodigo VARCHAR(45),
+  usuarioFechaUIS DATETIME,
+  usuarioCC VARCHAR(45),
+  usuarioVCC VARCHAR(45) DEFAULT '0',
+  usuarioFCC DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS arrendador (
+  idArrendador INT AUTO_INCREMENT PRIMARY KEY,
+  arrendadorCalle VARCHAR(45),
+  arrendadorNumExt VARCHAR(45),
+  arrendadorNumInt VARCHAR(45),
+  arrendadorColonia VARCHAR(45),
+  arrendadorMunicipio VARCHAR(45),
+  arrendadorEstado VARCHAR(45),
+  arrendadorCp INT,
+  usuario_idUsuario INT NOT NULL,
+  FOREIGN KEY (usuario_idUsuario) REFERENCES usuario(idUsuario)
+);
+
+CREATE TABLE IF NOT EXISTS arrendamiento (
+  idArrendamiento INT AUTO_INCREMENT PRIMARY KEY,
+  arrendamientoFechaInicio DATETIME,
+  arrendamientoRenta VARCHAR(45),
+  arrendamientoDescrip VARCHAR(300),
+  arrendamientoValEstudiante VARCHAR(45) DEFAULT '0',
+  arrendamientoValArrendador VARCHAR(45) DEFAULT '0',
+  propiedad_idPropiedad INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS arrendatario (
+  idArrendatario INT AUTO_INCREMENT PRIMARY KEY,
+  arrendatarioBoleta VARCHAR(45),
+  arrendatarioUnidadAca VARCHAR(45),
+  arrendatarioFechaActua DATETIME,
+  usuario_idUsuario INT NOT NULL,
+  arrendamiento_idArrendamiento INT,
+  FOREIGN KEY (usuario_idUsuario) REFERENCES usuario(idUsuario),
+  FOREIGN KEY (arrendamiento_idArrendamiento) REFERENCES arrendamiento(idArrendamiento)
+);
+
+CREATE TABLE IF NOT EXISTS propiedad (
+  idPropiedad INT AUTO_INCREMENT PRIMARY KEY,
+  propiedadTitulo VARCHAR(45) NOT NULL,
+  propiedadDescripcion VARCHAR(200),
+  propiedadTipo VARCHAR(45) NOT NULL,
+  propiedadLugares VARCHAR(45),
+  propiedadPrecio VARCHAR(45) NOT NULL,
+  propiedadCalle VARCHAR(45),
+  propiedadNumExt INT,
+  propiedadNumInt INT,
+  propiedadColonia VARCHAR(45),
+  propiedadMunicipio VARCHAR(45),
+  propiedadEstado VARCHAR(45),
+  propiedadEstatus VARCHAR(45) DEFAULT 'Activa',
+  propiedadFechaRegis DATETIME DEFAULT NOW(),
+  propiedadCodigo VARCHAR(45),
+  propiedadSerBasicos VARCHAR(200),
+  propiedadSerComEnt VARCHAR(200),
+  propiedadSerAdicio VARCHAR(200),
+  arrendador_idArrendador INT NOT NULL,
+  FOREIGN KEY (arrendador_idArrendador) REFERENCES arrendador(idArrendador)
+);
+
+ALTER TABLE arrendamiento
+  ADD FOREIGN KEY (propiedad_idPropiedad) REFERENCES propiedad(idPropiedad);
+
+CREATE TABLE IF NOT EXISTS resena (
+  idResena INT AUTO_INCREMENT PRIMARY KEY,
+  resenaFechaCreacion DATETIME DEFAULT NOW(),
+  resenaDuracionRenta VARCHAR(45),
+  resenaDescrip VARCHAR(200) NOT NULL,
+  resenaCalSerBasic VARCHAR(45),
+  resenaCalSerComEnt VARCHAR(45),
+  resenaCalSerAdicio VARCHAR(45),
+  resenaCalGen VARCHAR(45) NOT NULL,
+  arrendatario_idArrendatario INT NOT NULL,
+  propiedad_idPropiedad INT NOT NULL,
+  FOREIGN KEY (arrendatario_idArrendatario) REFERENCES arrendatario(idArrendatario),
+  FOREIGN KEY (propiedad_idPropiedad) REFERENCES propiedad(idPropiedad)
+);
+
+CREATE TABLE IF NOT EXISTS administrador (
+  idAdministrador INT AUTO_INCREMENT PRIMARY KEY,
+  administradorUser VARCHAR(45) NOT NULL UNIQUE,
+  administradorContra VARCHAR(200) NOT NULL,
+  administradorFechaInicioSesion DATETIME
+);
+
+INSERT INTO usuario (
+  usuarioNom,
+  usuarioApePat,
+  usuarioApeMat,
+  usuarioCorreo,
+  usuarioTel,
+  usuarioCurp,
+  usuarioUser,
+  usuarioContra,
+  usuarioFechaNac
+) 
+VALUES (
+  'Juan',
+  'Perez',
+  'Lopez',
+  'juanperez@test.com',
+  '5512345678',
+  'PEPJ010101HDFRRS01',
+  'juanp',
+  '123456',
+  '2001-01-01'
+);
+SELECT * FROM usuario;
+SELECT * FROM arrendador;
+SELECT * FROM arrendatario;
+SELECT * FROM propiedad;
+SELECT * FROM resena;
+SELECT * FROM resena;
+
+ALTER TABLE propiedad ADD COLUMN propiedadCp VARCHAR(10) NULL AFTER propiedadEstado;
+
+DELETE FROM usuario
+WHERE idUsuario = 22;
+
+ALTER TABLE usuario ADD COLUMN usuarioFoto LONGTEXT NULL;
+
+USE vivienda_upalm;
+UPDATE usuario SET usuarioVCC = '1' WHERE usuarioCorreo = 'juanperez@test.com';
+UPDATE usuario SET usuarioVCC = '1' WHERE usuarioCorreo = 'lupita.ortiz.0311@gmail.com';
+
+USE vivienda_upalm;
+UPDATE usuario 
+SET usuarioContra = '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+WHERE usuarioCorreo = 'juanperez@test.com';
+
+
+INSERT INTO usuario (usuarioNom, usuarioApePat, usuarioCorreo, usuarioContra, usuarioVCC)
+VALUES ('Carlos', 'López', 'arrendatario@test.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '1');
+
+INSERT INTO arrendatario (usuario_idUsuario)
+VALUES (LAST_INSERT_ID());
+
+INSERT INTO usuario (usuarioNom, usuarioApePat, usuarioCorreo, usuarioContra, usuarioVCC)
+VALUES ('Ana', 'González', 'arrendador@test.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '1');
+
+INSERT INTO arrendador (usuario_idUsuario) 
+VALUES (LAST_INSERT_ID());
+
+USE vivienda_upalm;
+SELECT usuarioCorreo, usuarioCC FROM usuario ORDER BY idUsuario DESC LIMIT 1;
+
+DELETE FROM usuario
+WHERE idUsuario = 2;
+
+INSERT INTO propiedad (
+  propiedadTitulo, propiedadDescripcion, propiedadTipo,
+  propiedadLugares, propiedadPrecio,
+  propiedadCalle, propiedadNumExt, propiedadColonia,
+  propiedadMunicipio, propiedadEstado,
+  propiedadEstatus, propiedadCodigo,
+  propiedadSerBasicos, propiedadFechaRegis,
+  arrendador_idArrendador
+) VALUES (
+  'Departamento cerca de UPALM',
+  'Departamento amueblado con acceso a internet, ideal para estudiantes del IPN.',
+  'Departamento',
+  '3',
+  '2500',
+  'Acantilado', NULL, 'Alborada Jaltenco',
+  'Jaltenco', 'ESTADO DE MÉXICO',
+  'Activa', 'PRUB01',
+  'Agua, Luz, Internet',
+  NOW(),
+  6
+);
+
+SELECT a.idArrendador, u.usuarioCorreo
+FROM arrendador a
+JOIN usuario u ON a.usuario_idUsuario = u.idUsuario
+WHERE u.usuarioCorreo = 'redes4425@gmail.com';
+
+UPDATE usuario SET usuarioVCC = '1' WHERE usuarioCorreo = 'redes4425@gmail.com';
+
+ALTER TABLE propiedad ADD COLUMN propiedadFotos LONGTEXT NULL;
+
+DESCRIBE usuario;
+
+SELECT u.idUsuario, u.usuarioNom, u.usuarioCorreo, u.usuarioCodigo, a.idArrendatario
+FROM usuario u
+JOIN arrendatario a ON a.usuario_idUsuario = u.idUsuario;
+
+-- Asignar código al arrendatario
+UPDATE usuario SET usuarioCodigo = 'EST-0001' WHERE idUsuario = 21;
+
+-- Ver códigos de propiedades disponibles
+SELECT idPropiedad, propiedadTitulo, propiedadCodigo FROM propiedad WHERE propiedadEstatus = 'Activa';
+
+SELECT idUsuario, usuarioNom, usuarioCorreo, usuarioCodigo 
+FROM usuario;
+SELECT idUsuario, usuarioNom, usuarioCodigo FROM usuario WHERE usuarioCodigo = 'EST-0001';
+SELECT idPropiedad, propiedadTitulo, propiedadCodigo FROM propiedad WHERE propiedadCodigo = '3ZKR7G';
+
+UPDATE arrendatario 
+SET arrendamiento_idArrendamiento = NULL 
+WHERE usuario_idUsuario = 21;
+
+SELECT idUsuario, usuarioNom, usuarioCorreo, usuarioCodigo 
+FROM usuario 
+WHERE usuarioCorreo = 'mlee43064@gmail.com';
+
+ALTER TABLE resena ADD COLUMN resenaSentimiento VARCHAR(20) DEFAULT NULL;
+
+ALTER TABLE resena MODIFY COLUMN resenaDescrip TEXT;
+
+SELECT idArrendatario, arrendamiento_idArrendamiento 
+FROM arrendatario 
+WHERE usuario_idUsuario = (SELECT idUsuario FROM usuario WHERE usuarioCorreo = 'mlee43064@gmail.com');
+
+SELECT r.idResena, r.resenaDescrip, r.resenaSentimiento, r.propiedad_idPropiedad
+FROM resena r
+JOIN arrendatario a ON a.idArrendatario = r.arrendatario_idArrendatario
+JOIN usuario u ON u.idUsuario = a.usuario_idUsuario
+WHERE u.usuarioCorreo = 'mlee43064@gmail.com';
