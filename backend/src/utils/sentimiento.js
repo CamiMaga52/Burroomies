@@ -2,6 +2,11 @@
 // Clasificador Naive Bayes entrenado con 210 ejemplos
 // Incluye manejo de negaciones, casos mixtos, sarcasmo y ambigüedades
 
+//FUNCIONAMIENTO:
+// Implementa un clasificador de sentimiento basado en reglas para analizar la opinión expresada en textos relacionados con propiedades de alquiler.
+// El clasificador utiliza un conjunto de datos de entrenamiento con ejemplos etiquetados como positivos o negativos. 
+// Incluye manejo de negaciones (por ejemplo, "no está sucio" se interpreta como positivo), casos mixtos(donde hay aspectos positivos y negativos pero la conclusión final es positiva) y sarcasmo/ambigüedades (donde el texto puede parecer negativo pero la intención es positiva).
+
 const DATOS = [
 
   // ════════════════════════════════════════════════════════════

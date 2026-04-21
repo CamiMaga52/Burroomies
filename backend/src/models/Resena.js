@@ -1,3 +1,8 @@
+//FUNCIONAMIENTO:
+// Define el modelo de Resena usando Sequelize. Incluye campos para ID, fecha de creación, duración de renta, descripción, calificaciones (servicios básicos, comunes/entretenimiento, adicionales y general), sentimiento analizado automáticamente, y referencias al arrendatario y propiedad asociados.
+// El campo idResena es la clave primaria y se autoincrementa. El campo resenaDescrip es obligatorio. El campo resenaSentimiento almacena el resultado del análisis de sentimientos (positivo, neutral o negativo) generado por un modelo Naive Bayes.
+// Exporta el modelo para usarlo en otros archivos (como en controladores de reseñas).
+
 const { DataTypes } = require('sequelize')
 const { sequelize } = require('../config/database')
 

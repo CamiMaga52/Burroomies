@@ -7,21 +7,8 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema dbBurroomies
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `dbBurroomies` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE SCHEMA IF NOT EXISTS `dbBurroomies` DEFAULT CHARACTER SET utf8mb4;
 USE `dbBurroomies`;
-
--- DROP DATABASE dbBurroomies;
-SELECT * FROM cp;
--- -----------------------------------------------------
--- Table `dbBurroomies`.`correo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbBurroomies`.`correo` (
-  `idCorreo` INT NOT NULL AUTO_INCREMENT,
-  `correoCodigo` CHAR(8) NULL,
-  `correoVerificacion` VARCHAR(5) NULL,
-  `correoCodigoFecha` DATETIME NULL,
-  PRIMARY KEY (`idCorreo`)
-) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`CP`
@@ -44,8 +31,9 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`CP` (
   `d_zona` VARCHAR(10) NULL,
   `c_cve_ciudad` VARCHAR(2) NULL,
   `cpAceptadoSistema` BINARY NULL DEFAULT 0,
-  PRIMARY KEY (`idCP`)
-) ENGINE = InnoDB;
+  PRIMARY KEY (`idCP`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`direccion`
@@ -61,21 +49,24 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`direccion` (
   CONSTRAINT `fk_direccion_CP1`
     FOREIGN KEY (`CP_idCP`)
     REFERENCES `dbBurroomies`.`CP` (`idCP`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`propiedad`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbBurroomies`.`propiedad` (
   `idPropiedad` INT NOT NULL AUTO_INCREMENT,
-  `propiedadTitulo` VARCHAR(45) NOT NULL,
-  `propiedadDescripcion` VARCHAR(300) NOT NULL,
-  `propiedadTipo` VARCHAR(45) NOT NULL,
+  `propiedadTitulo` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+  `propiedadDescripcion` VARCHAR(300) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+  `propiedadTipo` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
   `propiedadLugares` INT NOT NULL,
-  `propiedadPrecio` FLOAT NOT NULL,
-  `propiedadEstatus` ENUM('Disponible', 'Sin Disponibilidad', 'Desactivada') NULL DEFAULT 'Disponible',
+  `propiedadPrecio` DECIMAL(10,2) NOT NULL,
+  `propiedadEstatus` ENUM('Disponible', 'Sin Disponibilidad', 'Desactivada') CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NULL DEFAULT 'Disponible',
   `propiedadFechaRegis` DATETIME NOT NULL,
   `direccion_idDireccion` INT NOT NULL,
   PRIMARY KEY (`idPropiedad`),
@@ -83,7 +74,12 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`propiedad` (
   CONSTRAINT `fk_propiedad_direccion1`
     FOREIGN KEY (`direccion_idDireccion`)
     REFERENCES `dbBurroomies`.`direccion` (`idDireccion`)
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`unidad_academica`
@@ -94,8 +90,11 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`unidad_academica` (
   `unidadAcademicaClave` VARCHAR(10) NOT NULL,
   PRIMARY KEY (`idUnidadAcademica`),
   UNIQUE INDEX `unidadAcademicaClave` (`unidadAcademicaClave` ASC) VISIBLE,
-  UNIQUE INDEX `unidadAcademicaNombre` (`unidadAcademicaNombre` ASC) VISIBLE
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+  UNIQUE INDEX `unidadAcademicaNombre` (`unidadAcademicaNombre` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`carrera`
@@ -113,127 +112,63 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`carrera` (
     FOREIGN KEY (`idUnidadAcademica`)
     REFERENCES `dbBurroomies`.`unidad_academica` (`idUnidadAcademica`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`usuario`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbBurroomies`.`usuario` (
   `idUsuario` INT NOT NULL AUTO_INCREMENT,
-  `usuarioNom` VARCHAR(60) NOT NULL,
-  `usuarioApePat` VARCHAR(35) NOT NULL,
-  `usuarioApeMat` VARCHAR(35) NULL DEFAULT NULL,
-  `usuarioCorreo` VARCHAR(60) NOT NULL,
-  `usuarioTel` CHAR(13) NULL DEFAULT NULL,
-  `usuarioCurp` CHAR(18) NULL DEFAULT NULL,
-  `usuarioUser` VARCHAR(50) NULL DEFAULT NULL,
-  `usuarioContra` VARCHAR(200) NOT NULL,
+  `usuarioNom` VARCHAR(60) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+  `usuarioApePat` VARCHAR(35) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+  `usuarioApeMat` VARCHAR(35) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NULL DEFAULT NULL,
+  `usuarioCorreo` VARCHAR(60) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+  `usuarioTel` CHAR(13) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NULL DEFAULT NULL,
+  `usuarioCurp` CHAR(18) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NULL DEFAULT NULL,
+  `usuarioUser` VARCHAR(50) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NULL DEFAULT NULL,
+  `usuarioContra` VARCHAR(200) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
   `usuarioFechaNac` DATE NULL DEFAULT NULL,
   `usuarioFechaRegis` DATETIME NULL DEFAULT NULL,
   `usuarioFechaUIS` DATETIME NULL DEFAULT NULL,
+  `usuarioCodigo` CHAR(8) NULL,
+  `usuarioCorreoVerificado` TINYINT NULL DEFAULT 0,
+  `usuarioCodigoFecha` DATETIME NULL,
   PRIMARY KEY (`idUsuario`),
   UNIQUE INDEX `usuarioCorreo` (`usuarioCorreo` ASC) VISIBLE,
-  UNIQUE INDEX `usuarioCurp` (`usuarioCurp` ASC) VISIBLE
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+  UNIQUE INDEX `usuarioCurp` (`usuarioCurp` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`arrendatario`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbBurroomies`.`arrendatario` (
   `idArrendatario` INT NOT NULL AUTO_INCREMENT,
-  `arrendatarioBoleta` VARCHAR(12) NULL DEFAULT NULL,
+  `arrendatarioBoleta` VARCHAR(12) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NULL DEFAULT NULL,
   `arrendatarioFechaV` DATETIME NULL DEFAULT NULL,
   `usuario_idUsuario` INT NOT NULL,
   `carrera_idCarrera` INT NOT NULL,
-  `correo_idCorreo` INT NOT NULL,
   PRIMARY KEY (`idArrendatario`),
   INDEX `fk_arrendatario_usuario1_idx` (`usuario_idUsuario` ASC) VISIBLE,
   INDEX `fk_arrendatario_carrera1_idx` (`carrera_idCarrera` ASC) VISIBLE,
-  INDEX `fk_arrendatario_correo1_idx` (`correo_idCorreo` ASC) VISIBLE,
   CONSTRAINT `fk_arrendatario_carrera1`
     FOREIGN KEY (`carrera_idCarrera`)
-    REFERENCES `dbBurroomies`.`carrera` (`idCarrera`),
-  CONSTRAINT `fk_arrendatario_correo1`
-    FOREIGN KEY (`correo_idCorreo`)
-    REFERENCES `dbBurroomies`.`correo` (`idCorreo`),
+    REFERENCES `dbBurroomies`.`carrera` (`idCarrera`)
+    ON DELETE RESTRICT,
   CONSTRAINT `fk_arrendatario_usuario1`
     FOREIGN KEY (`usuario_idUsuario`)
     REFERENCES `dbBurroomies`.`usuario` (`idUsuario`)
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
 
--- -----------------------------------------------------
--- Table `dbBurroomies`.`administrador`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbBurroomies`.`administrador` (
-  `idAdmin` INT NOT NULL AUTO_INCREMENT,
-  `adminUser` VARCHAR(45) NOT NULL,
-  `adminContra` VARCHAR(200) NOT NULL,
-  `adminFechaInicioSesion` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`idAdmin`),
-  UNIQUE INDEX `administradorUser` (`adminUser` ASC) VISIBLE
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-
--- -----------------------------------------------------
--- Table `dbBurroomies`.`arrendador`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbBurroomies`.`arrendador` (
-  `idArrendador` INT NOT NULL AUTO_INCREMENT,
-  `arrendadorRFC` CHAR(14) NULL DEFAULT NULL,
-  `usuario_idUsuario` INT NOT NULL,
-  `correo_idCorreo` INT NOT NULL,
-  `direccion_idDireccion` INT NOT NULL,
-  PRIMARY KEY (`idArrendador`),
-  INDEX `fk_arrendador_usuario1_idx` (`usuario_idUsuario` ASC) VISIBLE,
-  INDEX `fk_arrendador_correo1_idx` (`correo_idCorreo` ASC) VISIBLE,
-  INDEX `fk_arrendador_direccion1_idx` (`direccion_idDireccion` ASC) VISIBLE,
-  CONSTRAINT `fk_arrendador_correo1`
-    FOREIGN KEY (`correo_idCorreo`)
-    REFERENCES `dbBurroomies`.`correo` (`idCorreo`),
-  CONSTRAINT `fk_arrendador_direccion1`
-    FOREIGN KEY (`direccion_idDireccion`)
-    REFERENCES `dbBurroomies`.`direccion` (`idDireccion`),
-  CONSTRAINT `fk_arrendador_usuario1`
-    FOREIGN KEY (`usuario_idUsuario`)
-    REFERENCES `dbBurroomies`.`usuario` (`idUsuario`)
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-
--- -----------------------------------------------------
--- Table `dbBurroomies`.`arrendamiento`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbBurroomies`.`arrendamiento` (
-  `idArrendamiento` INT NOT NULL AUTO_INCREMENT,
-  `arrendamientoFechaInicio` DATETIME NULL DEFAULT NULL,
-  `arrendamientoRenta` FLOAT NULL DEFAULT NULL,
-  `arrendamientoDescrip` VARCHAR(300) NULL DEFAULT NULL,
-  `arrendamientoValEstudiante` VARCHAR(6) NULL DEFAULT '0',
-  `arrendamientoValArrendador` VARCHAR(6) NULL DEFAULT '0',
-  `arrendatario_idArrendatario` INT NOT NULL,
-  `propiedad_idPropiedad` INT NOT NULL,
-  PRIMARY KEY (`idArrendamiento`),
-  INDEX `fk_arrendamiento_arrendatario1_idx` (`arrendatario_idArrendatario` ASC) VISIBLE,
-  INDEX `fk_arrendamiento_propiedad1_idx` (`propiedad_idPropiedad` ASC) VISIBLE,
-  CONSTRAINT `fk_arrendamiento_arrendatario1`
-    FOREIGN KEY (`arrendatario_idArrendatario`)
-    REFERENCES `dbBurroomies`.`arrendatario` (`idArrendatario`),
-  CONSTRAINT `fk_arrendamiento_propiedad1`
-    FOREIGN KEY (`propiedad_idPropiedad`)
-    REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`)
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-
--- -----------------------------------------------------
--- Table `dbBurroomies`.`fotos`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbBurroomies`.`fotos` (
-  `idFotos` INT NOT NULL AUTO_INCREMENT,
-  `fotosDescrip` LONGTEXT NULL DEFAULT NULL,
-  `propiedad_idPropiedad` INT NOT NULL,
-  PRIMARY KEY (`idFotos`),
-  INDEX `fk_fotos_propiedad_idx` (`propiedad_idPropiedad` ASC) VISIBLE,
-  CONSTRAINT `fk_fotos_propiedad`
-    FOREIGN KEY (`propiedad_idPropiedad`)
-    REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`)
-) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`favoritos`
@@ -248,11 +183,102 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`favoritos` (
   INDEX `fk_favoritos_arrendatario1_idx` (`arrendatario_idArrendatario` ASC) VISIBLE,
   CONSTRAINT `fk_favoritos_propiedad1`
     FOREIGN KEY (`propiedad_idPropiedad`)
-    REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`),
+    REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
   CONSTRAINT `fk_favoritos_arrendatario1`
     FOREIGN KEY (`arrendatario_idArrendatario`)
     REFERENCES `dbBurroomies`.`arrendatario` (`idArrendatario`)
-) ENGINE = InnoDB;
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dbBurroomies`.`administrador`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dbBurroomies`.`administrador` (
+  `idAdmin` INT NOT NULL AUTO_INCREMENT,
+  `adminUser` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+  `adminContra` VARCHAR(200) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+  `adminFechaInicioSesion` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`idAdmin`),
+  UNIQUE INDEX `administradorUser` (`adminUser` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
+
+-- -----------------------------------------------------
+-- Table `dbBurroomies`.`arrendador`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dbBurroomies`.`arrendador` (
+  `idArrendador` INT NOT NULL AUTO_INCREMENT,
+  `arrendadorRFC` CHAR(14) NULL DEFAULT NULL,
+  `usuario_idUsuario` INT NOT NULL,
+  `direccion_idDireccion` INT NOT NULL,
+  PRIMARY KEY (`idArrendador`),
+  INDEX `fk_arrendador_usuario1_idx` (`usuario_idUsuario` ASC) VISIBLE,
+  INDEX `fk_arrendador_direccion1_idx` (`direccion_idDireccion` ASC) VISIBLE,
+  CONSTRAINT `fk_arrendador_direccion1`
+    FOREIGN KEY (`direccion_idDireccion`)
+    REFERENCES `dbBurroomies`.`direccion` (`idDireccion`)
+    ON DELETE RESTRICT,
+  CONSTRAINT `fk_arrendador_usuario1`
+    FOREIGN KEY (`usuario_idUsuario`)
+    REFERENCES `dbBurroomies`.`usuario` (`idUsuario`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
+
+-- -----------------------------------------------------
+-- Table `dbBurroomies`.`arrendamiento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dbBurroomies`.`arrendamiento` (
+  `idArrendamiento` INT NOT NULL AUTO_INCREMENT,
+  `arrendamientoFechaInicio` DATETIME NULL DEFAULT NULL,
+  `arrendamientoRenta` FLOAT NULL DEFAULT NULL,
+  `arrendamientoDescrip` VARCHAR(300) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NULL DEFAULT NULL,
+  `arrendamientoValEstudiante` TINYINT NULL DEFAULT 0,
+  `arrendamientoValArrendador` TINYINT NULL DEFAULT 0,
+  `arrendamientoValResena` TINYINT NULL DEFAULT 0,
+  `arrendatario_idArrendatario` INT NOT NULL,
+  `propiedad_idPropiedad` INT NOT NULL,
+  PRIMARY KEY (`idArrendamiento`),
+  INDEX `fk_arrendamiento_arrendatario1_idx` (`arrendatario_idArrendatario` ASC) VISIBLE,
+  INDEX `fk_arrendamiento_propiedad1_idx` (`propiedad_idPropiedad` ASC) VISIBLE,
+  CONSTRAINT `fk_arrendamiento_arrendatario1`
+    FOREIGN KEY (`arrendatario_idArrendatario`)
+    REFERENCES `dbBurroomies`.`arrendatario` (`idArrendatario`)
+    ON DELETE RESTRICT,
+  CONSTRAINT `fk_arrendamiento_propiedad1`
+    FOREIGN KEY (`propiedad_idPropiedad`)
+    REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`)
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
+
+-- -----------------------------------------------------
+-- Table `dbBurroomies`.`fotos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dbBurroomies`.`fotos` (
+  `idFotos` INT NOT NULL AUTO_INCREMENT,
+  `fotosURL` VARCHAR(500) NULL DEFAULT NULL,
+  `propiedad_idPropiedad` INT NOT NULL,
+  PRIMARY KEY (`idFotos`),
+  INDEX `fk_fotos_propiedad_idx` (`propiedad_idPropiedad` ASC) VISIBLE,
+  CONSTRAINT `fk_fotos_propiedad`
+    FOREIGN KEY (`propiedad_idPropiedad`)
+    REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`resena`
@@ -261,11 +287,11 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`resena` (
   `idResena` INT NOT NULL AUTO_INCREMENT,
   `resenaFechaCreacion` DATETIME NULL DEFAULT NULL,
   `resenaDuracionRenta` INT NULL DEFAULT NULL,
-  `resenaDescrip` VARCHAR(300) NOT NULL,
-  `resenaCalSerBasic` FLOAT NULL DEFAULT NULL,
-  `resenaCalSerComEnt` FLOAT NULL DEFAULT NULL,
-  `resenaCalSerAdicio` FLOAT NULL DEFAULT NULL,
-  `resenaCalGen` FLOAT NOT NULL,
+  `resenaDescrip` VARCHAR(300) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+  `resenaCalSerBasic` DECIMAL(2,1) NULL,
+  `resenaCalSerComEnt` DECIMAL(2,1) NULL,
+  `resenaCalSerAdicio` DECIMAL(2,1) NULL,
+  `resenaCalGen` DECIMAL(2,1) NOT NULL,
   `resenaSentimiento` VARCHAR(45) NULL DEFAULT NULL,
   `propiedad_idPropiedad` INT NOT NULL,
   `arrendatario_idArrendatario` INT NOT NULL,
@@ -274,11 +300,16 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`resena` (
   INDEX `fk_resena_arrendatario1_idx` (`arrendatario_idArrendatario` ASC) VISIBLE,
   CONSTRAINT `fk_resena_arrendatario1`
     FOREIGN KEY (`arrendatario_idArrendatario`)
-    REFERENCES `dbBurroomies`.`arrendatario` (`idArrendatario`),
+    REFERENCES `dbBurroomies`.`arrendatario` (`idArrendatario`)
+    ON DELETE RESTRICT,
   CONSTRAINT `fk_resena_propiedad1`
     FOREIGN KEY (`propiedad_idPropiedad`)
     REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`)
-) ENGINE = InnoDB;
+    ON DELETE RESTRICT)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`servicio`
@@ -288,8 +319,11 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`servicio` (
   `servicioNombre` VARCHAR(100) NOT NULL,
   `servicioCategoria` ENUM('Basico', 'Entretenimiento', 'Adicional') NOT NULL,
   PRIMARY KEY (`idServicio`),
-  UNIQUE INDEX `servicioNombre` (`servicioNombre` ASC) VISIBLE
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+  UNIQUE INDEX `servicioNombre` (`servicioNombre` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
 
 -- -----------------------------------------------------
 -- Table `dbBurroomies`.`servicio_has_propiedad`
@@ -302,11 +336,16 @@ CREATE TABLE IF NOT EXISTS `dbBurroomies`.`servicio_has_propiedad` (
   INDEX `fk_servicio_has_propiedad_servicio1_idx` (`servicio_idServicio` ASC) VISIBLE,
   CONSTRAINT `fk_servicio_has_propiedad_propiedad1`
     FOREIGN KEY (`propiedad_idPropiedad`)
-    REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`),
+    REFERENCES `dbBurroomies`.`propiedad` (`idPropiedad`)
+    ON DELETE CASCADE,
   CONSTRAINT `fk_servicio_has_propiedad_servicio1`
     FOREIGN KEY (`servicio_idServicio`)
     REFERENCES `dbBurroomies`.`servicio` (`idServicio`)
-) ENGINE = InnoDB;
+    ON DELETE RESTRICT)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

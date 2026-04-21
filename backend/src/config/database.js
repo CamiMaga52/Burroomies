@@ -1,3 +1,8 @@
+//FUNCIONAMIENTO:
+// Configura la conexión a MySQL usando Sequelize. Toma los datos de conexión (nombre de BD, usuario, contraseña, host y puerto) de las variables de entorno.
+// La función connectDB prueba la conexión y sincroniza los modelos con la base de datos sin borrar datos existentes.
+// Exporta la conexión y la función para usarlas en otros archivos.
+
 const { Sequelize } = require('sequelize')
 
 const sequelize = new Sequelize(

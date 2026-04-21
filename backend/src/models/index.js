@@ -2,6 +2,12 @@
 //  models/index.js — Asociaciones entre modelos
 // ─────────────────────────────────────────
 
+//FUNCIONAMIENTO:
+// Este archivo define las asociaciones entre los modelos de la base de datos usando Sequelize.
+// Importa todos los modelos (Usuario, Arrendador, Arrendatario, Propiedad, Arrendamiento, Resena, Administrador) y establece las relaciones entre ellos (1:1, 1:N).
+// Por ejemplo, un Usuario puede ser un Arrendador o un Arrendatario (1:1), un Arrendador puede tener muchas Propiedades (1:N), una Propiedad tiene un Arrendamiento (1:1), etc.
+// Exporta todos los modelos para que puedan ser utilizados en otros archivos (como en controladores).
+
 const Usuario      = require('./Usuario')
 const Arrendador   = require('./Arrendador')
 const Arrendatario = require('./Arrendatario')

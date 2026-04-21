@@ -1,5 +1,11 @@
 // backend/src/controllers/documentoController.js
 
+//FUNCIONAMIENTO:
+// Controlador para validar documentos PDF de constancia de estudios y CURP usando la API de PDF.co para extraer QR y texto.
+// Define dos funciones principales: validarConstancia (para constancias de estudios) y validarCurp (para CURP).
+// Ambas funciones reciben un PDF en base64 y datos del usuario, suben el PDF a PDF.co, extraen el QR, consultan el sistema SAES del IPN (en el caso de constancias) o parsean el QR (en el caso de CURP), y comparan los datos extraídos con los proporcionados por el usuario.
+// Devuelven un resultado indicando si el documento es válido o no, junto con mensajes de error específicos en caso de discrepancias.
+
 const PDF_CO_KEY = process.env.PDF_CO_KEY
 
 // ── Normalizar texto para comparación ────────────────────────────

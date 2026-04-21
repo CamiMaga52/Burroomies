@@ -1,3 +1,8 @@
+//FUNCIONAMIENTO:
+// Define el modelo de Arrendatario usando Sequelize. Incluye campos para ID, apodo, boleta, unidad académica, fecha de actualización, referencia al usuario asociado y referencia al arrendamiento.
+// El campo idArrendatario es la clave primaria y se autoincrementa. El campo arrendatarioApodo es único y no puede ser nulo. El campo usuario_idUsuario es una clave foránea que referencia al modelo Usuario. El campo arrendamiento_idArrendamiento es una clave foránea que referencia al modelo Arrendamiento (puede ser nula).
+// Exporta el modelo para usarlo en otros archivos (como en controladores de arrendamiento y autenticación).
+
 const { DataTypes } = require('sequelize')
 const { sequelize } = require('../config/database')
 

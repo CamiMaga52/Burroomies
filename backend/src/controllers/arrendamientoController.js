@@ -1,3 +1,9 @@
+//FUNCIONAMIENTO:
+// Controlador para manejar operaciones relacionadas con arrendamientos.
+// Define funciones para registrar un nuevo arrendamiento (solo arrendadores), ver el arrendamiento actual (arrendatarios) y ver los arrendamientos activos (arrendadores).
+// También incluye una función para terminar un arrendamiento, que requiere confirmación de ambas partes (arrendatario y arrendador).
+// Utiliza los modelos de Arrendamiento, Arrendatario, Propiedad, Arrendador y Usuario para interactuar con la base de datos.
+
 const { Arrendamiento, Arrendatario, Propiedad, Arrendador, Usuario } = require('../models')
 
 // ── Registrar arrendamiento (arrendador) ─────────────────────────

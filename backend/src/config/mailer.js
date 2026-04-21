@@ -1,3 +1,10 @@
+//FUNCIONAMIENTO:
+// Configura el envío de correos electrónicos usando Nodemailer con Gmail.
+// Crea un transportador usando las credenciales del archivo .env (usuario y contraseña).
+// Define dos funciones: una para enviar código de verificación y otra para enviar código de restablecimiento de contraseña.
+// Ambos correos incluyen un diseño HTML bonito con el código que recibe el usuario.
+// Exporta las dos funciones para usarlas en otros archivos (como en controladores de autenticación).
+
 const nodemailer = require('nodemailer')
 
 const transporter = nodemailer.createTransport({

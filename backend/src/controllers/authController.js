@@ -1,3 +1,9 @@
+//FUNCIONAMIENTO:
+// Controlador para manejar la autenticación y gestión de usuarios.
+// Define funciones para registro, login, verificación de email, reenvío de código, recuperación de contraseña, perfil y cambio de contraseña.
+// Utiliza bcrypt para hashing de contraseñas, jsonwebtoken para tokens JWT y nodemailer para enviar correos de verificación y restablecimiento.
+// Interactúa con los modelos Usuario, Arrendador y Arrendatario para gestionar la información en la base de datos.
+
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { Usuario, Arrendador, Arrendatario } = require('../models')

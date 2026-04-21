@@ -1,3 +1,8 @@
+//FUNCIONAMIENTO:
+// Define el modelo de Arrendador usando Sequelize. Incluye campos para ID, dirección (calle, número exterior, número interior, colonia, municipio, estado, código postal) y una referencia al usuario asociado.
+// El campo idArrendador es la clave primaria y se autoincrementa. El campo usuario_idUsuario es una clave foránea que referencia al modelo Usuario.
+// Exporta el modelo para usarlo en otros archivos (como en controladores de arrendamiento y autenticación).
+
 const { DataTypes } = require('sequelize')
 const { sequelize } = require('../config/database')
 

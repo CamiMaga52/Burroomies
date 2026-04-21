@@ -1,3 +1,8 @@
+//FUNCIONAMIENTO:
+// Define el modelo de Usuario usando Sequelize. Incluye campos para ID, nombre, apellidos, correo electrónico, teléfono, CURP, usuario, contraseña, fecha de nacimiento, fecha de registro, código de verificación, fecha de última sesión, datos de tarjeta de crédito y foto.
+// El campo idUsuario es la clave primaria y se autoincrementa. El campo usuarioCorreo es único y no puede ser nulo. El campo usuarioContra almacena la contraseña hasheada.
+// Exporta el modelo para usarlo en otros archivos (como en controladores de autenticación).
+
 const { DataTypes } = require('sequelize')
 const { sequelize } = require('../config/database')
 

@@ -1,3 +1,8 @@
+//FUNCIONAMIENTO:
+// Este es el archivo principal de la aplicación backend. 
+// Configura el servidor Express, define las rutas para las diferentes funcionalidades (autenticación, propiedades, arrendamientos, reseñas, documentos), y maneja la conexión a la base de datos. 
+// También incluye un middleware global para manejar errores y una ruta de prueba para verificar que el servidor está funcionando correctamente.
+
 const express = require('express')
 const cors    = require('cors')
 require('dotenv').config()

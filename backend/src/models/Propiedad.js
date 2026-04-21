@@ -1,3 +1,8 @@
+//FUNCIONAMIENTO:
+// Define el modelo de Propiedad usando Sequelize. Incluye campos para ID, título, descripción, tipo, lugares, precio, dirección (calle, número exterior, número interior, colonia, municipio, estado, código postal), estatus, fecha de registro, código de propiedad, servicios básicos, servicios comunes/entretención, servicios adicionales, fotos y una referencia al arrendador asociado.
+// El campo idPropiedad es la clave primaria y se autoincrementa. El campo propiedadTitulo es obligatorio. El campo arrendador_idArrendador es una clave foránea que referencia al modelo Arrendador.
+// Exporta el modelo para usarlo en otros archivos (como en controladores de propiedad).
+
 const { DataTypes } = require('sequelize')
 const { sequelize } = require('../config/database')
 

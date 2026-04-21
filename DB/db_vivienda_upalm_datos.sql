@@ -95,7 +95,6 @@ INSERT INTO `servicio` (`servicioNombre`, `servicioCategoria`) VALUES
 ('Terraza', 'Adicional'),
 ('Jardín o áreas verdes', 'Adicional'),
 ('Gimnasio', 'Adicional'),
-('Área de parrilla', 'Adicional'),
 ('Lavavajillas', 'Adicional'),
 ('Lavandería cercana', 'Adicional'),
 ('Se permiten mascotas', 'Adicional'),
@@ -113,7 +112,7 @@ INSERT INTO `servicio` (`servicioNombre`, `servicioCategoria`) VALUES
 -- -----------------------------------------------------
 
 -- =====================================================
--- 1. TABLA direccion (10 direcciones con CP_idCP)
+-- 2. TABLA direccion (10 direcciones con CP_idCP)
 -- =====================================================
 INSERT INTO `direccion` (`direccionCalle`, `direccionNumExt`, `direccionNumInt`, `CP_idCP`) VALUES
 ('Av. Insurgentes Sur', '1234', 'A', 1),
@@ -128,34 +127,20 @@ INSERT INTO `direccion` (`direccionCalle`, `direccionNumExt`, `direccionNumInt`,
 ('Calle Liverpool', '123', '402', 10);
 
 -- =====================================================
--- 2. TABLA usuario (10 usuarios)
+-- 3. TABLA usuario (10 usuarios)
 -- =====================================================
-INSERT INTO `usuario` (`usuarioNom`, `usuarioApePat`, `usuarioApeMat`, `usuarioCorreo`, `usuarioTel`, `usuarioUser`, `usuarioContra`, `usuarioFechaNac`, `usuarioFechaRegis`) VALUES
-('Juan Carlos', 'Pérez', 'González', 'juan.perez@gmail.com', '5512345678', 'juancpg', 'juan123', '1995-03-15', NOW()),
-('María Fernanda', 'López', 'Martínez', 'maria.lopez@gmail.com', '5523456789', 'marialm', 'maria456', '1998-07-22', NOW()),
-('Carlos Alberto', 'Rodríguez', 'Sánchez', 'carlos.rodriguez@hotmail.com', '5534567890', 'carlosrs', 'carlos789', '1993-11-10', NOW()),
-('Ana Sofía', 'Hernández', 'Díaz', 'ana.hernandez@outlook.com', '5545678901', 'anasofiahd', 'ana321', '2000-05-05', NOW()),
-('Diego Alejandro', 'García', 'Ramírez', 'diego.garcia@gmail.com', '5556789012', 'diegogr', 'diego654', '1996-09-18', NOW()),
-('Valentina', 'Martínez', 'Torres', 'valentina.mt@hotmail.com', '5567890123', 'valentinamt', 'vale987', '1999-12-01', NOW()),
-('Santiago', 'Sánchez', 'Cruz', 'santiago.scruz@gmail.com', '5578901234', 'santiagosc', 'santi555', '1994-04-25', NOW()),
-('Renata', 'Flores', 'Morales', 'renata.flores@outlook.com', '5589012345', 'renatafm', 'renata777', '1997-08-14', NOW()),
-('Luis Miguel', 'Torres', 'Vega', 'luis.torres@gmail.com', '5590123456', 'luistv', 'luis333', '1992-02-28', NOW()),
-('Camila', 'Rojas', 'Mendoza', 'camila.rojas@hotmail.com', '5501234567', 'camilarom', 'camila111', '2001-06-30', NOW());
-
--- =====================================================
--- 3. TABLA correo (10 registros)
--- =====================================================
-INSERT INTO `correo` (`idCorreo`, `correoCodigo`, `correoVerificacion`, `correoCodigoFecha`) VALUES
-(1, 'ABCD1234', 'true', NOW()),
-(2, 'EFGH5678', 'true', NOW()),
-(3, 'IJKL9012', 'true', NOW()),
-(4, 'MNOP3456', 'true', NOW()),
-(5, 'QRST7890', 'true', NOW()),
-(6, 'UVWX1234', 'true', NOW()),
-(7, 'YZAB5678', 'true', NOW()),
-(8, 'CDEF9012', 'true', NOW()),
-(9, 'GHIJ3456', 'true', NOW()),
-(10, 'KLMN7890', 'true', NOW());
+-- Nota: usuarioContra debe ser hash en producción (ej: SHA2('password', 256))
+INSERT INTO `usuario` (`usuarioNom`, `usuarioApePat`, `usuarioApeMat`, `usuarioCorreo`, `usuarioTel`, `usuarioCurp`, `usuarioUser`, `usuarioContra`, `usuarioFechaNac`, `usuarioFechaRegis`, `usuarioCodigo`, `usuarioCorreoVerificado`, `usuarioCodigoFecha`) VALUES
+('Juan Carlos', 'Pérez', 'González', 'juan.perez@gmail.com', '5512345678', 'PEGJ950315HDFRRN07', 'juan123', 'hash_juan123', '1995-03-15', NOW(), 'ABCD1234', 1, NOW()),
+('María Fernanda', 'López', 'Martínez', 'maria.lopez@gmail.com', '5523456789', 'LOMM980722MDFRRN04', 'maria456', 'hash_maria456', '1998-07-22', NOW(), 'EFGH5678', 1, NOW()),
+('Carlos Alberto', 'Rodríguez', 'Sánchez', 'carlos.rodriguez@hotmail.com', '5534567890', 'ROSC931110HDFRRN01', 'carlos789', 'hash_carlos789', '1993-11-10', NOW(), 'IJKL9012', 1, NOW()),
+('Ana Sofía', 'Hernández', 'Díaz', 'ana.hernandez@outlook.com', '5545678901', 'HEDA000505MDFRRN09', 'ana321', 'hash_ana321', '2000-05-05', NOW(), 'MNOP3456', 1, NOW()),
+('Diego Alejandro', 'García', 'Ramírez', 'diego.garcia@gmail.com', '5556789012', 'GARD960918HDFRRN02', 'diego654', 'hash_diego654', '1996-09-18', NOW(), 'QRST7890', 1, NOW()),
+('Valentina', 'Martínez', 'Torres', 'valentina.mt@hotmail.com', '5567890123', 'MATV991201MDFRRN06', 'vale987', 'hash_vale987', '1999-12-01', NOW(), 'UVWX1234', 1, NOW()),
+('Santiago', 'Sánchez', 'Cruz', 'santiago.scruz@gmail.com', '5578901234', 'SACS940425HDFRRN03', 'santi555', 'hash_santi555', '1994-04-25', NOW(), 'YZAB5678', 1, NOW()),
+('Renata', 'Flores', 'Morales', 'renata.flores@outlook.com', '5589012345', 'FOMR970814MDFRRN08', 'renata777', 'hash_renata777', '1997-08-14', NOW(), 'CDEF9012', 1, NOW()),
+('Luis Miguel', 'Torres', 'Vega', 'luis.torres@gmail.com', '5590123456', 'TOVL920228HDFRRN05', 'luis333', 'hash_luis333', '1992-02-28', NOW(), 'GHIJ3456', 1, NOW()),
+('Camila', 'Rojas', 'Mendoza', 'camila.rojas@hotmail.com', '5501234567', 'ROMC010630MDFRRN10', 'camila111', 'hash_camila111', '2001-06-30', NOW(), 'KLMN7890', 1, NOW());
 
 -- =====================================================
 -- 4. TABLA propiedad (10 propiedades)
@@ -175,57 +160,58 @@ INSERT INTO `propiedad` (`propiedadTitulo`, `propiedadDescripcion`, `propiedadTi
 -- =====================================================
 -- 5. TABLA fotos (20 fotos para las propiedades)
 -- =====================================================
-INSERT INTO `fotos` (`idFotos`, `fotosDescrip`, `propiedad_idPropiedad`) VALUES
-(1, 'https://ejemplo.com/fotos/prop1_fachada.jpg', 1),
-(2, 'https://ejemplo.com/fotos/prop1_sala.jpg', 1),
-(3, 'https://ejemplo.com/fotos/prop2_jardin.jpg', 2),
-(4, 'https://ejemplo.com/fotos/prop2_cocina.jpg', 2),
-(5, 'https://ejemplo.com/fotos/prop3_interior.jpg', 3),
-(6, 'https://ejemplo.com/fotos/prop4_habitacion.jpg', 4),
-(7, 'https://ejemplo.com/fotos/prop4_baño.jpg', 4),
-(8, 'https://ejemplo.com/fotos/prop5_sala_comedor.jpg', 5),
-(9, 'https://ejemplo.com/fotos/prop6_terraza.jpg', 6),
-(10, 'https://ejemplo.com/fotos/prop6_jardin.jpg', 6),
-(11, 'https://ejemplo.com/fotos/prop7_estudio.jpg', 7),
-(12, 'https://ejemplo.com/fotos/prop8_habitacion.jpg', 8),
-(13, 'https://ejemplo.com/fotos/prop9_vista.jpg', 9),
-(14, 'https://ejemplo.com/fotos/prop9_sala.jpg', 9),
-(15, 'https://ejemplo.com/fotos/prop9_cocina.jpg', 9),
-(16, 'https://ejemplo.com/fotos/prop10_fachada.jpg', 10),
-(17, 'https://ejemplo.com/fotos/prop10_patio.jpg', 10),
-(18, 'https://ejemplo.com/fotos/prop10_interior.jpg', 10),
-(19, 'https://ejemplo.com/fotos/prop1_recamara.jpg', 1),
-(20, 'https://ejemplo.com/fotos/prop5_cocina.jpg', 5);
+-- Nota: idFotos es AUTO_INCREMENT, no se especifica
+INSERT INTO `fotos` (`fotosURL`, `propiedad_idPropiedad`) VALUES
+('https://ejemplo.com/fotos/prop1_fachada.jpg', 1),
+('https://ejemplo.com/fotos/prop1_sala.jpg', 1),
+('https://ejemplo.com/fotos/prop2_jardin.jpg', 2),
+('https://ejemplo.com/fotos/prop2_cocina.jpg', 2),
+('https://ejemplo.com/fotos/prop3_interior.jpg', 3),
+('https://ejemplo.com/fotos/prop4_habitacion.jpg', 4),
+('https://ejemplo.com/fotos/prop4_baño.jpg', 4),
+('https://ejemplo.com/fotos/prop5_sala_comedor.jpg', 5),
+('https://ejemplo.com/fotos/prop6_terraza.jpg', 6),
+('https://ejemplo.com/fotos/prop6_jardin.jpg', 6),
+('https://ejemplo.com/fotos/prop7_estudio.jpg', 7),
+('https://ejemplo.com/fotos/prop8_habitacion.jpg', 8),
+('https://ejemplo.com/fotos/prop9_vista.jpg', 9),
+('https://ejemplo.com/fotos/prop9_sala.jpg', 9),
+('https://ejemplo.com/fotos/prop9_cocina.jpg', 9),
+('https://ejemplo.com/fotos/prop10_fachada.jpg', 10),
+('https://ejemplo.com/fotos/prop10_patio.jpg', 10),
+('https://ejemplo.com/fotos/prop10_interior.jpg', 10),
+('https://ejemplo.com/fotos/prop1_recamara.jpg', 1),
+('https://ejemplo.com/fotos/prop5_cocina.jpg', 5);
 
 -- =====================================================
 -- 6. TABLA arrendatario (10 estudiantes)
 -- =====================================================
-INSERT INTO `arrendatario` (`arrendatarioBoleta`, `arrendatarioFechaV`, `usuario_idUsuario`, `carrera_idCarrera`, `correo_idCorreo`) VALUES
-('2024A123456', NULL, 1, 1, 1),
-('2024A234567', NULL, 2, 4, 2),
-('2023A345678', NULL, 3, 7, 3),
-('2024A456789', NULL, 4, 10, 4),
-('2023A567890', NULL, 5, 2, 5),
-('2024A678901', NULL, 6, 5, 6),
-('2024A789012', NULL, 7, 8, 7),
-('2023A890123', NULL, 8, 11, 8),
-('2024A901234', NULL, 9, 3, 9),
-('2024A012345', NULL, 10, 6, 10);
+INSERT INTO `arrendatario` (`arrendatarioBoleta`, `arrendatarioFechaV`, `usuario_idUsuario`, `carrera_idCarrera`) VALUES
+('2024123456', NULL, 1, 1),
+('2024234567', NULL, 2, 4),
+('2023345678', NULL, 3, 7),
+('2024456789', NULL, 4, 10),
+('2023567890', NULL, 5, 2),
+('2024678901', NULL, 6, 5),
+('2024789012', NULL, 7, 8),
+('2023890123', NULL, 8, 11),
+('2024901234', NULL, 9, 3),
+('2024012345', NULL, 10, 6);
 
 -- =====================================================
 -- 7. TABLA arrendador (10 dueños)
 -- =====================================================
-INSERT INTO `arrendador` (`arrendadorRFC`, `usuario_idUsuario`, `correo_idCorreo`, `direccion_idDireccion`) VALUES
-('PEGJ950315XXX', 1, 1, 1),
-('LOMF980722XXX', 2, 2, 2),
-('RSCA931110XXX', 3, 3, 3),
-('HEDA000505XXX', 4, 4, 4),
-('GARD960918XXX', 5, 5, 5),
-('MTV991201XXX', 6, 6, 6),
-('SCC940425XXX', 7, 7, 7),
-('FMR970814XXX', 8, 8, 8),
-('TVL920228XXX', 9, 9, 9),
-('ROM010630XXX', 10, 10, 10);
+INSERT INTO `arrendador` (`arrendadorRFC`, `usuario_idUsuario`, `direccion_idDireccion`) VALUES
+('PEGJ950315XXX', 1, 1),
+('LOMF980722XXX', 2, 2),
+('RSCA931110XXX', 3, 3),
+('HEDA000505XXX', 4, 4),
+('GARD960918XXX', 5, 5),
+('MTV991201XXX', 6, 6),
+('SCC940425XXX', 7, 7),
+('FMR970814XXX', 8, 8),
+('TVL920228XXX', 9, 9),
+('ROM010630XXX', 10, 10);
 
 -- =====================================================
 -- 8. TABLA servicio_has_propiedad (servicios por propiedad)
@@ -255,57 +241,60 @@ INSERT INTO `servicio_has_propiedad` (`servicio_idServicio`, `propiedad_idPropie
 -- =====================================================
 -- 9. TABLA favoritos (10 favoritos)
 -- =====================================================
-INSERT INTO `favoritos` (`idfavoritos`, `favoritosFechaAgregar`, `propiedad_idPropiedad`, `arrendatario_idArrendatario`) VALUES
-(1, NOW(), 1, 1),
-(2, NOW(), 3, 1),
-(3, NOW(), 2, 2),
-(4, NOW(), 5, 2),
-(5, NOW(), 4, 3),
-(6, NOW(), 1, 4),
-(7, NOW(), 6, 5),
-(8, NOW(), 8, 6),
-(9, NOW(), 7, 7),
-(10, NOW(), 10, 8);
+-- Nota: idfavoritos es AUTO_INCREMENT, no se especifica
+INSERT INTO `favoritos` (`favoritosFechaAgregar`, `propiedad_idPropiedad`, `arrendatario_idArrendatario`) VALUES
+(NOW(), 1, 1),
+(NOW(), 3, 1),
+(NOW(), 2, 2),
+(NOW(), 5, 2),
+(NOW(), 4, 3),
+(NOW(), 1, 4),
+(NOW(), 6, 5),
+(NOW(), 8, 6),
+(NOW(), 7, 7),
+(NOW(), 10, 8);
 
 -- =====================================================
 -- 10. TABLA arrendamiento (10 contratos)
 -- =====================================================
+-- Nota: arrendamientoVal* son TINYINT (0 o 1)
 INSERT INTO `arrendamiento` (`arrendamientoFechaInicio`, `arrendamientoRenta`, `arrendamientoDescrip`, `arrendamientoValEstudiante`, `arrendamientoValArrendador`, `arrendatario_idArrendatario`, `propiedad_idPropiedad`) VALUES
-(DATE_SUB(NOW(), INTERVAL 6 MONTH), 8500, 'Contrato por 1 año', '5', '5', 1, 1),
-(DATE_SUB(NOW(), INTERVAL 8 MONTH), 15000, 'Contrato por 6 meses', '4', '5', 2, 2),
-(DATE_SUB(NOW(), INTERVAL 3 MONTH), 6000, 'Contrato renovable', '5', '4', 3, 3),
-(DATE_SUB(NOW(), INTERVAL 2 MONTH), 4500, 'Renta mensual', '5', '5', 4, 4),
-(DATE_SUB(NOW(), INTERVAL 10 MONTH), 12000, 'Contrato con depósito', '4', '4', 5, 5),
-(DATE_SUB(NOW(), INTERVAL 1 MONTH), 18000, 'Incluye mantenimiento', '5', '5', 6, 6),
-(DATE_SUB(NOW(), INTERVAL 4 MONTH), 7500, 'Departamento amueblado', '5', '4', 7, 7),
-(DATE_SUB(NOW(), INTERVAL 5 MONTH), 5500, 'Servicios incluidos', '4', '5', 8, 8),
-(DATE_SUB(NOW(), INTERVAL 7 MONTH), 9500, 'Excelente ubicación', '5', '5', 9, 9),
-(DATE_SUB(NOW(), INTERVAL 9 MONTH), 22000, 'Casa de lujo', '5', '5', 10, 10);
+(DATE_SUB(NOW(), INTERVAL 6 MONTH), 8500, 'Contrato por 1 año', 1, 1, 1, 1),
+(DATE_SUB(NOW(), INTERVAL 8 MONTH), 15000, 'Contrato por 6 meses', 1, 1, 2, 2),
+(DATE_SUB(NOW(), INTERVAL 3 MONTH), 6000, 'Contrato renovable', 1, 1, 3, 3),
+(DATE_SUB(NOW(), INTERVAL 2 MONTH), 4500, 'Renta mensual', 1, 1, 4, 4),
+(DATE_SUB(NOW(), INTERVAL 10 MONTH), 12000, 'Contrato con depósito', 1, 1, 5, 5),
+(DATE_SUB(NOW(), INTERVAL 1 MONTH), 18000, 'Incluye mantenimiento', 1, 1, 6, 6),
+(DATE_SUB(NOW(), INTERVAL 4 MONTH), 7500, 'Departamento amueblado', 1, 1, 7, 7),
+(DATE_SUB(NOW(), INTERVAL 5 MONTH), 5500, 'Servicios incluidos', 1, 1, 8, 8),
+(DATE_SUB(NOW(), INTERVAL 7 MONTH), 9500, 'Excelente ubicación', 1, 1, 9, 9),
+(DATE_SUB(NOW(), INTERVAL 9 MONTH), 22000, 'Casa de lujo', 1, 1, 10, 10);
 
 -- =====================================================
 -- 11. TABLA resena (10 reseñas)
 -- =====================================================
+-- Nota: Calificaciones son DECIMAL(2,1)
 INSERT INTO `resena` (`resenaFechaCreacion`, `resenaDuracionRenta`, `resenaDescrip`, `resenaCalSerBasic`, `resenaCalSerComEnt`, `resenaCalSerAdicio`, `resenaCalGen`, `resenaSentimiento`, `propiedad_idPropiedad`, `arrendatario_idArrendatario`) VALUES
-(NOW(), 6, 'Excelente departamento, muy céntrico', 5, 4, 4, 4.5, 'Positivo', 1, 1),
-(NOW(), 8, 'Casa muy bonita y amplia, jardín hermoso', 5, 5, 5, 5, 'Positivo', 2, 2),
-(NOW(), 3, 'Loft moderno pero algo pequeño', 4, 5, 3, 4, 'Neutro', 3, 3),
-(NOW(), 2, 'Habitación cómoda, buena zona', 5, 3, 4, 4, 'Positivo', 4, 4),
-(NOW(), 10, 'Departamento bien ubicado, pero ruidoso', 4, 4, 4, 4, 'Neutro', 5, 5),
-(NOW(), 1, 'Casa excelente, el mejor lugar', 5, 5, 5, 5, 'Positivo', 6, 6),
-(NOW(), 4, 'Estudio acogedor, me encantó', 5, 4, 5, 4.5, 'Positivo', 7, 7),
-(NOW(), 5, 'Habitación pequeña, mala experiencia', 2, 3, 2, 2.5, 'Negativo', 8, 8),
-(NOW(), 7, 'Departamento muy cómodo', 5, 4, 5, 4.5, 'Positivo', 9, 9),
-(NOW(), 9, 'Casa increíble, volvería', 5, 5, 5, 5, 'Positivo', 10, 10);
+(NOW(), 6, 'Excelente departamento, muy céntrico', 5.0, 4.0, 4.0, 4.5, 'Positivo', 1, 1),
+(NOW(), 8, 'Casa muy bonita y amplia, jardín hermoso', 5.0, 5.0, 5.0, 5.0, 'Positivo', 2, 2),
+(NOW(), 3, 'Loft moderno pero algo pequeño', 4.0, 5.0, 3.0, 4.0, 'Neutro', 3, 3),
+(NOW(), 2, 'Habitación cómoda, buena zona', 5.0, 3.0, 4.0, 4.0, 'Positivo', 4, 4),
+(NOW(), 10, 'Departamento bien ubicado, pero ruidoso', 4.0, 4.0, 4.0, 4.0, 'Neutro', 5, 5),
+(NOW(), 1, 'Casa excelente, el mejor lugar', 5.0, 5.0, 5.0, 5.0, 'Positivo', 6, 6),
+(NOW(), 4, 'Estudio acogedor, me encantó', 5.0, 4.0, 5.0, 4.5, 'Positivo', 7, 7),
+(NOW(), 5, 'Habitación pequeña, mala experiencia', 2.0, 3.0, 2.0, 2.5, 'Negativo', 8, 8),
+(NOW(), 7, 'Departamento muy cómodo', 5.0, 4.0, 5.0, 4.5, 'Positivo', 9, 9),
+(NOW(), 9, 'Casa increíble, volvería', 5.0, 5.0, 5.0, 5.0, 'Positivo', 10, 10);
 
 -- =====================================================
 -- 12. TABLA administrador (5 administradores)
 -- =====================================================
 INSERT INTO `administrador` (`adminUser`, `adminContra`, `adminFechaInicioSesion`) VALUES
-('admin_root', 'admin123', NOW()),
-('supervisor1', 'super456', NOW()),
-('moderador', 'moder789', NOW()),
-('gestor_prop', 'gestor321', NOW()),
-('soporte', 'soporte555', NOW());
+('admin_root', 'hash_admin123', NOW()),
+('supervisor1', 'hash_super456', NOW()),
+('moderador', 'hash_moder789', NOW()),
+('gestor_prop', 'hash_gestor321', NOW()),
+('soporte', 'hash_soporte555', NOW());
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

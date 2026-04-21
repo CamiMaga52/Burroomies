@@ -1,3 +1,9 @@
+//FUNCIONAMIENTO:
+// Controlador para manejar operaciones relacionadas con reseñas.
+// Define funciones para obtener reseñas de una propiedad, crear una nueva reseña con análisis de sentimientos y obtener un resumen de sentimientos de una propiedad.
+// La función de creación de reseña verifica que el arrendatario haya terminado su arrendamiento, que no haya dejado ya una reseña para esa propiedad, y utiliza un análisis de sentimientos Naive Bayes para clasificar la reseña como positiva, negativa o neutral.
+// Utiliza los modelos de Resena, Arrendatario, Propiedad y Usuario para interactuar con la base de datos.
+
 const { Resena, Arrendatario, Propiedad, Usuario } = require('../models')
 const { analizarSentimiento } = require('../utils/sentimiento')
 

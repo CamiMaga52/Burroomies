@@ -1,3 +1,9 @@
+//FUNCIONAMIENTO:
+// Controlador para manejar operaciones relacionadas con propiedades.
+// Define funciones para obtener todas las propiedades (con filtros), obtener una propiedad por ID, obtener mis propiedades (arrendador), crear, actualizar y eliminar propiedades.
+// La función de creación de propiedad incluye validación del código postal usando una lista local y la API de COPOMEX para asegurar que la propiedad esté en una zona autorizada cercana al IPN/UPALM.
+// Utiliza los modelos de Propiedad, Arrendador, Arrendatario, Usuario y Resena para interactuar con la base de datos.
+
 const { Propiedad, Arrendador, Arrendatario, Usuario, Resena } = require('../models')
 const { Op } = require('sequelize')
 

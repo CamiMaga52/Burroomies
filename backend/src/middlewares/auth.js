@@ -1,3 +1,9 @@
+//FUNCIONAMIENTO:
+// Middleware para autenticación y autorización de usuarios.
+// Define una función authMiddleware que verifica el token JWT en el encabezado Authorization, decodifica el token y adjunta la información del usuario al objeto req.
+// También define funciones isArrendador, isArrendatario e isAdmin para verificar el rol del usuario antes de permitir el acceso a ciertas rutas.
+// Exporta las funciones para usarlas en las rutas protegidas de los controladores.
+
 const jwt = require('jsonwebtoken')
 
 const authMiddleware = (req, res, next) => {
